@@ -54,7 +54,9 @@ public class MyBot implements SkillzBot {
         for(Iceberg myIceberg : game.getMyIcebergs()) {
             /*IceBuilding destination;*/
             Iceberg destination = game.getEnemyIcebergs()[0];
-            int howManyPenguinsToSend = GameUtil.howManyPenguinsWillEnemyOrNeutralIceBuildingHave(game, destination, myIceberg.getTurnsTillArrival(destination)) + 1;
+            int distanceBetweenMyIcebergAndDestination = myIceberg.getTurnsTillArrival(destination);
+            log("distanceBetweenMyIcebergAndDestination: " + distanceBetweenMyIcebergAndDestination);
+            int howManyPenguinsToSend = GameUtil.howManyPenguinsWillEnemyOrNeutralIceBuildingHave(game, destination, distanceBetweenMyIcebergAndDestination) + 1;
             log("howManyPenguinsToSend: " + howManyPenguinsToSend);
             log("my penguin amount: " + myIceberg.penguinAmount);
             if(howManyPenguinsToSend > 0 && myIceberg.penguinAmount >= howManyPenguinsToSend) {

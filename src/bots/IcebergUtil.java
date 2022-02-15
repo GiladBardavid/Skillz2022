@@ -143,7 +143,7 @@ public class IcebergUtil {
 
         // If the target iceberg is neutral, or it doesn't have the same owner as the bonus iceberg, it will never revieve any penguins.
         // So we return an empty map.
-        if(target.owner.equals(game.getNeutral()) || target.owner.equals(bonusIceberg.owner)) {
+        if(target.owner.equals(game.getNeutral()) || !target.owner.equals(bonusIceberg.owner)) {
             return howManyPenguinsWillBeAddedInXTurns;
         }
 
