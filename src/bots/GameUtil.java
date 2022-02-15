@@ -39,13 +39,13 @@ public class GameUtil {
 
         // The amount of penguins that the enemy has already sent to the destination that will also arrive before the attack.
         // This is most likely the enemy's help-penguins
-        int amountOFEnemyPenguinsThatWillArriveByTurnX = 0;
+        int amountOfEnemyPenguinsThatWillArriveByTurnX = 0;
         for(PenguinGroup enemyPenguinGroup : game.getEnemyPenguinGroups()) {
             // Check if the penguin group is going to the destination and will arrive before the attack
             if(enemyPenguinGroup.destination == destination && enemyPenguinGroup.turnsTillArrival <= turnsTillArrival) {
 
                 //Add the penguins that will arrive by turn x
-                amountOFEnemyPenguinsThatWillArriveByTurnX += enemyPenguinGroup.penguinAmount;
+                amountOfEnemyPenguinsThatWillArriveByTurnX += enemyPenguinGroup.penguinAmount;
 
             }
         }
@@ -53,7 +53,7 @@ public class GameUtil {
         // We want to return the amount of penguins that the enemy already has in the iceberg plus the amount of penguins that it will generate plus
         // the amount of enemy penguins that will help the destination iceberg minus the amount of penguins that I already sent to the destination
         // (that will arrive in time).
-        int result = currentAmount + amountThatWillBeGenerated + amountOFEnemyPenguinsThatWillArriveByTurnX - amountOfMyPenguinsThatWillArriveByTurnX;
+        int result = currentAmount + amountThatWillBeGenerated + amountOfEnemyPenguinsThatWillArriveByTurnX - amountOfMyPenguinsThatWillArriveByTurnX;
         Log.log("\nB_0: " + destination + " will have " + result + " penguins in " + turnsTillArrival + " turns.\n");
         return result;
     }
