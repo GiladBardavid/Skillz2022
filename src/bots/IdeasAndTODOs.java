@@ -5,6 +5,7 @@ package bots;
 Ideas:
 
      - Perhaps we can use a priority queue for certain goals such as upgrading an Iceberg or capturing different IceBuildings.
+          - Evaluate the priority of each goal by how many penguins are we spending on it / how many pps are we getting.
 
      - I think it is better to evaluate how good capturing an iceberg is by calculating the difference between the penguins per second (pps)
        it gives me compared to the enemy. (For example: capturing an iceberg with 1 pps equals priority 2.

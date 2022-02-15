@@ -32,21 +32,30 @@ public class MyBot implements SkillzBot {
         this.game = game;
 
         // Update the turnsTillArrival of all ongoing attacks
-        for (Attack ongoingAttack : ongoingAttacks) {
-            log("Parsing attack " + ongoingAttack);
-            ongoingAttack.execute();
+        for(Attack ongoingAttack : ongoingAttacks) {
             ongoingAttack.decrementTurnsTillArrival();
         }
+
+        // --------------------------------------------------------------
 
         for(Iceberg myIceberg : game.getMyIcebergs()) {
             /*IceBuilding destination;*/
             Iceberg destination = game.getEnemyIcebergs()[0];
             int howManyPenguinsToSend = GameUtil.howManyPenguinsWillDestinationHave(game, destination, myIceberg.getTurnsTillArrival(destination)) + 1;
-            if(howManyPenguinsToSend > 0 && myIceberg.penguinAmount > howManyPenguinsToSend) {
+            log("howManyPenguinsToSend: " + howManyPenguinsToSend);
+            log("my penguin amount: " + myIceberg.penguinAmount);
+            if(howManyPenguinsToSend > 0 && myIceberg.penguinAmount >= howManyPenguinsToSend) {
+                log("Creating new attack");
                 Attack a = new Attack(destination);
                 a.addIcebergThatCanAttack(myIceberg, howManyPenguinsToSend);
                 ongoingAttacks.add(a);
             }
+        }
+
+        // Execute all the attacks that need to be done
+        for (Attack ongoingAttack : ongoingAttacks) {
+            log("Parsing attack\n" + ongoingAttack);
+            ongoingAttack.execute();
         }
 
         log("Ongoing attacks:\n" + ongoingAttacks + "\n");
