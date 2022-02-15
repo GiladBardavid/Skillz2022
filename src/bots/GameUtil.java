@@ -23,7 +23,7 @@ public class GameUtil {
         int penguinsGeneratedPerTurn = destination instanceof Iceberg ? ((Iceberg)destination).penguinsPerTurn : 0;
 
         // The amount of penguins that the iceberg will generate by the time the attack arrives
-        int amountThatWillBeGenerated = (turnsTillArrival + 1) * penguinsGeneratedPerTurn;
+        int amountThatWillBeGenerated = turnsTillArrival * penguinsGeneratedPerTurn;
 
         // The amount of penguins that I have already sent to the destination that will also arrive before the attack
         int amountOfMyPenguinsThatWillArriveByTurnX = 0;
@@ -55,6 +55,7 @@ public class GameUtil {
         // (that will arrive in time).
         int result = currentAmount + amountThatWillBeGenerated + amountOfEnemyPenguinsThatWillArriveByTurnX - amountOfMyPenguinsThatWillArriveByTurnX;
         Log.log("\nB_0: " + destination + " will have " + result + " penguins in " + turnsTillArrival + " turns.\n");
+        Log.log("B_1: this is because currentAmount = " + currentAmount + ",\n amountThatWillBeGenerated = " + amountThatWillBeGenerated + ",\n amountOfEnemyPenguinsThatWillArriveByTurnX = " + amountOfEnemyPenguinsThatWillArriveByTurnX + ",\n amountOfMyPenguinsThatWillArriveByTurnX = " + amountOfMyPenguinsThatWillArriveByTurnX + "\n");
         return result;
     }
 
