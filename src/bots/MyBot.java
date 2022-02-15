@@ -22,6 +22,10 @@ public class MyBot implements SkillzBot {
         log("maxTurnsToBonus: " + game.getBonusIceberg().maxTurnsToBonus);
         log("turnsLeftToBonus: " + game.getBonusIceberg().turnsLeftToBonus);
         log("penguinBonus: " + game.getBonusIceberg().penguinBonus);
+
+        log("my bonus iceberg: " + game.getMyBonusIceberg());
+        log("enemy bonus iceberg: " + game.getEnemyBonusIceberg());
+        log("neutral bonus iceberg: " + game.getNeutralBonusIceberg());
         log("");
 
         // Update the global game variable
