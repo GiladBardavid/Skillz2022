@@ -24,6 +24,7 @@ public class GameUtil {
         Map<Integer, Integer> incomingEnemyPenguinGroups = IcebergUtil.howManyEnemyPenguinsWillArriveToADestinationInXTurns(game, destination);
         Map<Integer, Integer> incomingBonusPenguins = IcebergUtil.howManyPenguinsWillAnIcebergGetAtEachTurnFromBonusIceberg(game, destination);
 
+        //TODO set it so bonus icebergs don't get the bonus iceberg's bonus
 
         // A variable to keep track of how many turns we have gone through
         int turnCounter = 0;
