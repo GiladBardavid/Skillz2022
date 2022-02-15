@@ -124,4 +124,37 @@ public class IcebergUtil {
         // Return the how-many-penguins-will-arrive-at-what-turn map.
         return howManyMyPenguinsWillArriveInXTurns;
     }
+
+
+    /**
+     * A function that returns a map that contains how many enemy penguins will be added at what turn to a target iceberg from the bonus iceberg.
+     * @param game The current game state.
+     * @param target The target iceberg, the one that we are checking.
+     * @return A map that contains how many bonus penguins will be added at what turn to the target iceberg from the bonus iceberg.
+     */
+    public static Map<Integer, Integer> howManyPenguinsWillAnIcebergGetAtEachTurnFromBonusIceberg(Game game, IceBuilding target) {
+
+        // Initialize the map that will contain the number of penguins that will be added to a target iceberg in a certain number of turns.
+        Map<Integer, Integer> howManyPenguinsWillBeAddedInXTurns = new TreeMap<>();
+
+        // Store the bonusIceberg, and the amount of penguins that it gives each time it produces penguins.
+        BonusIceberg bonusIceberg = game.getBonusIceberg();
+        int penguinAmountThatWillGetAddedEachTime = bonusIceberg.penguinBonus;
+
+        // If the target iceberg is neutral, or it doesn't have the same owner as the bonus iceberg, it will never revieve any penguins.
+        // So we return an empty map.
+        if(target.owner.equals(game.getNeutral()) || target.owner.equals(bonusIceberg.owner)) {
+            return howManyPenguinsWillBeAddedInXTurns;
+        }
+
+        // Loop over all turns that the bonus iceberg will produce penguins, and add them to the map.
+        for(int turn = bonusIceberg.turnsLeftToBonus; turn <= game.maxTurns; turn += bonusIceberg.maxTurnsToBonus) {
+
+            // Add the penguins that will be added to the target iceberg in the current turn to the map.
+            howManyPenguinsWillBeAddedInXTurns.put(turn, penguinAmountThatWillGetAddedEachTime);
+        }
+
+        // Return the how-many-penguins-will-be-added-at-what-turn map.
+        return howManyPenguinsWillBeAddedInXTurns;
+    }
 }
