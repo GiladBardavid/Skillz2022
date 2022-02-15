@@ -2,6 +2,13 @@ package bots;
 import penguin_game.*;
 import java.util.*;
 
+/**
+ * "The" Skillz 2022 Code
+ *
+ * @author Gilad "carry" B.
+ * @author Ilay "cyber" B.
+ * @author Sagi "8200" G.
+ */
 public class MyBot implements SkillzBot {
 
     // A variable to store the current game state. This is for other classes that depend on the game state.
@@ -36,7 +43,11 @@ public class MyBot implements SkillzBot {
             ongoingAttack.decrementTurnsTillArrival();
         }
 
+
+
         // --------------------------------------------------------------
+
+
 
         for(Iceberg myIceberg : game.getMyIcebergs()) {
             /*IceBuilding destination;*/
