@@ -33,6 +33,8 @@ public class MyBot implements SkillzBot {
         log("my bonus iceberg: " + game.getMyBonusIceberg());
         log("enemy bonus iceberg: " + game.getEnemyBonusIceberg());
         log("neutral bonus iceberg: " + game.getNeutralBonusIceberg());
+
+        log("me: " + GameUtil.playerToString(game, game.getMyself()) + " enemy: " + GameUtil.playerToString(game, game.getEnemy()) + " neutral: " + GameUtil.playerToString(game, game.getNeutral()));
         log("");
 
         // Update the global game variable
@@ -52,7 +54,7 @@ public class MyBot implements SkillzBot {
         for(Iceberg myIceberg : game.getMyIcebergs()) {
             /*IceBuilding destination;*/
             Iceberg destination = game.getEnemyIcebergs()[0];
-            int howManyPenguinsToSend = GameUtil.howManyPenguinsWillDestinationHave(game, destination, myIceberg.getTurnsTillArrival(destination)) + 1;
+            int howManyPenguinsToSend = GameUtil.howManyPenguinsWillEnemyOrNeutralIceBuildingHave(game, destination, myIceberg.getTurnsTillArrival(destination)) + 1;
             log("howManyPenguinsToSend: " + howManyPenguinsToSend);
             log("my penguin amount: " + myIceberg.penguinAmount);
             if(howManyPenguinsToSend > 0 && myIceberg.penguinAmount >= howManyPenguinsToSend) {

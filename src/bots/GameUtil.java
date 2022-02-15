@@ -6,14 +6,47 @@ import java.util.*;
 public class GameUtil {
 
     /**
-     * Returns how many penguins will an enemy iceberg have in turn x.
+     * Returns how many penguins will an enemy or a neutral iceberg have in turn x.
+     * Positive count - enemy or neutral.
+     * Negative count - mine.
      * @param game current game state
      * @param destination iceberg to check
-     * @param turnsTillArrival turn to check
+     * @param inHowManyTurns the amount of turns ahead we want to check
      * @return how many penguins will the enemy iceberg have in turn x
      */
-    public static int howManyPenguinsWillDestinationHave(Game game, IceBuilding destination, int turnsTillArrival) {
-        //TODO simulate turns and also calculate bonus icebergs
+    public static int howManyPenguinsWillEnemyOrNeutralIceBuildingHave(Game game, IceBuilding destination, int inHowManyTurns) {
+        return 0; // temp
+        /*// Initiate result that we will update for every turn
+        int currentPenguinAmount = destination.penguinAmount;
+
+        // A variable to keep track of how many turns we have gone through
+        int turnCounter = 0;
+
+        while(turnCounter < inHowManyTurns) {
+
+            // Add the destination's penguins-per-turn
+            int penguinsPerTurn;
+            if(destination instanceof Iceberg) {
+                Player destinationOwner = destination.owner;
+                switch (destinationOwner) {
+                    case game.getNeutral():
+                        penguinsPerTurn = 0;
+                        break;
+                    case game.getEnemy():
+
+                }
+            }
+        }*/
+    }
+
+
+
+
+
+
+    // ------------------------------ OLD FUNCTION - NEW ON ABOVE THIS COMMENT ------------------------------------------------
+
+    /*public static int howManyPenguinsWillDestinationHave(Game game, IceBuilding destination, int turnsTillArrival) {
 
         // Current penguin amount in the iceberg
         int currentAmount = destination.penguinAmount;
@@ -57,7 +90,7 @@ public class GameUtil {
         Log.log("\nB_0: " + destination + " will have " + result + " penguins in " + turnsTillArrival + " turns.\n");
         Log.log("B_1: this is because currentAmount = " + currentAmount + ",\n amountThatWillBeGenerated = " + amountThatWillBeGenerated + ",\n amountOfEnemyPenguinsThatWillArriveByTurnX = " + amountOfEnemyPenguinsThatWillArriveByTurnX + ",\n amountOfMyPenguinsThatWillArriveByTurnX = " + amountOfMyPenguinsThatWillArriveByTurnX + "\n");
         return result;
-    }
+    }*/
 
 
     /**
@@ -80,5 +113,27 @@ public class GameUtil {
         }
 
         return result;
+    }
+
+
+    /**
+     * A function that converts a player to a string representation of it.
+     * @param game current game state
+     * @param player the player to convert
+     * @return A string representation of the player.
+     */
+    public static String playerToString(Game game, Player player) {
+        // If the player is me, return "Me"
+        if(player.equals(game.getMyself())) {
+            return "Me";
+        }
+
+        // If the player is the enemy, return "Enemy"
+        if(player.equals(game.getEnemy())){
+            return "Enemy";
+        }
+
+        // If the player is neutral, return "Neutral"
+        return "Neutral";
     }
 }
