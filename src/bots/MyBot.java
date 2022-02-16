@@ -17,6 +17,8 @@ public class MyBot implements SkillzBot {
     // A map that for each iceberg, we will store how many penguins do we want it to have in turn x. This is so we will be able to correctly perform all attacks.
     public Map<Iceberg, Map<Integer, Integer>> howManyPenguinsShouldIcebergsHaveInTurn = new HashMap<>();
 
+    public PriorityQueue<IceBuilding> bestActionsToPerform;
+
     /**
      * Does the turn. This function is called by the system.
      * @param game current game state
@@ -39,6 +41,10 @@ public class MyBot implements SkillzBot {
         for(Attack ongoingAttack : ongoingAttacks) {
             ongoingAttack.decrementTurnsTillArrival();
         }
+
+        // Find and store the best actions to perform
+        bestActionsToPerform = GameUtil.getPriorityQueueOfIceBuildings(game);
+        log("bestActionsToPerform: " + bestActionsToPerform);
 
 
 

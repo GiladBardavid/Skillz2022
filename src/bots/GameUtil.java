@@ -96,7 +96,7 @@ public class GameUtil {
             // Increment the turn counter
             turnCounter++;
 
-            Log.log("\nB_0: After " + turnCounter + " turns, the penguin amount is " + currentPenguinAmount + "\n");
+            Log.log("B_0: After " + turnCounter + " turns, the penguin amount is " + currentPenguinAmount);
         }
 
         // Return the penguin amount after the specified number of turns.
@@ -330,5 +330,57 @@ public class GameUtil {
         // Return the calculated value.
         Log.log("B_6_1: value of capturing bonus iceberg " + destination + " is " + valueOfAttacking);
         return valueOfAttacking;
+    }
+
+
+    /**
+     * Get a priority queue of ice-buildings that are the best to capture.
+     * @param game current game state
+     * @return a priority queue of ice-buildings that are the best to capture
+     */
+    public static PriorityQueue<IceBuilding> getPriorityQueueOfIceBuildings(Game game) {
+
+        // Create a priority queue of ice-buildings that are the best to capture, using a custom lambda comparator.
+        PriorityQueue<IceBuilding> priorityQueue = new PriorityQueue<>((o1, o2) -> getValueOfCapturing(game, o2) - getValueOfCapturing(game, o1));
+
+        // Add all the ice-buildings that are not mine to the priority queue.
+        Set<IceBuilding> allEnemyOrNeutralIceBuildings = getAllEnemyOrNeutralIceBuildings(game);
+
+        // Add all the members of the allEnemyOrNeutralIceBuildings to the priority queue.
+        priorityQueue.addAll(allEnemyOrNeutralIceBuildings);
+
+        // Return the calculated priority queue.
+        return priorityQueue;
+    }
+
+
+    /**
+     * A function to get all the ice-buildings that are not mine.
+     * @param game current game state
+     * @return a set of all the ice-buildings that are not mine
+     */
+    public static Set<IceBuilding> getAllEnemyOrNeutralIceBuildings(Game game) {
+
+        // Initialize a set of ice-buildings that are not mine.
+        Set<IceBuilding> allEnemyOrNeutralIceBuildings = new HashSet<IceBuilding>();
+
+        // Use a stream to add to the set all the enemy or neutral ice-buildings.
+        Arrays.stream(game.getAllIcebergs())
+                // We only want to add the ice-buildings that are they enemy's or neutral.
+                .filter(iceBuilding -> playerToString(game, iceBuilding.owner).equals("Me") || playerToString(game, iceBuilding.owner).equals("Neutral"))
+                // For each iceberg, add it's downcast to IceBuilding to the set.
+                .forEach(iceBuilding -> allEnemyOrNeutralIceBuildings.add((IceBuilding) iceBuilding));
+
+        // We want to also add the bonus iceberg if it is not mine. So firstly we check who's its owner
+        String bonusIcebergOwner = playerToString(game, game.getBonusIceberg().owner);
+
+        // If the bonus iceberg's owner is either enemy or neutral, add it to the set.
+        if(bonusIcebergOwner.equals("Enemy") || bonusIcebergOwner.equals("Neutral")) {
+            allEnemyOrNeutralIceBuildings.add(game.getBonusIceberg());
+        }
+
+        // Return the calculated set.
+        Log.log("B_6_2: all enemy or neutral ice-buildings are " + allEnemyOrNeutralIceBuildings);
+        return allEnemyOrNeutralIceBuildings;
     }
 }
