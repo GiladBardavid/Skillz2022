@@ -38,4 +38,21 @@ public class BonusIcebergUtil {
         return amountOfPenguinsThatBonusIcebergWillGenerate;
     }
 
+
+    /**
+     * A function that finds what is the average bonus from the bonus-iceberg per iceberg per 1 turn.
+     * @param game current game state
+     * @return the average bonus from the bonus-iceberg per iceberg per 1 turn.
+     */
+    public static double getAveragePenguinsPerTurnPerIceberg(Game game) {
+        // Fetch bonus iceberg
+        BonusIceberg bonusIceberg = game.getBonusIceberg();
+
+        // Find how many penguins on average will the bonus iceberg produce per 1 turn.
+        double averagePenguinsPerTurnPerIceberg = (double)bonusIceberg.penguinBonus / bonusIceberg.maxTurnsToBonus;
+
+        // Return the calculated result
+        return averagePenguinsPerTurnPerIceberg;
+    }
+
 }
