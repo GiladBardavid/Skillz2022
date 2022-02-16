@@ -111,6 +111,7 @@ public class GameUtil {
 
 
 
+
     /**
      * Returns how many penguins will one of my icebergs have in turn x.
      * Positive count - mine.
