@@ -14,7 +14,7 @@ public class GameUtil {
      * @param inHowManyTurns the amount of turns ahead we want to check
      * @return how many penguins will the enemy iceberg have in turn x
      */
-    public static int howManyPenguinsWillEnemyOrNeutralIceBuildingHave(Game game, IceBuilding destination, int inHowManyTurns) {
+    public static int getPenguinAmountInTurnXForEnemyOrNeutralIceBuilding(Game game, IceBuilding destination, int inHowManyTurns) {
 
         // Initiate result that we will update for every turn
         int currentPenguinAmount = destination.penguinAmount;
@@ -57,8 +57,13 @@ public class GameUtil {
 
                         // If the destination is mine (the enemy penguin will have a negative penguin amount),
                         // we need to subtract the penguins-per-turn, because we are looking from the POV of the enemy in this function.
-                        else {
+                        else if(currentPenguinAmount < 0){
                             penguinsPerTurn = -((Iceberg) destination).penguinsPerTurn;
+                        }
+
+                        // If the iceberg is neutral, it doesn't create penguins.
+                        else {
+                            penguinsPerTurn = 0;
                         }
                         break;
                 }
@@ -101,6 +106,112 @@ public class GameUtil {
         Log.log("B_1 Returning: " + currentPenguinAmount);
         return currentPenguinAmount;
     }
+
+
+
+
+
+    /**
+     * Returns how many penguins will one of my icebergs have in turn x.
+     * Positive count - mine.
+     * Negative count - enemy or neutral.
+     * @param game current game state
+     * @param myIceBuilding IceBuilding to check
+     * @param inHowManyTurns the amount of turns ahead we want to check
+     * @return how many penguins will my iceberg have in turn x
+     */
+    public static int getPenguinAmountInTurnXForMyIceBuilding(Game game, IceBuilding myIceBuilding, int inHowManyTurns) {
+        // Initiate result that we will update for every turn
+        int currentPenguinAmount = myIceBuilding.penguinAmount;
+
+        // Store 3 maps, one for the incoming my penguin groups, one for the incoming enemy penguin groups and one for the incoming bonus penguins.
+        Map<Integer, Integer> incomingMyPenguinGroups = IcebergUtil.howManyMyPenguinsWillArriveToADestinationInXTurns(game, myIceBuilding);
+        Map<Integer, Integer> incomingEnemyPenguinGroups = IcebergUtil.howManyEnemyPenguinsWillArriveToADestinationInXTurns(game, myIceBuilding);
+        Map<Integer, Integer> incomingBonusPenguins = IcebergUtil.howManyPenguinsWillAnIcebergGetAtEachTurnFromBonusIceberg(game, myIceBuilding);
+
+        //TODO set it so bonus icebergs don't get the bonus iceberg's bonus
+
+        // A variable to keep track of how many turns we have gone through
+        // Initialized to 1 because we already have the current turn's information
+        int turnCounter = 1;
+
+        while(turnCounter <= inHowManyTurns) {
+            Log.log("B_0_0: entered loop and current penguin amount = " + currentPenguinAmount);
+
+            // Add the destination's penguins-per-turn
+            // Initialized at 0 to avoid an error saying it isn't initialized.
+            int penguinsPerTurn = 0;
+
+            // If the destination is an iceberg, we need to change the penguin amount according to the penguins-per-turn of the destination.
+            if(myIceBuilding instanceof Iceberg) {
+
+                // If the destination is neutral, it doesn't create penguins.
+                // If the destination is enemy, we need to add the penguins-per-turn.
+                // If the destination is mine, we need to subtract the penguins-per-turn, because we are looking from the POV of the enemy in this function.
+                String destinationOwner = playerToString(game, myIceBuilding.owner);
+                switch (destinationOwner) {
+                    case "Neutral":
+                        // If the destination is neutral, it doesn't create penguins.
+                        penguinsPerTurn = 0;
+                        break;
+                    case "Enemy":
+                        // If the destination is enemy, we need to add the penguins-per-turn.
+                        if(currentPenguinAmount > 0) {
+                            penguinsPerTurn = ((Iceberg) myIceBuilding).penguinsPerTurn;
+                        }
+
+                        // If the destination is mine (the enemy penguin will have a negative penguin amount),
+                        // we need to subtract the penguins-per-turn, because we are looking from the POV of the enemy in this function.
+                        else if(currentPenguinAmount < 0){
+                            penguinsPerTurn = -((Iceberg) myIceBuilding).penguinsPerTurn;
+                        }
+
+                        // If the iceberg is neutral, it doesn't create penguins.
+                        else {
+                            penguinsPerTurn = 0;
+                        }
+                        break;
+                }
+            }
+            // If the destination is not an iceberg (it is a bonus iceberg), it doesn't spawn penguins on itself, so it's penguins-per-turn is 0.
+            else {
+                penguinsPerTurn = 0;
+            }
+
+
+            // Add the penguins-per-turn to the current penguin amount
+            currentPenguinAmount += penguinsPerTurn;
+            Log.log("B_4_1: added penguins per turn and current penguin amount = " + currentPenguinAmount);
+
+            // Update the current penguin amount according to the penguin groups that will be arriving.
+            // Incoming my penguin groups
+            if(incomingMyPenguinGroups.containsKey(turnCounter)) {
+                Log.log("B_4: found a penguin group that I own that will arrive after " + turnCounter + " turns with size " + incomingMyPenguinGroups.get(turnCounter));
+                currentPenguinAmount -= incomingMyPenguinGroups.get(turnCounter);
+                Log.log("B_4_2: new penguin amount is " + currentPenguinAmount);
+            }
+            // Incoming enemy penguin groups
+            if(incomingEnemyPenguinGroups.containsKey(turnCounter)) {
+                Log.log("B_5_0: found a penguin group that the enemy owns that will arrive after " + turnCounter + " turns with size " + incomingMyPenguinGroups.get(turnCounter));
+                currentPenguinAmount += incomingEnemyPenguinGroups.get(turnCounter);
+                Log.log("B_5_1: new penguin amount is " + currentPenguinAmount);
+            }
+            // Incoming bonus penguins
+            if(incomingBonusPenguins.containsKey(turnCounter)) {
+                currentPenguinAmount += incomingBonusPenguins.get(turnCounter);
+            }
+
+            // Increment the turn counter
+            turnCounter++;
+
+            Log.log("\nB_4_3: After " + turnCounter + " turns, the penguin amount is " + currentPenguinAmount + "\n");
+        }
+
+        // Return the penguin amount after the specified number of turns.
+        Log.log("B_4_4 Returning: " + currentPenguinAmount);
+        return currentPenguinAmount;
+    }
+
 
 
 
