@@ -15,7 +15,7 @@ public class BonusIcebergUtil {
         // Fetch bonus iceberg
         BonusIceberg bonusIceberg = game.getBonusIceberg();
 
-        // If the bonus iceberg will not generate any penguins in the next x turns, return 0.
+        // If the bonus iceberg does not generate any penguins in the next x turns, return 0.
         if(inHowManyTurns < bonusIceberg.turnsLeftToBonus) {
             return 0;
         }
