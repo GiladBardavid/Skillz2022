@@ -123,6 +123,20 @@ public class Attack {
 
 
 
+
+
+
+
+    public static boolean canAttack(Game game, IceBuilding destination) {
+
+        return false;
+    }
+
+
+
+
+
+
     /**
      * A toString function for an attack.
      * @return A string representation of the attack

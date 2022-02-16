@@ -2,6 +2,7 @@ package bots;
 
 import penguin_game.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GameUtil {
 
@@ -217,19 +218,12 @@ public class GameUtil {
      * @return A list containing all the icebergs that are either the enemy's or neutral.
      */
     public static List<Iceberg> getEnemyOrNeutralIcebergs(Game game) {
-        // Initiate result list
-        List<Iceberg> result = new ArrayList<Iceberg>();
+        // Initiate result list, and use a stream to filter only the icebergs that are either the enemy's or neutral.
+        List<Iceberg> result = Arrays.stream(game.getAllIcebergs())
+                .filter(iceberg -> playerToString(game, iceberg.owner).equals("Enemy") || playerToString(game, iceberg.owner).equals("Neutral"))
+                .collect(Collectors.toList());
 
-        // Add all enemy icebergs to the result list
-        for(Iceberg enemyIceberg : game.getEnemyIcebergs()) {
-            result.add(enemyIceberg);
-        }
-
-        // Add all neutral icebergs to the result list
-        for(Iceberg neutralIceberg : game.getNeutralIcebergs()) {
-            result.add(neutralIceberg);
-        }
-
+        // Return the result list.
         return result;
     }
 
@@ -322,7 +316,7 @@ public class GameUtil {
 
         // Neutral icebergs are worth less than captured icebergs, this is because they will only impact in the future.
         // The value of this factor is not proven to be correct, but it is a good approximation. We might want to change this in the future.
-        double neutralIcebergFactor = 0.5;
+        double neutralIcebergFactor = /*0.5*/0;
 
         // The value of attacking the bonus iceberg is the value per iceberg times the number of icebergs plus a factor for neutral icebergs.
         int valueOfAttacking = (int) (valuePerIceberg * (myIcebergAmount + enemyIcebergAmount + neutralIcebergAmount * neutralIcebergFactor));

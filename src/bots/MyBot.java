@@ -50,6 +50,10 @@ public class MyBot implements SkillzBot {
 
         // --------------------------------------------------------------
 
+        //TEMPORARY
+        if(game.turn == 1) {
+            game.getMyIcebergs()[0].sendPenguins(game.getNeutralIcebergs()[6], 9);
+        }
 
 
         for(Iceberg myIceberg : game.getMyIcebergs()) {
