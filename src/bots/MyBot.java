@@ -11,9 +11,6 @@ import java.util.*;
  */
 public class MyBot implements SkillzBot {
 
-    // A variable to store the current game state. This is for other classes that depend on the game state.
-    public Game game;
-
     // A set of all ongoing attacks.
     public Set<Attack> ongoingAttacks = new HashSet<>();
 
@@ -37,9 +34,6 @@ public class MyBot implements SkillzBot {
         log("me: " + GameUtil.playerToString(game, game.getMyself()) + " enemy: " + GameUtil.playerToString(game, game.getEnemy()) + " neutral: " + GameUtil.playerToString(game, game.getNeutral()));
         log("");
 
-
-        // Update the global game variable
-        this.game = game;
 
         // Update the turnsTillArrival of all ongoing attacks
         for(Attack ongoingAttack : ongoingAttacks) {
