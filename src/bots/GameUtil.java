@@ -31,7 +31,6 @@ public class GameUtil {
         int turnCounter = 1;
 
         while(turnCounter <= inHowManyTurns) {
-            Log.log("B_0_0: entered loop and current penguin amount = " + currentPenguinAmount);
 
             // Add the destination's penguins-per-turn
             // Initialized at 0 to avoid an error saying it isn't initialized.
@@ -76,25 +75,23 @@ public class GameUtil {
 
             // Add the penguins-per-turn to the current penguin amount
             currentPenguinAmount += penguinsPerTurn;
-            Log.log("B_0_1: added penguins per turn and current penguin amount = " + currentPenguinAmount);
 
             // Update the current penguin amount according to the penguin groups that will be arriving.
             // Incoming my penguin groups
             if(incomingMyPenguinGroups.containsKey(turnCounter)) {
-                Log.log("B_2: found a penguin group that I own that will arrive after " + turnCounter + " turns with size " + incomingMyPenguinGroups.get(turnCounter));
                 currentPenguinAmount -= incomingMyPenguinGroups.get(turnCounter);
-                Log.log("B_2_0: new penguin amount is " + currentPenguinAmount);
             }
+
             // Incoming enemy penguin groups
             if(incomingEnemyPenguinGroups.containsKey(turnCounter)) {
-                Log.log("B_3: found a penguin group that the enemy owns that will arrive after " + turnCounter + " turns with size " + incomingMyPenguinGroups.get(turnCounter));
                 currentPenguinAmount += incomingEnemyPenguinGroups.get(turnCounter);
-                Log.log("B_3_0: new penguin amount is " + currentPenguinAmount);
             }
+
             // Incoming bonus penguins
             if(incomingBonusPenguins.containsKey(turnCounter)) {
                 currentPenguinAmount += incomingBonusPenguins.get(turnCounter);
             }
+
 
             // Increment the turn counter
             turnCounter++;
@@ -137,7 +134,6 @@ public class GameUtil {
         int turnCounter = 1;
 
         while(turnCounter <= inHowManyTurns) {
-            Log.log("B_0_0: entered loop and current penguin amount = " + currentPenguinAmount);
 
             // Add the destination's penguins-per-turn
             // Initialized at 0 to avoid an error saying it isn't initialized.
@@ -182,21 +178,18 @@ public class GameUtil {
 
             // Add the penguins-per-turn to the current penguin amount
             currentPenguinAmount += penguinsPerTurn;
-            Log.log("B_4_1: added penguins per turn and current penguin amount = " + currentPenguinAmount);
 
             // Update the current penguin amount according to the penguin groups that will be arriving.
             // Incoming my penguin groups
             if(incomingMyPenguinGroups.containsKey(turnCounter)) {
-                Log.log("B_4: found a penguin group that I own that will arrive after " + turnCounter + " turns with size " + incomingMyPenguinGroups.get(turnCounter));
                 currentPenguinAmount -= incomingMyPenguinGroups.get(turnCounter);
-                Log.log("B_4_2: new penguin amount is " + currentPenguinAmount);
             }
+
             // Incoming enemy penguin groups
             if(incomingEnemyPenguinGroups.containsKey(turnCounter)) {
-                Log.log("B_5_0: found a penguin group that the enemy owns that will arrive after " + turnCounter + " turns with size " + incomingMyPenguinGroups.get(turnCounter));
                 currentPenguinAmount += incomingEnemyPenguinGroups.get(turnCounter);
-                Log.log("B_5_1: new penguin amount is " + currentPenguinAmount);
             }
+
             // Incoming bonus penguins
             if(incomingBonusPenguins.containsKey(turnCounter)) {
                 currentPenguinAmount += incomingBonusPenguins.get(turnCounter);
