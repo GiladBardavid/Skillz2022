@@ -27,6 +27,16 @@ public class MyBot implements SkillzBot {
             bestTargetsToAttack.add(bestActionsToPerform.poll());
         }
 
+        // Remove from the targets list the ones that will already be mine
+        for(int i = 0; i < bestTargetsToAttack.size(); i++) {
+            IceBuilding iceBuildingToCheck = bestTargetsToAttack.get(i);
+            
+            if(NeededHelp.willBeMine(game, iceBuildingToCheck)) {
+                bestTargetsToAttack.remove(i);
+                i--;
+            }
+        }
+
         log("bestActionsToPerform: " + bestActionsToPerform);
 
         log("\nbestTargetsToAttack: " + bestTargetsToAttack + "\n");
