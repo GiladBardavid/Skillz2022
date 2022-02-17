@@ -28,10 +28,20 @@ public class MyBot implements SkillzBot {
         }
 
         // Remove from the targets list the ones that will already be mine
+        /*for(int i = 0; i < bestTargetsToAttack.size(); i++) {
+            IceBuilding iceBuildingToCheck = bestTargetsToAttack.get(i);
+
+            if(NeededHelp.willBeMine(game, iceBuildingToCheck)) {
+                bestTargetsToAttack.remove(i);
+                i--;
+            }
+        }*/
+
+        // Remove all natural targets that contain a close enemy iceberg
         for(int i = 0; i < bestTargetsToAttack.size(); i++) {
             IceBuilding iceBuildingToCheck = bestTargetsToAttack.get(i);
-            
-            if(NeededHelp.willBeMine(game, iceBuildingToCheck)) {
+
+            if(GameUtil.closestIcebergsContainsEnemy(game, iceBuildingToCheck)) {
                 bestTargetsToAttack.remove(i);
                 i--;
             }
@@ -111,7 +121,7 @@ public class MyBot implements SkillzBot {
 
         for(Iceberg myIceberg : game.getMyIcebergs()) {
             // We don't want icebergs that are under attack to send penguins --- not optimal
-            if(GameUtil.isGettingHelp(game, myIceberg)) {
+            if(GameUtil.isGettingHelp(game, myIceberg) || !NeededHelp.willSurvive(game, myIceberg)) {
                 continue;
             }
 

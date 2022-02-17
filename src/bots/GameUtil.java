@@ -509,4 +509,40 @@ public class GameUtil {
         return false;
     }
 
+
+
+    public static List<Iceberg> getClosestIcebergs(Game game, IceBuilding destination) {
+        int minDistance = Integer.MAX_VALUE;
+
+        for(Iceberg icebergToCheck : game.getAllIcebergs()) {
+            if(icebergToCheck.equals(destination)) {
+                continue;
+            }
+            if(icebergToCheck.getTurnsTillArrival(destination) < minDistance) {
+                minDistance = icebergToCheck.getTurnsTillArrival(destination);
+            }
+        }
+
+        List<Iceberg> closestIcebergs = new ArrayList<>();
+        for(Iceberg icebergToCheck : game.getAllIcebergs()) {
+            if(icebergToCheck.getTurnsTillArrival(destination) == minDistance) {
+                closestIcebergs.add(icebergToCheck);
+            }
+        }
+
+        return closestIcebergs;
+    }
+
+
+    public static boolean closestIcebergsContainsEnemy(Game game, IceBuilding destination) {
+        for(Iceberg icebergToCheck : getClosestIcebergs(game, destination)) {
+            if(playerToString(game, icebergToCheck.owner).equals("Enemy")) {
+                Log.log("\n\nclosestIcebergsContainsEnemy for iceBuilding " + destination + " is true\n\n");
+                return true;
+            }
+        }
+        Log.log("\n\nclosestIcebergsContainsEnemy for iceBuilding " + destination + " is false\n\n");
+        return false;
+    }
+
 }

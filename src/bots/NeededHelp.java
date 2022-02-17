@@ -248,4 +248,9 @@ public class NeededHelp {
         // Unreachable
         return false;
     }
+
+
+    public static boolean willSurvive(Game game, IceBuilding myIceberg) {
+        return getNeededHelp(game, myIceberg) == null;
+    }
 }
