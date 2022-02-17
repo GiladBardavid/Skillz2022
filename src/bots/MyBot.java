@@ -100,6 +100,10 @@ public class MyBot implements SkillzBot {
 
 
         for(Iceberg myIceberg : game.getMyIcebergs()) {
+            // We don't want icebergs that are under attack to send penguins --- not optimal
+            if(GameUtil.isGettingHelp(game, myIceberg)) {
+                continue;
+            }
 
 
             for(int i = 0; i < bestTargetsToAttack.size(); i++) {

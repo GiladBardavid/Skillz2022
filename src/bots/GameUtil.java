@@ -497,4 +497,15 @@ public class GameUtil {
 
         return neutralIceBuildings;
     }
+
+
+
+
+    //TODO this method is not optimal
+    public static boolean isGettingHelp(Game game, IceBuilding myIceBuilding) {
+        if(getMyPenguinGroupsHeadedTowardIceBuilding(game, myIceBuilding).size() > 0) {
+            return true;
+        }
+        return false;
+    }
 }
