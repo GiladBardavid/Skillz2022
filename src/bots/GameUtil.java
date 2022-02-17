@@ -299,7 +299,7 @@ public class GameUtil {
         valueOfAttacking += 1 / averageDistanceToMyIcebergs;
 
         // Return the value of capturing the iceberg.
-        Log.log("B_6_0: value of capturing normal iceberg " + destination + " is " + valueOfAttacking);
+        Log.log("B_6_0: value of capturing normal iceberg " + destination + "(" + playerToString(game, destination.owner) + ")" + " is " + valueOfAttacking);
         return valueOfAttacking;
     }
 
@@ -327,7 +327,7 @@ public class GameUtil {
         int valueOfAttacking = (int) (valuePerIceberg * (myIcebergAmount + enemyIcebergAmount + neutralIcebergAmount * neutralIcebergFactor));
 
         // Return the calculated value.
-        Log.log("B_6_1: value of capturing bonus iceberg " + destination + " is " + valueOfAttacking);
+        Log.log("B_6_1: value of capturing normal iceberg " + destination + "(" + playerToString(game, destination.owner) + ")" + " is " + valueOfAttacking);
         return valueOfAttacking;
     }
 
@@ -344,6 +344,8 @@ public class GameUtil {
 
         // Add all the ice-buildings that are not mine to the priority queue.
         Set<IceBuilding> allEnemyOrNeutralIceBuildings = getAllEnemyOrNeutralIceBuildings(game);
+
+        Log.log("All enemy or neutral ice-buildings: " + allEnemyOrNeutralIceBuildings);
 
         // Add all the members of the allEnemyOrNeutralIceBuildings to the priority queue.
         priorityQueue.addAll(allEnemyOrNeutralIceBuildings);
@@ -366,7 +368,7 @@ public class GameUtil {
         // Use a stream to add to the set all the enemy or neutral ice-buildings.
         Arrays.stream(game.getAllIcebergs())
                 // We only want to add the ice-buildings that are they enemy's or neutral.
-                .filter(iceBuilding -> playerToString(game, iceBuilding.owner).equals("Me") || playerToString(game, iceBuilding.owner).equals("Neutral"))
+                .filter(iceBuilding -> isEnemy(game, iceBuilding) || isNeutral(game, iceBuilding))
                 // For each iceberg, add it's downcast to IceBuilding to the set.
                 .forEach(iceBuilding -> allEnemyOrNeutralIceBuildings.add((IceBuilding) iceBuilding));
 
