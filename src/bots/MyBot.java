@@ -36,10 +36,29 @@ public class MyBot implements SkillzBot {
         log("\n");
 
 
-        Set<Iceberg> icebergsThatSentPenguins = new HashSet<>();
-        Set<Iceberg> icebergsThatUpgraded = new HashSet<>();
+        Set<Iceberg> icebergsThatHaveSentPenguins = new HashSet<>();
+        Set<Iceberg> icebergsThatHaveUpgraded = new HashSet<>();
 
 
+
+        for(IceBuilding myIceBuilding : GameUtil.getMyIceBuildings(game)) {
+            NeededHelp helpForCurrentIceberg = NeededHelp.getNeededHelp(game, myIceBuilding);
+            if(helpForCurrentIceberg != null) {
+                log("Needed help for: " + myIceBuilding);
+
+                int neededAmount = helpForCurrentIceberg.howManyPenguins;
+                for(Iceberg myIceberg : game.getMyIcebergs()) {
+
+                    boolean isCloseEnoughToSendHelp = myIceberg.getTurnsTillArrival(myIceBuilding) <= helpForCurrentIceberg.inHowManyTurns;
+                    if(myIceberg.penguinAmount >= neededAmount && isCloseEnoughToSendHelp) {
+                        log("Sending help to: " + myIceberg);
+                        log(myIceberg + " is sending " + neededAmount + " penguins to " + myIceBuilding);
+                        myIceberg.sendPenguins(myIceBuilding, neededAmount);
+                        icebergsThatHaveSentPenguins.add(myIceberg);
+                    }
+                }
+            }
+        }
 
 
         for(Iceberg myIceberg : game.getMyIcebergs()) {
@@ -56,10 +75,10 @@ public class MyBot implements SkillzBot {
                 log("howManyPenguinsToSend: " + howManyPenguinsToSend);
 
                 log("my penguin amount: " + myIceberg.penguinAmount);
-                if (!icebergsThatUpgraded.contains(myIceberg) && howManyPenguinsToSend > 0 && myIceberg.penguinAmount >= howManyPenguinsToSend) {
+                if (!icebergsThatHaveUpgraded.contains(myIceberg) && howManyPenguinsToSend > 0 && myIceberg.penguinAmount >= howManyPenguinsToSend) {
                     log(myIceberg + " sending " + howManyPenguinsToSend + " penguins to " + destination);
                     myIceberg.sendPenguins(destination, howManyPenguinsToSend);
-                    icebergsThatSentPenguins.add(myIceberg);
+                    icebergsThatHaveSentPenguins.add(myIceberg);
                     /*bestActionsToPerform.poll();*/
                     // temp
                     bestTargetsToAttack.remove(i);

@@ -431,4 +431,16 @@ public class GameUtil {
         }
         return (double)sum / myIcebergs.length;
     }
+
+
+    public static List<IceBuilding> getMyIceBuildings(Game game) {
+        List<IceBuilding> myIceBuildings = new ArrayList<>();
+        for(int i = 0; i < game.getMyIcebergs().length; i++) {
+            myIceBuildings.add(game.getMyIcebergs()[i]);
+        }
+        if(isMine(game, game.getBonusIceberg())) {
+            myIceBuildings.add(game.getBonusIceberg());
+        }
+        return myIceBuildings;
+    }
 }

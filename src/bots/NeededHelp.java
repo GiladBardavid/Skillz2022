@@ -22,5 +22,8 @@ public class NeededHelp {
                 return new NeededHelp(-penguinAmountInXTurns + 1, i);
             }
         }
+
+        // Doesn't need help
+        return null;
     }
 }
