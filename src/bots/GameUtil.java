@@ -340,7 +340,7 @@ public class GameUtil {
     public static PriorityQueue<IceBuilding> getPriorityQueueOfIceBuildings(Game game) {
 
         // Create a priority queue of ice-buildings that are the best to capture, using a custom lambda comparator.
-        PriorityQueue<IceBuilding> priorityQueue = new PriorityQueue<>((o1, o2) -> (int)(getValueOfCapturing(game, o2) - getValueOfCapturing(game, o1)));
+        PriorityQueue<IceBuilding> priorityQueue = new PriorityQueue<>((o1, o2) -> Double.compare(getValueOfCapturing(game, o2), getValueOfCapturing(game, o1)));
 
         // Add all the ice-buildings that are not mine to the priority queue.
         Set<IceBuilding> allEnemyOrNeutralIceBuildings = getAllEnemyOrNeutralIceBuildings(game);

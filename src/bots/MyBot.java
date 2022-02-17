@@ -29,6 +29,13 @@ public class MyBot implements SkillzBot {
 
         log("bestActionsToPerform: " + bestActionsToPerform);
 
+        log("\nbestTargetsToAttack: " + bestTargetsToAttack + "\n");
+        for(int i = 0; i < bestTargetsToAttack.size(); i++) {
+            log("bestTargetsToAttack[" + i + "] value is: " + GameUtil.getValueOfCapturing(game, bestTargetsToAttack.get(i)));
+        }
+        log("\n");
+
+
         Set<Iceberg> icebergsThatSentPenguins = new HashSet<>();
         Set<Iceberg> icebergsThatUpgraded = new HashSet<>();
 
