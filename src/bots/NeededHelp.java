@@ -17,7 +17,7 @@ public class NeededHelp {
 
     public static NeededHelp getNeededHelp(Game game, IceBuilding myIceBuilding) {
         for(int i = 0; i < game.maxTurns; i++) {
-            int penguinAmountInXTurns = GameUtil.getPenguinAmountInTurnXForEnemyOrNeutralIceBuilding(game, myIceBuilding, i);
+            int penguinAmountInXTurns = GameUtil.getPenguinAmountInTurnXForMyIceBuilding(game, myIceBuilding, i);
             if(penguinAmountInXTurns <= 0) {
                 return new NeededHelp(-penguinAmountInXTurns + 1, i);
             }
