@@ -299,7 +299,7 @@ public class GameUtil {
         valueOfAttacking += 1 / averageDistanceToMyIcebergs;
 
         // Return the value of capturing the iceberg.
-        Log.log("B_6_0: value of capturing normal iceberg " + destination + "(" + playerToString(game, destination.owner) + ")" + " is " + valueOfAttacking);
+        //Log.log("B_6_0: value of capturing normal iceberg " + destination + "(" + playerToString(game, destination.owner) + ")" + " is " + valueOfAttacking);
         return valueOfAttacking;
     }
 
@@ -327,7 +327,7 @@ public class GameUtil {
         double valueOfAttacking = valuePerIceberg * (myIcebergAmount + enemyIcebergAmount + neutralIcebergAmount * neutralIcebergFactor);
 
         // Return the calculated value.
-        Log.log("B_6_1: value of capturing normal iceberg " + destination + "(" + playerToString(game, destination.owner) + ")" + " is " + valueOfAttacking);
+        //Log.log("B_6_1: value of capturing normal iceberg " + destination + "(" + playerToString(game, destination.owner) + ")" + " is " + valueOfAttacking);
         return valueOfAttacking;
     }
 
