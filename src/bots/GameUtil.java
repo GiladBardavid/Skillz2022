@@ -443,4 +443,44 @@ public class GameUtil {
         }
         return myIceBuildings;
     }
+
+
+    public static List<PenguinGroup> getEnemyPenguinsGroupsHeadedTowardIceBuilding(Game game, IceBuilding destination) {
+        List<PenguinGroup> enemyPenguinsGroupsHeadedTowardIceBuilding = new ArrayList<>();
+
+        for(PenguinGroup penguinGroup : game.getEnemyPenguinGroups()) {
+            if (penguinGroup.destination.equals(destination)) {
+                enemyPenguinsGroupsHeadedTowardIceBuilding.add(penguinGroup);
+            }
+        }
+
+        return enemyPenguinsGroupsHeadedTowardIceBuilding;
+    }
+
+
+    public static List<PenguinGroup> getMyPenguinGroupsHeadedTowardIceBuilding(Game game, IceBuilding destination) {
+        List<PenguinGroup> myPenguinGroupsHeadedTowardIceBuilding = new ArrayList<>();
+
+        for(PenguinGroup penguinGroup : game.getMyPenguinGroups()) {
+            if (penguinGroup.destination.equals(destination)) {
+                myPenguinGroupsHeadedTowardIceBuilding.add(penguinGroup);
+            }
+        }
+
+        return myPenguinGroupsHeadedTowardIceBuilding;
+    }
+
+
+    public static int getFarthestPenguinGroupHeadedTowardIceBuilding(Game game, IceBuilding destination) {
+        int maxDistance = 0;
+
+        for(PenguinGroup penguinGroup : game.getAllPenguinGroups()) {
+            if (penguinGroup.destination.equals(destination)) {
+                int distance = penguinGroup.turnsTillArrival;
+                maxDistance = Math.max(maxDistance, distance);
+            }
+        }
+
+        return maxDistance;
+    }
 }

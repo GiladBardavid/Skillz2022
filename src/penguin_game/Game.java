@@ -42,7 +42,7 @@ public class Game extends BaseObject {
 
     public PenguinGroup[] getNaturalPenguinGroups(){return getNeutral().penguinGroups;}
 
-    public PenguinGroup[] getAllPenguinGroup(){return new PenguinGroup[10];}
+    public PenguinGroup[] getAllPenguinGroups(){return new PenguinGroup[10];}
 
     public int getMaxTurnTime(){
         return 500;
