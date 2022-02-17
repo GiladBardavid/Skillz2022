@@ -39,16 +39,26 @@ public class MyBot implements SkillzBot {
 
 
         for(Iceberg myIceberg : game.getMyIcebergs()) {
-            /*IceBuilding destination;*/
-            Iceberg destination = game.getEnemyIcebergs()[0];
-            int distanceBetweenMyIcebergAndDestination = myIceberg.getTurnsTillArrival(destination);
-            log("distanceBetweenMyIcebergAndDestination: " + distanceBetweenMyIcebergAndDestination);
-            int howManyPenguinsToSend = GameUtil.getPenguinAmountInTurnXForEnemyOrNeutralIceBuilding(game, destination, distanceBetweenMyIcebergAndDestination) + 1;
-            log("howManyPenguinsToSend: " + howManyPenguinsToSend);
-            log("my penguin amount: " + myIceberg.penguinAmount);
-            if(howManyPenguinsToSend > 0 && myIceberg.penguinAmount >= howManyPenguinsToSend) {
-                log(myIceberg + " sending " + howManyPenguinsToSend + " penguins to " + destination);
-                myIceberg.sendPenguins(destination, howManyPenguinsToSend);
+
+            boolean foundAGoalICouldntDo = false;
+            while (!foundAGoalICouldntDo) {
+                IceBuilding destination = bestActionsToPerform.peek();
+
+                int distanceBetweenMyIcebergAndDestination = myIceberg.getTurnsTillArrival(destination);
+                log("distanceBetweenMyIcebergAndDestination: " + distanceBetweenMyIcebergAndDestination);
+
+                int howManyPenguinsToSend = GameUtil.getPenguinAmountInTurnXForEnemyOrNeutralIceBuilding(game, destination, distanceBetweenMyIcebergAndDestination) + 1;
+                log("howManyPenguinsToSend: " + howManyPenguinsToSend);
+
+                log("my penguin amount: " + myIceberg.penguinAmount);
+                if (howManyPenguinsToSend > 0 && myIceberg.penguinAmount >= howManyPenguinsToSend) {
+                    log(myIceberg + " sending " + howManyPenguinsToSend + " penguins to " + destination);
+                    myIceberg.sendPenguins(destination, howManyPenguinsToSend);
+                    bestActionsToPerform.poll();
+                }
+                else {
+                    foundAGoalICouldntDo = true;
+                }
             }
         }
     }
