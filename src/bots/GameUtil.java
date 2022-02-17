@@ -483,4 +483,18 @@ public class GameUtil {
 
         return maxDistance;
     }
+
+    public static List<IceBuilding> getNeutralIceBuildings(Game game) {
+        List<IceBuilding> neutralIceBuildings = new ArrayList<>();
+
+        for(Iceberg neutralIceberg : game.getNeutralIcebergs()) {
+            neutralIceBuildings.add(neutralIceberg);
+        }
+
+        if(isNeutral(game, game.getBonusIceberg())) {
+            neutralIceBuildings.add(game.getBonusIceberg());
+        }
+
+        return neutralIceBuildings;
+    }
 }

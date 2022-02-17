@@ -68,7 +68,36 @@ public class MyBot implements SkillzBot {
             }
         }
 
-        log("\nFINISHED HELPING\n");
+        log("\nFINISHED HELPING MINE\n");
+
+
+        for(IceBuilding neutralIceBuilding : GameUtil.getNeutralIceBuildings(game)) {
+            log("Checking neutral help for ice-building: " + neutralIceBuilding);
+            NeededHelp helpForNeutralIceberg = NeededHelp.getNeededHelpForNeutralIceberg(game, neutralIceBuilding);
+            if(helpForNeutralIceberg != null) {
+                log("Needed help for: " + neutralIceBuilding);
+
+                int neededAmount = helpForNeutralIceberg.howManyPenguins;
+                for(Iceberg myIceberg : game.getMyIcebergs()) {
+
+                    boolean isInRangeToSendHelp = myIceberg.getTurnsTillArrival(neutralIceBuilding) == helpForNeutralIceberg.inHowManyTurns;
+                    if(myIceberg.penguinAmount >= neededAmount && isInRangeToSendHelp) {
+                        log("Sending help to: " + myIceberg);
+                        log(myIceberg + " is sending " + neededAmount + " penguins to " + neutralIceBuilding);
+                        myIceberg.sendPenguins(neutralIceBuilding, neededAmount);
+                        icebergsThatHaveSentPenguins.add(myIceberg);
+
+                        iceBuildingsThatGotFullHelp.add(neutralIceBuilding);
+                        // Break because the iceberg got full help, so we don't need another one to help it aswell
+                        break;
+                    }
+                }
+            }
+        }
+
+        log("\nFINISHED HELPING NEUTRAL\n");
+
+
 
         for(Iceberg myIceberg : game.getMyIcebergs()) {
 

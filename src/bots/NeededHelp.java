@@ -53,7 +53,7 @@ public class NeededHelp {
         for(int i = 0; i < penguinAmountAfterTurn.length; i++) {
             Log.log("C_0_1: penguinAmountAfterTurn[" + i + "] = " + penguinAmountAfterTurn[i]);
             if(penguinAmountAfterTurn[i] <= 0) {
-                Log.log("C_0_0: IceBuilding " + myIceBuilding + " needs help! " + (-penguinAmountAfterTurn[i] + 1) + " penguins in " + (i + 1) + " turns.");
+                Log.log("C_0_0: IceBuilding " + myIceBuilding + " needs help! " + (-penguinAmountAfterTurn[i] + 1) + " penguins in " + i + " turns.");
                 // + 1 because we want to make the iceberg ours, not just neutral
                 return new NeededHelp(-penguinAmountAfterTurn[i] + 1, i);
             }
@@ -73,6 +73,8 @@ public class NeededHelp {
 
         // + 1 to length because we want to check the last turn as well
         int[] penguinAmountAfterTurn = new int[GameUtil.getFarthestPenguinGroupHeadedTowardIceBuilding(game, neutralIceBuildingToHelp) + 1];
+
+        int penguinsPerTurn = (neutralIceBuildingToHelp instanceof Iceberg) ? ((Iceberg)neutralIceBuildingToHelp).penguinsPerTurn : 0;
 
         for(int i = 0; i < penguinAmountAfterTurn.length; i++) {
             penguinAmountAfterTurn[i] = currentAmount;
@@ -103,9 +105,11 @@ public class NeededHelp {
         for(int i = 0; i < penguinAmountAfterTurn.length; i++) {
             Log.log("C_0_6: penguinAmountAfterTurn[" + i + "] = " + penguinAmountAfterTurn[i]);
             if(penguinAmountAfterTurn[i] <= 0) {
-                Log.log("C_0_7: IceBuilding " + neutralIceBuildingToHelp + " needs help! " + (-penguinAmountAfterTurn[i] + 1) + " penguins in " + (i + 1) + " turns.");
+                Log.log("C_0_7: IceBuilding " + neutralIceBuildingToHelp + " needs help! " + (-penguinAmountAfterTurn[i] + 1 + penguinsPerTurn) + " penguins in " + (i + 1) + " turns.");
                 // + 1 because we want to make the iceberg ours, not just neutral
-                return new NeededHelp(-penguinAmountAfterTurn[i] + 1, i);
+                //  + penguinsPerTurn because we always want to send the penguins 1 turn later
+                // +1 to the i because we always attack 1 turn later
+                return new NeededHelp(-penguinAmountAfterTurn[i] + 1 + penguinsPerTurn, i + 1);
             }
         }
 
