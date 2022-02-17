@@ -62,4 +62,54 @@ public class NeededHelp {
         // Doesn't need help
         return null;
     }
+
+
+
+
+
+
+    public static NeededHelp getNeededHelpForNeutralIceberg(Game game, IceBuilding neutralIceBuildingToHelp) {
+        int currentAmount = neutralIceBuildingToHelp.penguinAmount;
+
+        // + 1 to length because we want to check the last turn as well
+        int[] penguinAmountAfterTurn = new int[GameUtil.getFarthestPenguinGroupHeadedTowardIceBuilding(game, neutralIceBuildingToHelp) + 1];
+
+        for(int i = 0; i < penguinAmountAfterTurn.length; i++) {
+            penguinAmountAfterTurn[i] = currentAmount;
+        }
+
+        for(PenguinGroup incomingEnemyPenguinGroup : GameUtil.getEnemyPenguinsGroupsHeadedTowardIceBuilding(game, neutralIceBuildingToHelp)) {
+            Log.log("C_0_4: subtracting " + incomingEnemyPenguinGroup.penguinAmount + " penguins");
+            int attackingPenguinGroupTurnsTillArrival = incomingEnemyPenguinGroup.turnsTillArrival;
+
+            for(int i = attackingPenguinGroupTurnsTillArrival; i < penguinAmountAfterTurn.length; i++) {
+                int penguinAmountToRemove = incomingEnemyPenguinGroup.penguinAmount;
+                penguinAmountAfterTurn[i] -= penguinAmountToRemove;
+            }
+        }
+
+        for(PenguinGroup incomingMyPenguinGroup : GameUtil.getMyPenguinGroupsHeadedTowardIceBuilding(game, neutralIceBuildingToHelp)) {
+            Log.log("C_0_5: adding " + incomingMyPenguinGroup.penguinAmount + " penguins");
+            int helpingPenguinGroupTurnsTillArrival = incomingMyPenguinGroup.turnsTillArrival;
+
+            for(int i = helpingPenguinGroupTurnsTillArrival; i < penguinAmountAfterTurn.length; i++) {
+                int penguinAmountToAdd = incomingMyPenguinGroup.penguinAmount;
+                penguinAmountAfterTurn[i] += penguinAmountToAdd;
+            }
+        }
+
+        // TODO add bonus iceberg bonus-penguins
+
+        for(int i = 0; i < penguinAmountAfterTurn.length; i++) {
+            Log.log("C_0_6: penguinAmountAfterTurn[" + i + "] = " + penguinAmountAfterTurn[i]);
+            if(penguinAmountAfterTurn[i] <= 0) {
+                Log.log("C_0_7: IceBuilding " + neutralIceBuildingToHelp + " needs help! " + (-penguinAmountAfterTurn[i] + 1) + " penguins in " + (i + 1) + " turns.");
+                // + 1 because we want to make the iceberg ours, not just neutral
+                return new NeededHelp(-penguinAmountAfterTurn[i] + 1, i);
+            }
+        }
+
+        // Doesn't need help
+        return null;
+    }
 }

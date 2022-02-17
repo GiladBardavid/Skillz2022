@@ -38,7 +38,7 @@ public class MyBot implements SkillzBot {
 
         Set<Iceberg> icebergsThatHaveSentPenguins = new HashSet<>();
         Set<Iceberg> icebergsThatHaveUpgraded = new HashSet<>();
-        
+
         Set<IceBuilding> iceBuildingsThatGotFullHelp = new HashSet<>();
 
 
