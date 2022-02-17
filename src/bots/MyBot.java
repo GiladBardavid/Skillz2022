@@ -43,6 +43,7 @@ public class MyBot implements SkillzBot {
 
         for(IceBuilding myIceBuilding : GameUtil.getMyIceBuildings(game)) {
             log("TIME1: time left: " + game.getTimeRemaining());
+            log("checking help for ice-building: " + myIceBuilding);
             NeededHelp helpForCurrentIceberg = NeededHelp.getNeededHelp(game, myIceBuilding);
             if(helpForCurrentIceberg != null) {
                 log("Needed help for: " + myIceBuilding);
@@ -61,6 +62,7 @@ public class MyBot implements SkillzBot {
             }
         }
 
+        log("\nFINISHED HELPING\n");
 
         for(Iceberg myIceberg : game.getMyIcebergs()) {
 

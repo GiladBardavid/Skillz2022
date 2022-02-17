@@ -19,15 +19,17 @@ public class NeededHelp {
 
         int currentAmount = myIceBuilding.penguinAmount;
 
-        int[] penguinAmountAfterTurn = new int[GameUtil.getFarthestPenguinGroupHeadedTowardIceBuilding(game, myIceBuilding)];
+        // + 1 to length because we want to check the last turn as well
+        int[] penguinAmountAfterTurn = new int[GameUtil.getFarthestPenguinGroupHeadedTowardIceBuilding(game, myIceBuilding) + 1];
 
         int penguinsPerTurn = (myIceBuilding instanceof Iceberg) ? ((Iceberg)myIceBuilding).penguinsPerTurn : 0;
 
-        for(int i = 0; i < GameUtil.getFarthestPenguinGroupHeadedTowardIceBuilding(game, myIceBuilding); i++) {
+        for(int i = 0; i < penguinAmountAfterTurn.length; i++) {
             penguinAmountAfterTurn[i] = currentAmount + (i * penguinsPerTurn);
         }
 
         for(PenguinGroup incomingEnemyPenguinGroup : GameUtil.getEnemyPenguinsGroupsHeadedTowardIceBuilding(game, myIceBuilding)) {
+            Log.log("C_0_2: subtracting " + incomingEnemyPenguinGroup.penguinAmount + " penguins");
             int attackingPenguinGroupTurnsTillArrival = incomingEnemyPenguinGroup.turnsTillArrival;
 
             for(int i = attackingPenguinGroupTurnsTillArrival; i < penguinAmountAfterTurn.length; i++) {
@@ -37,6 +39,7 @@ public class NeededHelp {
         }
 
         for(PenguinGroup incomingMyPenguinGroup : GameUtil.getMyPenguinGroupsHeadedTowardIceBuilding(game, myIceBuilding)) {
+            Log.log("C_0_3: adding " + incomingMyPenguinGroup.penguinAmount + " penguins");
             int helpingPenguinGroupTurnsTillArrival = incomingMyPenguinGroup.turnsTillArrival;
 
             for(int i = helpingPenguinGroupTurnsTillArrival; i < penguinAmountAfterTurn.length; i++) {
@@ -48,7 +51,9 @@ public class NeededHelp {
         // TODO add bonus iceberg bonus-penguins
 
         for(int i = 0; i < penguinAmountAfterTurn.length; i++) {
+            Log.log("C_0_1: penguinAmountAfterTurn[" + i + "] = " + penguinAmountAfterTurn[i]);
             if(penguinAmountAfterTurn[i] <= 0) {
+                Log.log("C_0_0: IceBuilding " + myIceBuilding + " needs help! " + penguinAmountAfterTurn[i] + " penguins in " + (i + 1) + " turns.");
                 return new NeededHelp(-penguinAmountAfterTurn[i], i);
             }
         }
