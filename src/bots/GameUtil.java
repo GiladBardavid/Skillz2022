@@ -285,10 +285,10 @@ public class GameUtil {
      */
     public static double getValueOfCapturingIceberg(Game game, Iceberg destination) {
         // If we are capturing an iceberg, we are gaining its penguins-per-turn.
-        int valueOfAttacking = destination.penguinsPerTurn;
+        double valueOfAttacking = destination.penguinsPerTurn;
 
         // If the iceberg is an enemy iceberg, not only are we gaining penguins-per-turn, we are also making the enemy lose penguins-per-turn.
-        if(playerToString(game, destination.owner).equals("Enemy")) {
+        if(isEnemy(game, destination)) {
             // Take into account the enemy losing penguins-per-turn.
             valueOfAttacking += destination.penguinsPerTurn;
         }
@@ -324,7 +324,7 @@ public class GameUtil {
         double neutralIcebergFactor = /*0.5*/0;
 
         // The value of attacking the bonus iceberg is the value per iceberg times the number of icebergs plus a factor for neutral icebergs.
-        int valueOfAttacking = (int) (valuePerIceberg * (myIcebergAmount + enemyIcebergAmount + neutralIcebergAmount * neutralIcebergFactor));
+        double valueOfAttacking = valuePerIceberg * (myIcebergAmount + enemyIcebergAmount + neutralIcebergAmount * neutralIcebergFactor);
 
         // Return the calculated value.
         Log.log("B_6_1: value of capturing normal iceberg " + destination + "(" + playerToString(game, destination.owner) + ")" + " is " + valueOfAttacking);

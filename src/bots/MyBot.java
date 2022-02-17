@@ -20,6 +20,13 @@ public class MyBot implements SkillzBot {
 
         // Find and store the best actions to perform
         PriorityQueue<IceBuilding> bestActionsToPerform = GameUtil.getPriorityQueueOfIceBuildings(game);
+
+        // Temporarily change our data structure from PriorityQueue to ArrayList
+        List<IceBuilding> bestTargetsToAttack = new ArrayList<>();
+        while (!bestActionsToPerform.isEmpty()) {
+            bestTargetsToAttack.add(bestActionsToPerform.poll());
+        }
+
         log("bestActionsToPerform: " + bestActionsToPerform);
 
         Set<Iceberg> icebergsThatSentPenguins = new HashSet<>();
@@ -30,9 +37,10 @@ public class MyBot implements SkillzBot {
 
         for(Iceberg myIceberg : game.getMyIcebergs()) {
 
-            boolean foundAGoalICouldntDo = false;
-            while (!foundAGoalICouldntDo) {
-                IceBuilding destination = bestActionsToPerform.peek();
+
+            for(int i = 0; i < bestTargetsToAttack.size(); i++) {
+                // Temp change priority queue to list
+                IceBuilding destination = /*bestActionsToPerform.peek()*/bestTargetsToAttack.get(i);
 
                 int distanceBetweenMyIcebergAndDestination = myIceberg.getTurnsTillArrival(destination);
                 log("distanceBetweenMyIcebergAndDestination: " + distanceBetweenMyIcebergAndDestination);
@@ -45,11 +53,14 @@ public class MyBot implements SkillzBot {
                     log(myIceberg + " sending " + howManyPenguinsToSend + " penguins to " + destination);
                     myIceberg.sendPenguins(destination, howManyPenguinsToSend);
                     icebergsThatSentPenguins.add(myIceberg);
-                    bestActionsToPerform.poll();
+                    /*bestActionsToPerform.poll();*/
+                    // temp
+                    bestTargetsToAttack.remove(i);
+                    i--;
                 }
-                else {
+                /*else {
                     foundAGoalICouldntDo = true;
-                }
+                }*/
             }
         }
     }
