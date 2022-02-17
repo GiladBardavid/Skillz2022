@@ -18,7 +18,7 @@ public class Iceberg extends IceBuilding {
         this.upgradeValue = upgradeValue;
     }
 
-    public boolean CanUpgrade() {return true;}
+    public boolean canUpgrade() {return true;}
 
     public void upgrade() {}
 

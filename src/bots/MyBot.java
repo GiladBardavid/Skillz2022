@@ -11,19 +11,12 @@ import java.util.*;
  */
 public class MyBot implements SkillzBot {
 
-    // A set of all ongoing attacks.
-    public Set<Attack> ongoingAttacks = new HashSet<>();
-
-    // A map that for each iceberg, we will store how many penguins do we want it to have in turn x. This is so we will be able to correctly perform all attacks.
-    public Map<Iceberg, Map<Integer, Integer>> howManyPenguinsShouldIcebergsHaveInTurn = new HashMap<>();
-
-    public PriorityQueue<IceBuilding> bestActionsToPerform;
-
     /**
      * Does the turn. This function is called by the system.
      * @param game current game state
      */
     public void doTurn(Game game) {
+
 
         log("maxTurnsToBonus: " + game.getBonusIceberg().maxTurnsToBonus);
         log("turnsLeftToBonus: " + game.getBonusIceberg().turnsLeftToBonus);
@@ -36,24 +29,13 @@ public class MyBot implements SkillzBot {
         log("me: " + GameUtil.playerToString(game, game.getMyself()) + " enemy: " + GameUtil.playerToString(game, game.getEnemy()) + " neutral: " + GameUtil.playerToString(game, game.getNeutral()));
         log("");
 
-
-        // Update the turnsTillArrival of all ongoing attacks
-        for(Attack ongoingAttack : ongoingAttacks) {
-            ongoingAttack.decrementTurnsTillArrival();
-        }
-
         // Find and store the best actions to perform
-        bestActionsToPerform = GameUtil.getPriorityQueueOfIceBuildings(game);
+        PriorityQueue<IceBuilding> bestActionsToPerform = GameUtil.getPriorityQueueOfIceBuildings(game);
         log("bestActionsToPerform: " + bestActionsToPerform);
 
 
 
         // --------------------------------------------------------------
-
-        //TEMPORARY
-        if(game.turn == 1) {
-            game.getMyIcebergs()[0].sendPenguins(game.getNeutralIcebergs()[6], 9);
-        }
 
 
         for(Iceberg myIceberg : game.getMyIcebergs()) {
@@ -65,20 +47,10 @@ public class MyBot implements SkillzBot {
             log("howManyPenguinsToSend: " + howManyPenguinsToSend);
             log("my penguin amount: " + myIceberg.penguinAmount);
             if(howManyPenguinsToSend > 0 && myIceberg.penguinAmount >= howManyPenguinsToSend) {
-                log("Creating new attack");
-                Attack a = new Attack(destination);
-                a.addIcebergThatCanAttack(myIceberg, howManyPenguinsToSend);
-                ongoingAttacks.add(a);
+                log(myIceberg + " sending " + howManyPenguinsToSend + " penguins to " + destination);
+                myIceberg.sendPenguins(destination, howManyPenguinsToSend);
             }
         }
-
-        // Execute all the attacks that need to be done
-        for (Attack ongoingAttack : ongoingAttacks) {
-            log("Parsing attack\n" + ongoingAttack);
-            ongoingAttack.execute();
-        }
-
-        log("Ongoing attacks:\n" + ongoingAttacks + "\n");
     }
 
 
