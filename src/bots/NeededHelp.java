@@ -53,8 +53,9 @@ public class NeededHelp {
         for(int i = 0; i < penguinAmountAfterTurn.length; i++) {
             Log.log("C_0_1: penguinAmountAfterTurn[" + i + "] = " + penguinAmountAfterTurn[i]);
             if(penguinAmountAfterTurn[i] <= 0) {
-                Log.log("C_0_0: IceBuilding " + myIceBuilding + " needs help! " + penguinAmountAfterTurn[i] + " penguins in " + (i + 1) + " turns.");
-                return new NeededHelp(-penguinAmountAfterTurn[i], i);
+                Log.log("C_0_0: IceBuilding " + myIceBuilding + " needs help! " + (-penguinAmountAfterTurn[i] + 1) + " penguins in " + (i + 1) + " turns.");
+                // + 1 because we want to make the iceberg ours, not just neutral
+                return new NeededHelp(-penguinAmountAfterTurn[i] + 1, i);
             }
         }
 
