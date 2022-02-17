@@ -38,6 +38,8 @@ public class MyBot implements SkillzBot {
 
         Set<Iceberg> icebergsThatHaveSentPenguins = new HashSet<>();
         Set<Iceberg> icebergsThatHaveUpgraded = new HashSet<>();
+        
+        Set<IceBuilding> iceBuildingsThatGotFullHelp = new HashSet<>();
 
 
 
@@ -57,6 +59,10 @@ public class MyBot implements SkillzBot {
                         log(myIceberg + " is sending " + neededAmount + " penguins to " + myIceBuilding);
                         myIceberg.sendPenguins(myIceBuilding, neededAmount);
                         icebergsThatHaveSentPenguins.add(myIceberg);
+
+                        iceBuildingsThatGotFullHelp.add(myIceBuilding);
+                        // Break because the iceberg got full help, so we don't need another one to help it aswell
+                        break;
                     }
                 }
             }
