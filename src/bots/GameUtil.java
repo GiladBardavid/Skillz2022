@@ -256,7 +256,7 @@ public class GameUtil {
      * @param destination the ice-building that we are checking its value of capturing
      * @return The value of capturing the destination ice-building.
      */
-    public static int getValueOfCapturing(Game game, IceBuilding destination) {
+    public static double getValueOfCapturing(Game game, IceBuilding destination) {
 
         // If the destination is a normal iceberg, call a separate function that calculates its value of capturing.
         if(destination instanceof Iceberg) {
@@ -283,7 +283,7 @@ public class GameUtil {
      * @param destination the iceberg to capture
      * @return The value of capturing the iceberg.
      */
-    public static int getValueOfCapturingIceberg(Game game, Iceberg destination) {
+    public static double getValueOfCapturingIceberg(Game game, Iceberg destination) {
         // If we are capturing an iceberg, we are gaining its penguins-per-turn.
         int valueOfAttacking = destination.penguinsPerTurn;
 
@@ -292,6 +292,11 @@ public class GameUtil {
             // Take into account the enemy losing penguins-per-turn.
             valueOfAttacking += destination.penguinsPerTurn;
         }
+
+        // TEMPORARY: we want to capture the closest iceberg if 2 have the same priority.
+        // TODO make this better
+        double averageDistanceToMyIcebergs = getAverageDistanceToMyIcebergs(game, destination);
+        valueOfAttacking += 1 / averageDistanceToMyIcebergs;
 
         // Return the value of capturing the iceberg.
         Log.log("B_6_0: value of capturing normal iceberg " + destination + " is " + valueOfAttacking);
@@ -305,7 +310,7 @@ public class GameUtil {
      * @param destination the bonus-iceberg to capture
      * @return the value of capturing the bonus iceberg
      */
-    public static int getValueOfCapturingBonusIceberg(Game game, BonusIceberg destination) {
+    public static double getValueOfCapturingBonusIceberg(Game game, BonusIceberg destination) {
         // The value that the bonus iceberg provides to each iceberg on each turn per average.
         double valuePerIceberg = BonusIcebergUtil.getAveragePenguinsPerTurnPerIceberg(game);
 
@@ -335,7 +340,7 @@ public class GameUtil {
     public static PriorityQueue<IceBuilding> getPriorityQueueOfIceBuildings(Game game) {
 
         // Create a priority queue of ice-buildings that are the best to capture, using a custom lambda comparator.
-        PriorityQueue<IceBuilding> priorityQueue = new PriorityQueue<>((o1, o2) -> getValueOfCapturing(game, o2) - getValueOfCapturing(game, o1));
+        PriorityQueue<IceBuilding> priorityQueue = new PriorityQueue<>((o1, o2) -> (int)(getValueOfCapturing(game, o2) - getValueOfCapturing(game, o1)));
 
         // Add all the ice-buildings that are not mine to the priority queue.
         Set<IceBuilding> allEnemyOrNeutralIceBuildings = getAllEnemyOrNeutralIceBuildings(game);
@@ -376,5 +381,52 @@ public class GameUtil {
         // Return the calculated set.
         Log.log("B_6_2: all enemy or neutral ice-buildings are " + allEnemyOrNeutralIceBuildings);
         return allEnemyOrNeutralIceBuildings;
+    }
+
+
+    /**
+     * A function that checks whether an IceBuilding is mine.
+     * @param game current game state
+     * @param iceBuilding ice-building to check
+     * @return true if the ice-building is mine, false otherwise
+     */
+    public static boolean isMine(Game game, IceBuilding iceBuilding) {
+        return playerToString(game, iceBuilding.owner).equals("Me");
+    }
+
+
+    /**
+     * A function that checks whether an IceBuilding is owned by the enemy.
+     * @param game current game state
+     * @param iceBuilding ice-building to check
+     * @return true if the ice-building is owned by the enemy, false otherwise
+     */
+    public static boolean isEnemy(Game game, IceBuilding iceBuilding) {
+        return playerToString(game, iceBuilding.owner).equals("Enemy");
+    }
+
+
+    /**
+     * A function that checks whether an IceBuilding is neutral.
+     * @param game current game state
+     * @param iceBuilding ice-building to check
+     * @return
+     */
+    public static boolean isNeutral(Game game, IceBuilding iceBuilding) {
+        return playerToString(game, iceBuilding.owner).equals("Neutral");
+    }
+
+
+
+
+
+    public static double getAverageDistanceToMyIcebergs(Game game, IceBuilding destination) {
+        Iceberg[] myIcebergs = game.getMyIcebergs();
+        long sum = 0;
+        for(int i = 0; i < myIcebergs.length; i++) {
+            int distance = destination.getTurnsTillArrival(myIcebergs[i]);
+            sum += distance;
+        }
+        return (double)sum / myIcebergs.length;
     }
 }

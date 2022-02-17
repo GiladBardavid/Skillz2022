@@ -18,24 +18,14 @@ public class MyBot implements SkillzBot {
     public void doTurn(Game game) {
 
 
-        log("maxTurnsToBonus: " + game.getBonusIceberg().maxTurnsToBonus);
-        log("turnsLeftToBonus: " + game.getBonusIceberg().turnsLeftToBonus);
-        log("penguinBonus: " + game.getBonusIceberg().penguinBonus);
-
-        log("my bonus iceberg: " + game.getMyBonusIceberg());
-        log("enemy bonus iceberg: " + game.getEnemyBonusIceberg());
-        log("neutral bonus iceberg: " + game.getNeutralBonusIceberg());
-
-        log("me: " + GameUtil.playerToString(game, game.getMyself()) + " enemy: " + GameUtil.playerToString(game, game.getEnemy()) + " neutral: " + GameUtil.playerToString(game, game.getNeutral()));
-        log("");
-
         // Find and store the best actions to perform
         PriorityQueue<IceBuilding> bestActionsToPerform = GameUtil.getPriorityQueueOfIceBuildings(game);
         log("bestActionsToPerform: " + bestActionsToPerform);
 
+        Set<Iceberg> icebergsThatSentPenguins = new HashSet<>();
+        Set<Iceberg> icebergsThatUpgraded = new HashSet<>();
 
 
-        // --------------------------------------------------------------
 
 
         for(Iceberg myIceberg : game.getMyIcebergs()) {
@@ -51,9 +41,10 @@ public class MyBot implements SkillzBot {
                 log("howManyPenguinsToSend: " + howManyPenguinsToSend);
 
                 log("my penguin amount: " + myIceberg.penguinAmount);
-                if (howManyPenguinsToSend > 0 && myIceberg.penguinAmount >= howManyPenguinsToSend) {
+                if (!icebergsThatUpgraded.contains(myIceberg) && howManyPenguinsToSend > 0 && myIceberg.penguinAmount >= howManyPenguinsToSend) {
                     log(myIceberg + " sending " + howManyPenguinsToSend + " penguins to " + destination);
                     myIceberg.sendPenguins(destination, howManyPenguinsToSend);
+                    icebergsThatSentPenguins.add(myIceberg);
                     bestActionsToPerform.poll();
                 }
                 else {
