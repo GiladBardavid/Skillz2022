@@ -1,7 +1,6 @@
 package bots;
 
 import penguin_game.*;
-import java.util.*;
 
 public class NeededHelp {
 
@@ -28,7 +27,7 @@ public class NeededHelp {
             penguinAmountAfterTurn[i] = currentAmount + (i * penguinsPerTurn);
         }
 
-        for(PenguinGroup incomingEnemyPenguinGroup : GameUtil.getEnemyPenguinsGroupsHeadedTowardIceBuilding(game, myIceBuilding)) {
+        for(PenguinGroup incomingEnemyPenguinGroup : GameUtil.getEnemyPenguinGroupsHeadedTowardIceBuilding(game, myIceBuilding)) {
             Log.log("C_0_2: subtracting " + incomingEnemyPenguinGroup.penguinAmount + " penguins");
             int attackingPenguinGroupTurnsTillArrival = incomingEnemyPenguinGroup.turnsTillArrival;
 
@@ -80,7 +79,7 @@ public class NeededHelp {
             penguinAmountAfterTurn[i] = currentAmount;
         }
 
-        for(PenguinGroup incomingEnemyPenguinGroup : GameUtil.getEnemyPenguinsGroupsHeadedTowardIceBuilding(game, neutralIceBuildingToHelp)) {
+        for(PenguinGroup incomingEnemyPenguinGroup : GameUtil.getEnemyPenguinGroupsHeadedTowardIceBuilding(game, neutralIceBuildingToHelp)) {
             Log.log("C_0_4: subtracting " + incomingEnemyPenguinGroup.penguinAmount + " penguins");
             int attackingPenguinGroupTurnsTillArrival = incomingEnemyPenguinGroup.turnsTillArrival;
 
@@ -139,7 +138,7 @@ public class NeededHelp {
             penguinAmountAfterTurn[i] = currentAmount + (i * penguinsPerTurn);
         }
 
-        for(PenguinGroup incomingEnemyPenguinGroup : GameUtil.getEnemyPenguinsGroupsHeadedTowardIceBuilding(game, enemyIceBuilding)) {
+        for(PenguinGroup incomingEnemyPenguinGroup : GameUtil.getEnemyPenguinGroupsHeadedTowardIceBuilding(game, enemyIceBuilding)) {
             Log.log("C_1_0: adding " + incomingEnemyPenguinGroup.penguinAmount + " penguins");
             int attackingPenguinGroupTurnsTillArrival = incomingEnemyPenguinGroup.turnsTillArrival;
 
@@ -190,7 +189,7 @@ public class NeededHelp {
             penguinAmountAfterTurn[i] = currentAmount;
         }
 
-        for(PenguinGroup incomingEnemyPenguinGroup : GameUtil.getEnemyPenguinsGroupsHeadedTowardIceBuilding(game, neutralIceBuildingToHelp)) {
+        for(PenguinGroup incomingEnemyPenguinGroup : GameUtil.getEnemyPenguinGroupsHeadedTowardIceBuilding(game, neutralIceBuildingToHelp)) {
             Log.log("C_1_4: subtracting " + incomingEnemyPenguinGroup.penguinAmount + " penguins");
             int attackingPenguinGroupTurnsTillArrival = incomingEnemyPenguinGroup.turnsTillArrival;
 

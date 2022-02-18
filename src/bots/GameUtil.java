@@ -343,7 +343,7 @@ public class GameUtil {
         PriorityQueue<IceBuilding> priorityQueue = new PriorityQueue<>((o1, o2) -> Double.compare(getValueOfCapturing(game, o2), getValueOfCapturing(game, o1)));
 
         // Add all the ice-buildings that are not mine to the priority queue.
-        Set<IceBuilding> allEnemyOrNeutralIceBuildings = getAllEnemyOrNeutralIceBuildings(game);
+        Set<IceBuilding> allEnemyOrNeutralIceBuildings = getEnemyOrNeutralIceBuildings(game);
 
         Log.log("All enemy or neutral ice-buildings: " + allEnemyOrNeutralIceBuildings);
 
@@ -360,7 +360,7 @@ public class GameUtil {
      * @param game current game state
      * @return a set of all the ice-buildings that are not mine
      */
-    public static Set<IceBuilding> getAllEnemyOrNeutralIceBuildings(Game game) {
+    public static Set<IceBuilding> getEnemyOrNeutralIceBuildings(Game game) {
 
         // Initialize a set of ice-buildings that are not mine.
         Set<IceBuilding> allEnemyOrNeutralIceBuildings = new HashSet<IceBuilding>();
@@ -432,6 +432,16 @@ public class GameUtil {
         return (double)sum / myIcebergs.length;
     }
 
+    public static double getAverageDistanceToEnemyIcebergs(Game game, IceBuilding destination) {
+        Iceberg[] enemyIcebergs = game.getEnemyIcebergs();
+        long sum = 0;
+        for(int i = 0; i < enemyIcebergs.length; i++) {
+            int distance = destination.getTurnsTillArrival(enemyIcebergs[i]);
+            sum += distance;
+        }
+        return (double)sum / enemyIcebergs.length;
+    }
+
 
     public static List<IceBuilding> getMyIceBuildings(Game game) {
         List<IceBuilding> myIceBuildings = new ArrayList<>();
@@ -445,7 +455,7 @@ public class GameUtil {
     }
 
 
-    public static List<PenguinGroup> getEnemyPenguinsGroupsHeadedTowardIceBuilding(Game game, IceBuilding destination) {
+    public static List<PenguinGroup> getEnemyPenguinGroupsHeadedTowardIceBuilding(Game game, IceBuilding destination) {
         List<PenguinGroup> enemyPenguinsGroupsHeadedTowardIceBuilding = new ArrayList<>();
 
         for(PenguinGroup penguinGroup : game.getEnemyPenguinGroups()) {
@@ -545,4 +555,158 @@ public class GameUtil {
         return false;
     }
 
+
+
+
+    public static int getMaxLengthBetweenIceBuildings(Game game) {
+        int maxLength = 0;
+
+        List<IceBuilding> allIceBuildings = getAllIceBuildings(game);
+
+        for(int i = 0; i < allIceBuildings.size(); i++) {
+            for(int j = i + 1; j < allIceBuildings.size(); j++) {
+                int length = allIceBuildings.get(i).getTurnsTillArrival(allIceBuildings.get(j));
+                maxLength = Math.max(maxLength, length);
+            }
+        }
+
+        return maxLength;
+    }
+
+    public static List<IceBuilding> getAllIceBuildings(Game game) {
+        List<IceBuilding> allIceBuildings = new ArrayList<>();
+
+        for(IceBuilding iceBuilding : game.getAllIcebergs()) {
+            allIceBuildings.add(iceBuilding);
+        }
+
+        allIceBuildings.add(game.getBonusIceberg());
+
+        return allIceBuildings;
+    }
+
+
+    public static int getMinTimeToCapture(Game game, IceBuilding target) {
+        List<Iceberg> closestToFarthestOfMyIcebergs = Arrays.asList(game.getMyIcebergs());
+
+        Collections.sort(closestToFarthestOfMyIcebergs, new Comparator<Iceberg>() {
+            @Override
+            public int compare(Iceberg o1, Iceberg o2) {
+                return o1.getTurnsTillArrival(target) - o2.getTurnsTillArrival(target);
+            }
+        });
+
+        for(int i = 0; i < game.getMyIcebergs().length; i++) {
+            if(canCaptureIfISendAllFromTheClosestXIcebergs(game, target, i)) {
+                return closestToFarthestOfMyIcebergs.get(i).getTurnsTillArrival(target);
+            }
+        }
+
+        return -1;
+    }
+
+
+
+    public static boolean canCaptureIfISendAllFromTheClosestXIcebergs(Game game, IceBuilding target, int amountOfIceBuildingsToSend) {
+        List<Iceberg> closestToFarthestOfMyIcebergs = Arrays.asList(game.getMyIcebergs());
+
+        Collections.sort(closestToFarthestOfMyIcebergs, new Comparator<Iceberg>() {
+            @Override
+            public int compare(Iceberg o1, Iceberg o2) {
+                return o1.getTurnsTillArrival(target) - o2.getTurnsTillArrival(target);
+            }
+        });
+
+
+        // The max of the turns till arrival of the X-th closest iceberg
+        int totalTurnsTillArrival = closestToFarthestOfMyIcebergs.get(amountOfIceBuildingsToSend).getTurnsTillArrival(target);
+
+        // How many penguins will be in the ice-building after every turn
+        int[] penguinAmountsInTargetAfterTurns = new int[getMaxLengthBetweenIceBuildings(game) + 1];
+
+        // Current penguin amount in the iceberg
+        int originalAmount = target.penguinAmount;
+
+        // Calculate the penguins per turn. If the iceberg is the enemies then it has a positive penguins-per-turn, otherwise it's 0.
+        int penguinsPerTurn = 0;
+        if(target instanceof Iceberg && isEnemy(game, target)) {
+            penguinsPerTurn = ((Iceberg) target).penguinsPerTurn;
+        }
+
+        // For each turn in the array, calculate according to the penguins-per-second and the original penguin amount
+        for(int i = 0; i < penguinAmountsInTargetAfterTurns.length; i++) {
+            penguinAmountsInTargetAfterTurns[i] = originalAmount + i * penguinsPerTurn;
+        }
+
+        // Add enemy penguin groups that will arrive to help the target
+        for(PenguinGroup enemyPenguinGroup : getEnemyPenguinGroupsHeadedTowardIceBuilding(game, target)) {
+            int turnsTillArrival = enemyPenguinGroup.turnsTillArrival;
+
+            for(int i = turnsTillArrival; i < penguinAmountsInTargetAfterTurns.length; i++) {
+                penguinAmountsInTargetAfterTurns[i] += enemyPenguinGroup.penguinAmount;
+            }
+        }
+
+        // Subtract the amount of my penguins that are already on the way
+        for(PenguinGroup myPenguinGroup : getMyPenguinGroupsHeadedTowardIceBuilding(game, target)) {
+            int turnsTillArrival = myPenguinGroup.turnsTillArrival;
+
+            for(int i = turnsTillArrival; i < penguinAmountsInTargetAfterTurns.length; i++) {
+                penguinAmountsInTargetAfterTurns[i] -= myPenguinGroup.penguinAmount;
+            }
+        }
+
+
+        // Simulate what would happen if we were to send all penguins from the closest x icebergs
+        int totalPenguinsThatWillArriveAfterSendingFromFirstX = 0;
+        for(int i = 0; i < amountOfIceBuildingsToSend; i++) {
+            Iceberg currentIceberg = closestToFarthestOfMyIcebergs.get(i);
+
+            int currentTurnsTillArrival = currentIceberg.getTurnsTillArrival(target);
+
+            // For every iceberg, it also generates additional penguins while waiting for the other penguin groups in the attack to arrive
+            int turnsTillArrivalDelta = totalTurnsTillArrival - currentTurnsTillArrival;
+
+            int currentPenguinAmount = currentIceberg.penguinAmount;
+            int amountOfGeneratedPenguins = turnsTillArrivalDelta * currentPenguinAmount;
+
+            // We increase the total amount of penguins that will arrive by the original amount that was in the iceberg + the amount that it will generate before sending those penguins
+            totalPenguinsThatWillArriveAfterSendingFromFirstX += amountOfGeneratedPenguins + currentPenguinAmount;
+        }
+
+        // Loop over the array from the impact turn and forward, subtracting all of my penguins that will arrive in that turn.
+        for(int i = totalTurnsTillArrival; i < penguinAmountsInTargetAfterTurns.length; i++) {
+            penguinAmountsInTargetAfterTurns[i] -= totalPenguinsThatWillArriveAfterSendingFromFirstX;
+        }
+
+
+        for(int i = 0; i < penguinAmountsInTargetAfterTurns.length; i++) {
+            if(penguinAmountsInTargetAfterTurns[i] < 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
+    public static double normalizeScore(double value, double min, double max) {
+        if(value <= min) {
+            return 0;
+        }
+        if(value >= max) {
+            return 1;
+        }
+
+        return (value - min) / (max - min);
+    }
+
+
+    public static double computeFactoredScore(double ... values) {
+        double score = 0;
+        for(int i = 0; i < values.length; i += 2) {
+            score += values[i] * values[i + 1];
+        }
+        return score;
+    }
 }
