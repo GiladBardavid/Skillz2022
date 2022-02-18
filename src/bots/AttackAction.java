@@ -12,6 +12,7 @@ public class AttackAction extends Action {
 
     @Override
     public double computeScoreImpl(Game game) {
+        Log.log("D_0_1: Started computeScoreImpl for target = " + target);
         /**
          * Score by penguins-per-turn gain
          * Score by min-time-to-capture
@@ -26,6 +27,8 @@ public class AttackAction extends Action {
 
 
         int minTimeToCapture = GameUtil.getMinTimeToCapture(game, target);
+        Log.log("D_0_2: minTimeToCapture = " + minTimeToCapture);
+
 
         // If I can't capture, return 0
         if(minTimeToCapture == -1) {
@@ -41,6 +44,8 @@ public class AttackAction extends Action {
         double scorePenguins = GameUtil.normalizeScore(penguinsPerTurnDelta, 0, 20);
         double scoreTime = GameUtil.normalizeScore(100 - minTimeToCapture, 0, 100);
         double scoreDefend = GameUtil.normalizeScore(enemyDefendScore, -100, 100);
+
+        Log.log("D_0_0: target = " + target + "scorePenguins = " + scorePenguins + " scoreTime = " + scoreTime + " scoreDefend = " + scoreDefend);
 
         double penguinsPerTurnFactor = 0.5;
         double minTimeToCaptureFactor = 0.3;

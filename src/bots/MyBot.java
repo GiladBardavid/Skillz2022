@@ -15,6 +15,18 @@ public class MyBot implements SkillzBot {
      */
     public void doTurn(Game game) {
 
+
+        // Update static states
+        GameUtil.updateTurnState(game);
+
+        for(IceBuilding iceBuilding : GameUtil.getAllIceBuildings(game)) {
+            log(Arrays.toString(GameUtil.howManyEnemyPenguinsWillArriveAtWhatTurn.get(iceBuilding)));
+        }
+
+        for(IceBuilding iceBuilding : GameUtil.getAllIceBuildings(game)) {
+            log("iceBuildingStateAtWhatTurn: iceberg = " + iceBuilding + " value = " + GameUtil.iceBuildingStateAtWhatTurn.get(iceBuilding));
+        }
+
         List<Action> candidateActions = createAllActions(game);
 
         // Sort actions
@@ -22,7 +34,7 @@ public class MyBot implements SkillzBot {
             action.computeScore(game);
         }
 
-        Collections.sort(candidateActions, new Comparator<>() {
+        Collections.sort(candidateActions, new Comparator<Action>() {
             @Override
             public int compare(Action o1, Action o2) {
                 return Double.compare(o2.score, o1.score);
