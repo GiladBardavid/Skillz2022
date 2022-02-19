@@ -27,7 +27,7 @@ public class GameUtil {
 
             if(penguinAmountArrivingAtWhatTurn == null){
                 penguinAmountArrivingAtWhatTurn = new int[maxLengthBetweenIceBuildings + 1];
-                howManyEnemyPenguinsWillArriveAtWhatTurn.put(destination, penguinAmountArrivingAtWhatTurn);
+                howManyOfMyPenguinsWillArriveAtWhatTurn.put(destination, penguinAmountArrivingAtWhatTurn);
             }
 
             int turnsTillArrival = myPenguinGroup.turnsTillArrival;
@@ -112,10 +112,19 @@ public class GameUtil {
                     case ME:
                         newPenguinAmount += arrivingMine;
                         newPenguinAmount -= arrivingEnemy;
+                        if(iceBuilding == bonusIceberg) {
+                            Log.log("0: BONUS ICEBERG IS NOW MINE");
+                            Log.log("NEW PENGUINS AMOUNT IS: " + newPenguinAmount);
+                        }
                         break;
                     case ENEMY:
                         newPenguinAmount += arrivingEnemy;
                         newPenguinAmount -= arrivingMine;
+                        if(iceBuilding == bonusIceberg){
+                            Log.log("0: BONUS ICEBERG IS NOW ENEMY");
+                            Log.log("NEW PENGUINS AMOUNT IS: " + newPenguinAmount);
+                            Log.log("because arrivingMine: " + arrivingMine + " arrivingEnemy: " + arrivingEnemy);
+                        }
                         break;
                     case NEUTRAL:
                         int totalArriving = arrivingMine + arrivingEnemy;
@@ -136,6 +145,8 @@ public class GameUtil {
 
                             // If the bonus iceberg was captured, reset the bonus timer
                             if(iceBuilding.equals(bonusIceberg)) {
+                                Log.log("1: BONUS ICEBERG CAPTURED");
+                                Log.log("NEW PENGUINS AMOUNT IS: " + newPenguinAmount);
                                 turnsLeftToBonus = bonusIceberg.maxTurnsToBonus;
 
                                 if(newOwner != IceBuildingState.Owner.NEUTRAL) {
