@@ -15,6 +15,19 @@ public class MyBot implements SkillzBot {
      */
     public void doTurn(Game game) {
 
+        log("maxTurnsToBonus: " + game.getBonusIceberg().maxTurnsToBonus);
+        log("turnsLeftToBonus: " + game.getBonusIceberg().turnsLeftToBonus);
+        log("penguinBonus: " + game.getBonusIceberg().penguinBonus);
+
+
+        // 7 8 9 10 11 12 13
+        if(game.turn == 1) {
+            game.getMyIcebergs()[0].sendPenguins(game.getNeutralIcebergs()[6], 9);
+        }
+        if(game.turn == 2) {
+            game.getMyIcebergs()[0].sendPenguins(game.getBonusIceberg(), 2);
+        }
+
 
         // Update static states
         GameUtil.updateTurnState(game);

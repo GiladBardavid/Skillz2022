@@ -20,7 +20,8 @@ TODOs:
      - When adding to an Iceberg to an attack object,
        we also need to take into account the new amount of penguins that will be in each of the other, closer Icebergs.
 
-     - Add help
+
+     - In the attack ranking, we need to put a special factor for bonus icebergs
 
 
 Notes:

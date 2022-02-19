@@ -78,9 +78,7 @@ public class GameUtil {
             int thisTurnBonus = 0;
             IceBuildingState.Owner thisTurnBonusOwner = null;
 
-            if(bonusIcebergState.owner != IceBuildingState.Owner.NEUTRAL){
-                turnsLeftToBonus--;
-            }
+
             if(turnsLeftToBonus == 0){
                 thisTurnBonus = bonusIceberg.penguinBonus;
                 thisTurnBonusOwner = bonusIcebergState.owner;
@@ -105,10 +103,6 @@ public class GameUtil {
                     newPenguinAmount += penguinsPerTurn;
                 }
 
-
-                if(state.owner == thisTurnBonusOwner && iceBuilding != bonusIceberg) {
-                    newPenguinAmount += thisTurnBonus;
-                }
 
 
                 int arrivingMine = arrivingMineByTurn == null ? 0 : arrivingMineByTurn[i];
@@ -143,6 +137,10 @@ public class GameUtil {
                             // If the bonus iceberg was captured, reset the bonus timer
                             if(iceBuilding.equals(bonusIceberg)) {
                                 turnsLeftToBonus = bonusIceberg.maxTurnsToBonus;
+
+                                if(newOwner != IceBuildingState.Owner.NEUTRAL) {
+                                    thisTurnBonus++;
+                                }
                             }
                         }
                 }
@@ -152,7 +150,7 @@ public class GameUtil {
 
                     // If the bonus iceberg was captured, reset the bonus timer
                     if(iceBuilding.equals(bonusIceberg)) {
-                        turnsLeftToBonus = bonusIceberg.maxTurnsToBonus;
+                        turnsLeftToBonus = bonusIceberg.maxTurnsToBonus; // Not +1 as it is now neutral
                     }
                 }
                 if (newPenguinAmount < 0) {
@@ -163,14 +161,23 @@ public class GameUtil {
 
                     // If the bonus iceberg was captured, reset the bonus timer
                     if(iceBuilding.equals(bonusIceberg)) {
-                        turnsLeftToBonus = bonusIceberg.maxTurnsToBonus;
+                        turnsLeftToBonus = bonusIceberg.maxTurnsToBonus + 1;
                     }
 
                 }
 
 
+                if(newOwner == thisTurnBonusOwner && !iceBuilding.equals(bonusIceberg)) {
+                    newPenguinAmount += thisTurnBonus;
+                }
+
                 state = new IceBuildingState(newPenguinAmount, newOwner);
                 statesByTurn.add(state);
+            }
+
+            // Decrement the bonus timer
+            if(bonusIcebergState.owner != IceBuildingState.Owner.NEUTRAL){
+                turnsLeftToBonus--;
             }
 
         }
