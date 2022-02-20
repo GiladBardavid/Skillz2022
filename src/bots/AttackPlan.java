@@ -29,7 +29,7 @@ public class AttackPlan {
         }
 
         public String toString() {
-            return sender.toString() + ": " + penguinAmount + " penguins, " + turnsToSend + " turns";
+            return sender.toString() + ": " + penguinAmount + " penguins, " + turnsToSend + " turns to send";
         }
     }
 

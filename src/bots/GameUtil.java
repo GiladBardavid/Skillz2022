@@ -750,9 +750,17 @@ public class GameUtil {
 
 
         for(int i = 0; i < closestToFarthestIcebergs.size(); i++) {
+            log("farthest iceberg is: " + closestToFarthestIcebergs.get(i));
             Iceberg farthest = closestToFarthestIcebergs.get(i);
 
+            // If the farthest iceberg (in the i-th index) , continue as it cannot send.
+            if(!isMine(game, farthest)) {
+                continue;
+            }
+
+
             int turnsTillArrival = farthest.getTurnsTillArrival(target);
+            log("Turns till arrival: " + turnsTillArrival);
 
             IceBuildingState targetStateAtArrival = prediction.iceBuildingStateAtWhatTurn.get(target).get(turnsTillArrival);
 
@@ -761,11 +769,12 @@ public class GameUtil {
                 continue;
             }
 
+
             int penguinSum = 0;
             AttackPlan attackPlan = new AttackPlan(target);
 
             // Add all penguins from the closest x of my icebergs
-            for(int j = i; j >= 0; j--) {
+            for(int j = 0; j <= i; j++) {
                 Iceberg currentIceberg = closestToFarthestIcebergs.get(j);
 
                 List<IceBuildingState> stateByTurn = prediction.iceBuildingStateAtWhatTurn.get(currentIceberg);
@@ -776,9 +785,21 @@ public class GameUtil {
                 IceBuildingState state = stateByTurn.get(turnsTillArrivalDelta);
 
                 if(state.owner == ME) {
-                    penguinSum += state.penguinAmount;
 
-                    attackPlan.addAction(currentIceberg, state.penguinAmount, turnsTillArrivalDelta);
+                    int amountToSend = state.penguinAmount;
+                    penguinSum += amountToSend;
+
+                    if(j == i && penguinSum > targetStateAtArrival.penguinAmount) {
+                        int prevAmountToSend = amountToSend;
+
+                        int excess = penguinSum - targetStateAtArrival.penguinAmount;
+                        amountToSend = amountToSend - excess + 1; // +1 because we want to capture and not only make neutral
+
+
+                        penguinSum -= (prevAmountToSend - amountToSend);
+                    }
+
+                    attackPlan.addAction(currentIceberg, amountToSend, turnsTillArrivalDelta);
                 }
             }
 
@@ -793,5 +814,10 @@ public class GameUtil {
 
         // Cannot attack the target
         return null;
+    }
+
+
+    private static void log(Object toPrint) {
+        Log.log(toPrint);
     }
 }

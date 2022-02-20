@@ -22,10 +22,7 @@ public class MyBot implements SkillzBot {
 
 
         if(game.turn == 1) {
-            game.getMyIcebergs()[0].sendPenguins(game.getNeutralIcebergs()[6], 9);
-        }
-        if(game.turn == 2) {
-            game.getMyIcebergs()[0].sendPenguins(game.getBonusIceberg(), 2);
+            game.getMyIcebergs()[0].sendPenguins(game.getNeutralIcebergs()[0], game.getMyIcebergs()[0].penguinAmount);
         }
 
 
@@ -33,10 +30,15 @@ public class MyBot implements SkillzBot {
         GameUtil.updateTurnState(game);
 
         // Test attack plans
-        for(IceBuilding iceBuilding : game.getAllIcebergs()) {
+        for(IceBuilding iceBuilding : GameUtil.getAllIceBuildings(game)) {
             AttackPlan plan = GameUtil.planAttack(game, GameUtil.prediction, iceBuilding);
             if(plan != null) {
+                log("Prediction = " + GameUtil.prediction.iceBuildingStateAtWhatTurn.get(iceBuilding));
                 log(plan.toString());
+            }
+
+            else {
+                log("No plan for " + iceBuilding.toString() + "\n");
             }
         }
 
