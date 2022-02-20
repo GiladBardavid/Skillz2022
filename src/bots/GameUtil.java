@@ -775,7 +775,7 @@ public class GameUtil {
 
 
             int turnsTillArrival = farthest.getTurnsTillArrival(target);
-            log("Turns till arrival: " + turnsTillArrival);
+            /*log("Turns till arrival: " + turnsTillArrival);*/
 
             IceBuildingState targetStateAtArrival = prediction.iceBuildingStateAtWhatTurn.get(target).get(turnsTillArrival);
 

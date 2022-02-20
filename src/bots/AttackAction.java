@@ -54,7 +54,8 @@ public class AttackAction extends Action {
         double penguinsPerTurnDeltaScore = GameUtil.normalizeScore(penguinsPerTurnDelta, 0, 30);
 
         double averageDistanceToEnemyIcebergs = GameUtil.getAverageDistanceToEnemyIcebergs(game, target);
-        double enemyDefendScore = GameUtil.normalizeScore(averageDistanceToEnemyIcebergs - averageDistanceToMyIcebergs, 30, -30);
+        double enemyDefendScore = GameUtil.normalizeScore(averageDistanceToMyIcebergs - averageDistanceToEnemyIcebergs, 30, -30);
+        Log.log("Target: " + target + ", Average distance to enemy icebergs: " + averageDistanceToEnemyIcebergs +  ", average distance to mine: " + averageDistanceToMyIcebergs + " so score = " + enemyDefendScore);
         // TODO improve enemy defend score calculation by using weighted average
 
 
@@ -65,7 +66,7 @@ public class AttackAction extends Action {
                 islandParametersScore, 0.05,
                 averageDistanceToMyIcebergsScore, 0.1,
                 penguinsPerTurnDeltaScore, 0.3,
-                enemyDefendScore, 0.2
+                enemyDefendScore, 0.2 * 10000
         );
 
         return score;

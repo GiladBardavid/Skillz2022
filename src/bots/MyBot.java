@@ -50,6 +50,7 @@ public class MyBot implements SkillzBot {
 
         for (Action action : candidateActions) {
             log(action.toString());
+            log("Score: " + action.score);
         }
 
 
