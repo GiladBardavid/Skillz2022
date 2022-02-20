@@ -56,7 +56,10 @@ public class MyBot implements SkillzBot {
 
         Action bestAction = candidateActions.get(0);
 
-        bestAction.executeIfPossible(game);
+        // If the action is worth performing, execute it.
+        if(bestAction.score > 0) {
+            bestAction.executeIfPossible(game);
+        }
         // TODO execute more than one action
     }
 
