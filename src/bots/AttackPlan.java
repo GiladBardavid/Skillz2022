@@ -25,6 +25,22 @@ public class AttackPlan {
         return maxTurns;
     }
 
+    public int getTotalPenguinsSent() {
+        int result = 0;
+        for(AttackPlanAction action : actions) {
+            result += action.penguinAmount;
+        }
+        return result;
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (AttackPlanAction action : actions) {
+            sb.append(action.toString()).append("\n");
+        }
+        return "Plan: target: " + target + " " + sb.toString();
+    }
+
     static class AttackPlanAction {
         public Iceberg sender;
         public int penguinAmount;
@@ -41,19 +57,4 @@ public class AttackPlan {
         }
     }
 
-    public int getTotalPenguinsSent() {
-        int result = 0;
-        for(AttackPlanAction action : actions) {
-            result += action.penguinAmount;
-        }
-        return result;
-    }
-
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (AttackPlanAction action : actions) {
-            sb.append(action.toString()).append("\n");
-        }
-        return sb.toString();
-    }
 }

@@ -21,10 +21,6 @@ public class MyBot implements SkillzBot {
         log("penguinBonus: " + game.getBonusIceberg().penguinBonus);
 
 
-        if(game.turn == 1) {
-            game.getMyIcebergs()[0].sendPenguins(game.getNeutralIcebergs()[5], game.getMyIcebergs()[0].penguinAmount);
-        }
-
 
         // Update static states
         GameUtil.updateTurnState(game);

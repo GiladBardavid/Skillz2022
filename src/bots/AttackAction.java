@@ -85,6 +85,6 @@ public class AttackAction extends Action {
 
     @Override
     public String toString() {
-        return "Plan: " + plan.toString();
+        return plan.toString();
     }
 }
