@@ -4,63 +4,87 @@ import penguin_game.*;
 
 public class AttackAction extends Action {
 
-    IceBuilding target;
+    AttackPlan plan;
 
-    public AttackAction(IceBuilding target) {
-        this.target = target;
+    public AttackAction(AttackPlan plan) {
+        this.plan = plan;
     }
 
     @Override
     public double computeScoreImpl(Game game) {
         /**
-         * Score by penguins-per-turn gain
-         * Score by min-time-to-capture
-         * Score by enemy ability to defend
+         * Factors:
+         * - cost
+         * - turns to capture
+         * - type of target (normal / bonus)
+         * - average distance to my icebergs
+         * - iceberg parameters (upgrade cost, upgrade value)
+         * - enemy defend score
+         * - penguins per turn delta
          */
 
-        int penguinsPerTurnDelta = (target instanceof Iceberg) ? ((Iceberg) target).penguinsPerTurn : 0;
+        IceBuilding target = plan.target;
 
+        int penguinsSent = plan.getTotalPenguinsSent();
+        double penguinsSentScore = GameUtil.normalizeScore(penguinsSent, 1000, 1);
+
+        int turnsToCapture = plan.getTurnsToCapture();
+        double turnsToCaptureScore = GameUtil.normalizeScore(turnsToCapture, 100, 1 );
+
+        double targetTypeScore = 0;
+        if(target == game.getBonusIceberg()) {
+            int amountOfIcebergs = game.getMyIcebergs().length + game.getEnemyIcebergs().length + (int)(0.3 * game.getNeutralIcebergs().length);
+            targetTypeScore = GameUtil.normalizeScore(BonusIcebergUtil.getAveragePenguinsPerTurnPerIceberg(game) * amountOfIcebergs, 0, 200);
+        }
+
+        double islandParametersScore = 0; // TODO add max level parameter
+
+        if(target instanceof Iceberg) {
+            Iceberg iceberg = (Iceberg) target;
+            islandParametersScore = GameUtil.normalizeScore((double)iceberg.upgradeValue / iceberg.upgradeCost, 0, 1);
+        }
+
+        double averageDistanceToMyIcebergs = GameUtil.getAverageDistanceToMyIcebergs(game, target);
+        double averageDistanceToMyIcebergsScore = GameUtil.normalizeScore(averageDistanceToMyIcebergs, 100, 1);
+
+        int penguinsPerTurnDelta = (target instanceof Iceberg) ? ((Iceberg) target).penguinsPerTurn : 0;
         if(GameUtil.isEnemy(game, target)){
             penguinsPerTurnDelta *= 2;
         }
+        double penguinsPerTurnDeltaScore = GameUtil.normalizeScore(penguinsPerTurnDelta, 0, 30);
+
+        // TODO add enemy defend score parameter
 
 
-        int minTimeToCapture = GameUtil.getMinTimeToCapture(game, target);
-        Log.log("D_0_2: minTimeToCapture = " + minTimeToCapture);
+        double score = GameUtil.computeFactoredScore(
+                penguinsSentScore, 0.2,
+                turnsToCaptureScore, 0.1,
+                targetTypeScore, 0.2,
+                islandParametersScore, 0.1,
+                averageDistanceToMyIcebergsScore, 0.1,
+                penguinsPerTurnDeltaScore, 0.3
+        );
 
-        // If I can't capture, return 0
-        if(minTimeToCapture == -1) {
-            return 0;
-        }
-
-
-        // temporary
-        double averageDistanceToMyIcebergs = GameUtil.getAverageDistanceToMyIcebergs(game, target);
-        double averageDistanceToEnemyIcebergs = GameUtil.getAverageDistanceToEnemyIcebergs(game, target);
-
-        double enemyDefendScore = averageDistanceToMyIcebergs - averageDistanceToEnemyIcebergs;
-
-        double scorePenguins = GameUtil.normalizeScore(penguinsPerTurnDelta, 0, 20);
-        double scoreTime = GameUtil.normalizeScore(100 - minTimeToCapture, 0, 100);
-        double scoreDefend = GameUtil.normalizeScore(enemyDefendScore, -100, 100);
-
-        Log.log("D_0_0: target = " + target + "scorePenguins = " + scorePenguins + " scoreTime = " + scoreTime + " scoreDefend = " + scoreDefend);
-
-        double penguinsPerTurnFactor = 0.5;
-        double minTimeToCaptureFactor = 0.3;
-        double enemyDefendFactor = 0.2;
-
-        double newScore = GameUtil.computeFactoredScore(scorePenguins, penguinsPerTurnFactor, scoreTime, minTimeToCaptureFactor, scoreDefend, enemyDefendFactor);
-        return newScore;
+        return score;
     }
 
     @Override
     public void executeIfPossible(Game game) {
-
+        for(AttackPlan.AttackPlanAction planAction : plan.actions) {
+            if(planAction.turnsToSend == 0) {
+                if(planAction.sender.penguinAmount >= planAction.penguinAmount) {
+                    planAction.sender.sendPenguins(plan.target, planAction.penguinAmount);
+                    Log.log("Performed action: " + planAction.toString());
+                }
+                else {
+                    Log.log("Could not perform action " + planAction.toString() + " because sender doesn't have enough penguins.");
+                }
+            }
+        }
     }
 
     @Override
     public String toString() {
-        return "AttackAction [target=" + target + "]  score = " + getScore();
+        return "Plan: " + plan.toString();
     }
 }

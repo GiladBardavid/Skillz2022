@@ -22,29 +22,22 @@ public class MyBot implements SkillzBot {
 
 
         if(game.turn == 1) {
-            game.getMyIcebergs()[0].sendPenguins(game.getNeutralIcebergs()[0], game.getMyIcebergs()[0].penguinAmount);
+            game.getMyIcebergs()[0].sendPenguins(game.getNeutralIcebergs()[5], game.getMyIcebergs()[0].penguinAmount);
         }
 
 
         // Update static states
         GameUtil.updateTurnState(game);
 
-        // Test attack plans
-        for(IceBuilding iceBuilding : GameUtil.getAllIceBuildings(game)) {
-            AttackPlan plan = GameUtil.planAttack(game, GameUtil.prediction, iceBuilding);
-            if(plan != null) {
-                log("Prediction = " + GameUtil.prediction.iceBuildingStateAtWhatTurn.get(iceBuilding));
-                log(plan.toString());
-            }
 
-            else {
-                log("No plan for " + iceBuilding.toString() + "\n");
-            }
-        }
 
 
 
         List<Action> candidateActions = createAllActions(game);
+
+        if(candidateActions.size() == 0) {
+            return;
+        }
 
         // Sort actions
         for(Action action : candidateActions) {
@@ -64,10 +57,10 @@ public class MyBot implements SkillzBot {
         }
 
 
-        // Execute actions
-        for(Action action : candidateActions) {
-            action.executeIfPossible(game);
-        }
+        Action bestAction = candidateActions.get(0);
+
+        bestAction.executeIfPossible(game);
+        // TODO execute more than one action
     }
 
 
@@ -80,10 +73,18 @@ public class MyBot implements SkillzBot {
     public List<Action> createAllActions(Game game) {
         List<Action> actions = new ArrayList<>();
 
-        // Add attack actions
-        for(IceBuilding iceBuildingToAdd : GameUtil.getEnemyOrNeutralIceBuildings(game)) {
-            actions.add(new AttackAction(iceBuildingToAdd));
+        // Create attack actions
+        for(IceBuilding iceBuilding : GameUtil.getAllIceBuildings(game)) {
+            AttackPlan plan = GameUtil.planAttack(game, GameUtil.prediction, iceBuilding);
+            if(plan != null) {
+                log("Prediction = " + GameUtil.prediction.iceBuildingStateAtWhatTurn.get(iceBuilding));
+                log(plan.toString());
+
+                actions.add(new AttackAction(plan));
+            }
         }
+
+        // TODO add defend action, upgrade actions, bridge action.
 
         return actions;
     }

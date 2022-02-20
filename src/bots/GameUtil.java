@@ -710,15 +710,30 @@ public class GameUtil {
 
 
 
-    public static double normalizeScore(double value, double min, double max) {
-        if(value <= min) {
+    public static double normalizeScore(double value, double worstValue, double bestValue) {
+
+        boolean reverse = false;
+        if(worstValue > bestValue) {
+            double temp = worstValue;
+            worstValue = bestValue;
+            bestValue = temp;
+
+            reverse = true;
+        }
+
+        if (value <= worstValue) {
             return 0;
         }
-        if(value >= max) {
+        if (value >= bestValue) {
             return 1;
         }
 
-        return (value - min) / (max - min);
+        double score = (value - worstValue) / (bestValue - worstValue);
+        if(reverse) {
+            score = 1 - score;
+        }
+
+        return score;
     }
 
 
@@ -750,7 +765,7 @@ public class GameUtil {
 
 
         for(int i = 0; i < closestToFarthestIcebergs.size(); i++) {
-            log("farthest iceberg is: " + closestToFarthestIcebergs.get(i));
+            /*log("farthest iceberg is: " + closestToFarthestIcebergs.get(i));*/
             Iceberg farthest = closestToFarthestIcebergs.get(i);
 
             // If the farthest iceberg (in the i-th index) , continue as it cannot send.

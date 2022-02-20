@@ -17,6 +17,14 @@ public class AttackPlan {
         actions.add(new AttackPlanAction(sender, penguinAmount, turnsUntilSend));
     }
 
+    public int getTurnsToCapture() {
+        int maxTurns = 0;
+        for (AttackPlanAction action : actions) {
+            maxTurns = Math.max(maxTurns, action.turnsToSend + action.sender.getTurnsTillArrival(target));
+        }
+        return maxTurns;
+    }
+
     static class AttackPlanAction {
         public Iceberg sender;
         public int penguinAmount;
@@ -31,6 +39,14 @@ public class AttackPlan {
         public String toString() {
             return sender.toString() + ": " + penguinAmount + " penguins, " + turnsToSend + " turns to send";
         }
+    }
+
+    public int getTotalPenguinsSent() {
+        int result = 0;
+        for(AttackPlanAction action : actions) {
+            result += action.penguinAmount;
+        }
+        return result;
     }
 
     public String toString() {
