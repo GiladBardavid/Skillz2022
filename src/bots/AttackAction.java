@@ -74,7 +74,7 @@ public class AttackAction extends Action {
             if(planAction.turnsToSend == 0) {
                 if(planAction.sender.penguinAmount >= planAction.penguinAmount) {
                     planAction.sender.sendPenguins(plan.target, planAction.penguinAmount);
-                    Log.log("Performed action: " + planAction.toString());
+                    Log.log("Performed action: target = " + plan.target +  ", action = " + planAction.toString());
                 }
                 else {
                     Log.log("Could not perform action " + planAction.toString() + " because sender doesn't have enough penguins.");

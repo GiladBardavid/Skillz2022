@@ -788,8 +788,9 @@ public class GameUtil {
             int penguinSum = 0;
             AttackPlan attackPlan = new AttackPlan(target);
 
+            boolean hasEnoughToCapture = false;
             // Add all penguins from the closest x of my icebergs
-            for(int j = 0; j <= i; j++) {
+            for(int j = 0; j <= i && !hasEnoughToCapture; j++) {
                 Iceberg currentIceberg = closestToFarthestIcebergs.get(j);
 
                 List<IceBuildingState> stateByTurn = prediction.iceBuildingStateAtWhatTurn.get(currentIceberg);
@@ -804,7 +805,7 @@ public class GameUtil {
                     int amountToSend = state.penguinAmount;
                     penguinSum += amountToSend;
 
-                    if(j == i && penguinSum > targetStateAtArrival.penguinAmount) {
+                    if(penguinSum > targetStateAtArrival.penguinAmount) {
                         int prevAmountToSend = amountToSend;
 
                         int excess = penguinSum - targetStateAtArrival.penguinAmount;
@@ -812,9 +813,12 @@ public class GameUtil {
 
 
                         penguinSum -= (prevAmountToSend - amountToSend);
+
+                        hasEnoughToCapture = true;
                     }
 
                     attackPlan.addAction(currentIceberg, amountToSend, turnsTillArrivalDelta);
+
                 }
             }
 
