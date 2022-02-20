@@ -16,7 +16,7 @@ public abstract class Action {
         setScore(computeScoreImpl(game));
     }
 
-    public abstract void executeIfPossible(Game game);
+    public abstract boolean executeIfPossible(Game game);
 
     public void setScore(double score) {
         this.score = score;

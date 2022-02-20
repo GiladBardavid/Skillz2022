@@ -84,7 +84,13 @@ public class MyBot implements SkillzBot {
             }
         }
 
-        // TODO add defend action, upgrade actions, bridge action.
+        for(Iceberg myIceberg : game.getMyIcebergs()) {
+            if(myIceberg.canUpgrade()) {
+                actions.add(new UpgradeAction(myIceberg));
+            }
+        }
+
+        // TODO add defend action, bridge action.
 
         return actions;
     }

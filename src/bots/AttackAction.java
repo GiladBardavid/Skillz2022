@@ -79,18 +79,21 @@ public class AttackAction extends Action {
     }
 
     @Override
-    public void executeIfPossible(Game game) {
+    public boolean executeIfPossible(Game game) {
+        boolean wasExecuted = false;
         for(AttackPlan.AttackPlanAction planAction : plan.actions) {
             if(planAction.turnsToSend == 0) {
                 if(planAction.sender.penguinAmount >= planAction.penguinAmount) {
                     planAction.sender.sendPenguins(plan.target, planAction.penguinAmount);
                     Log.log("Performed action: target = " + plan.target +  ", action = " + planAction.toString());
+                    wasExecuted = true;
                 }
                 else {
                     Log.log("Could not perform action " + planAction.toString() + " because sender doesn't have enough penguins.");
                 }
             }
         }
+        return wasExecuted;
     }
 
     @Override
