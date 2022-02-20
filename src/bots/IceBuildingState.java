@@ -51,9 +51,8 @@ public class IceBuildingState {
 
     @Override
     public String toString() {
-        return "IceBuildingState{" +
-                "penguinAmount=" + penguinAmount +
-                ", owner=" + owner +
+        return "{" + penguinAmount +
+                "/" + owner +
                 '}';
     }
 }
