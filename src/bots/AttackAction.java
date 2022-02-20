@@ -57,7 +57,7 @@ public class AttackAction extends Action {
         double enemyDefendScore = GameUtil.normalizeScore(averageDistanceToMyIcebergs - averageDistanceToEnemyIcebergs, 30, -30);
 
         // If the enemy will be able to capture it back, there is no point in attacking it
-        if(enemyDefendScore <= 0.5){
+        if(enemyDefendScore < 0.2){
             return 0;
         }
 
@@ -66,13 +66,13 @@ public class AttackAction extends Action {
 
 
         double score = GameUtil.computeFactoredScore(
-                penguinsSentScore, 0.15,
-                turnsToCaptureScore, 0.05,
+                penguinsSentScore, 0.2,
+                turnsToCaptureScore, 0.1,
                 targetTypeScore, 0.15,
                 islandParametersScore, 0.05,
                 averageDistanceToMyIcebergsScore, 0.1,
                 penguinsPerTurnDeltaScore, 0.3,
-                enemyDefendScore, 0.2 * 10000
+                enemyDefendScore, 0.1
         );
 
         return score;
