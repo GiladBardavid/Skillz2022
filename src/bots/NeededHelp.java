@@ -230,6 +230,7 @@ public class NeededHelp {
 
 
 
+
     public static boolean willBeMine(Game game, IceBuilding iceBuildingToCheck) {
 
         if(GameUtil.isEnemy(game, iceBuildingToCheck)) {
@@ -251,5 +252,11 @@ public class NeededHelp {
 
     public static boolean willSurvive(Game game, IceBuilding myIceberg) {
         return getNeededHelp(game, myIceberg) == null;
+    }
+
+
+
+    public static int getMaxThatCanSend(Game game, Iceberg sendingIceberg) {
+        return 0;
     }
 }

@@ -12,7 +12,6 @@ public class AttackAction extends Action {
 
     @Override
     public double computeScoreImpl(Game game) {
-        Log.log("D_0_1: Started computeScoreImpl for target = " + target);
         /**
          * Score by penguins-per-turn gain
          * Score by min-time-to-capture
@@ -29,11 +28,11 @@ public class AttackAction extends Action {
         int minTimeToCapture = GameUtil.getMinTimeToCapture(game, target);
         Log.log("D_0_2: minTimeToCapture = " + minTimeToCapture);
 
-
         // If I can't capture, return 0
         if(minTimeToCapture == -1) {
             return 0;
         }
+
 
         // temporary
         double averageDistanceToMyIcebergs = GameUtil.getAverageDistanceToMyIcebergs(game, target);

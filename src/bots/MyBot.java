@@ -9,6 +9,7 @@ import java.util.*;
  */
 public class MyBot implements SkillzBot {
 
+
     /**
      * Does the turn. This function is called by the system.
      * @param game current game state
@@ -20,7 +21,6 @@ public class MyBot implements SkillzBot {
         log("penguinBonus: " + game.getBonusIceberg().penguinBonus);
 
 
-        // 7 8 9 10 11 12 13
         if(game.turn == 1) {
             game.getMyIcebergs()[0].sendPenguins(game.getNeutralIcebergs()[6], 9);
         }
@@ -32,13 +32,15 @@ public class MyBot implements SkillzBot {
         // Update static states
         GameUtil.updateTurnState(game);
 
-        for(IceBuilding iceBuilding : GameUtil.getAllIceBuildings(game)) {
-            log(Arrays.toString(GameUtil.howManyEnemyPenguinsWillArriveAtWhatTurn.get(iceBuilding)));
+        // Test attack plans
+        for(IceBuilding iceBuilding : game.getAllIcebergs()) {
+            AttackPlan plan = GameUtil.planAttack(game, GameUtil.prediction, iceBuilding);
+            if(plan != null) {
+                log(plan.toString());
+            }
         }
 
-        for(IceBuilding iceBuilding : GameUtil.getAllIceBuildings(game)) {
-            log("iceBuildingStateAtWhatTurn: iceberg = " + iceBuilding + " value = " + GameUtil.iceBuildingStateAtWhatTurn.get(iceBuilding));
-        }
+
 
         List<Action> candidateActions = createAllActions(game);
 
