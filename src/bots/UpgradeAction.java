@@ -40,8 +40,10 @@ public class UpgradeAction extends Action {
 
     @Override
     public boolean executeIfPossible(Game game) {
+        Log.log("Trying upgrade action: target = " + target + " canUpgrade = " + target.canUpgrade());
         if(target.canUpgrade()){
             target.upgrade();
+            Log.log("Upgrade action executed: target = " + target);
             return true;
         }
         return false;

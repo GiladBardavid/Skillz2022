@@ -60,7 +60,7 @@ public class AttackAction extends Action {
         double enemyDefendScore = GameUtil.normalizeScore(averageDistanceToMyIcebergs - averageDistanceToEnemyIcebergs, 30, -30);
 
         // If the enemy will be able to capture it back, there is no point in attacking it
-        if(enemyDefendScore < 0.2){
+        if(enemyDefendScore < 0.35){
             return 0;
         }
 
