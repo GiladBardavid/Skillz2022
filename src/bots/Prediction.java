@@ -221,11 +221,13 @@ public class Prediction {
                 }
 
                 // Send penguins to other icebergs
-                if(sendingMine >= 0 && newOwner == ME) {
+                if(newOwner == ME) {
                     newPenguinAmount -= sendingMine;
                 }
                 else {
-                    Log.log("ERROR trying to send: amount = " + sendingMine + " predicted owner = " + newOwner);
+                    if(sendingMine > 0) {
+                        Log.log("ERROR trying to send: amount = " + sendingMine + " predicted owner = " + newOwner);
+                    }
                 }
 
 
