@@ -3,6 +3,8 @@ package bots;
 import penguin_game.*;
 import java.util.*;
 
+import static bots.IceBuildingState.Owner.ME;
+
 public class Prediction {
 
     public static Map<IceBuilding, List<IceBuildingState>> iceBuildingStateAtWhatTurn;
@@ -153,7 +155,6 @@ public class Prediction {
                 int arrivingEnemy = arrivingEnemyByTurn == null ? 0 : arrivingEnemyByTurn[i];
 
                 int sendingMine = sendingMineByTurn == null ? 0 : sendingMineByTurn[i];
-                arrivingMine -= sendingMine;
 
                 switch (state.owner) {
                     case ME:
@@ -176,7 +177,7 @@ public class Prediction {
                             if (newPenguinAmount == 0) {
                                 newOwner = IceBuildingState.Owner.NEUTRAL;
                             } else if (arrivingMine > arrivingEnemy) {
-                                newOwner = IceBuildingState.Owner.ME;
+                                newOwner = ME;
                             } else {
                                 newOwner = IceBuildingState.Owner.ENEMY;
                             }
@@ -218,6 +219,16 @@ public class Prediction {
                 if(newOwner == thisTurnBonusOwner && !iceBuilding.equals(bonusIceberg)) {
                     newPenguinAmount += thisTurnBonus;
                 }
+
+                // Send penguins to other icebergs
+                if(sendingMine >= 0 && newOwner == ME) {
+                    newPenguinAmount -= sendingMine;
+                }
+                else {
+                    Log.log("ERROR trying to send: amount = " + sendingMine + " predicted owner = " + newOwner);
+                }
+
+
 
                 state = new IceBuildingState(newPenguinAmount, newOwner);
                 statesByTurn.add(state);
