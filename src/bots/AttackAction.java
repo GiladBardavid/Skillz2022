@@ -100,16 +100,18 @@ public class AttackAction extends Action {
     }
 
     @Override
-    public Set<Iceberg> getModifiedIcebergs() {
-        Set<Iceberg> icebergs = new HashSet<>();
-        for(AttackPlan.AttackPlanAction planAction : plan.actions) {
-            icebergs.add(planAction.sender);
-        }
-        return icebergs;
+    public String toString() {
+        return plan.toString();
     }
 
     @Override
-    public String toString() {
-        return plan.toString();
+    public Set<Iceberg> getIcebergsThatSentNow() {
+        Set<Iceberg> icebergs = new HashSet<>();
+        for(AttackPlan.AttackPlanAction planAction : plan.actions) {
+            if(planAction.turnsToSend == 0) {
+                icebergs.add(planAction.sender);
+            }
+        }
+        return icebergs;
     }
 }

@@ -19,9 +19,15 @@ public abstract class Action {
 
     public abstract boolean executeIfPossible(Game game);
 
-    public abstract Set<Iceberg> getModifiedIcebergs();
-
     public void setScore(double score) {
         this.score = score;
+    }
+
+    public Set<Iceberg> getIcebergsThatSentNow(){
+        return new HashSet<>();
+    }
+
+    public Set<Iceberg> getIcebergsThatUpgradedNow(){
+        return new HashSet<>();
     }
 }

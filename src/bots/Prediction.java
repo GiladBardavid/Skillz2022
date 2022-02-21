@@ -7,24 +7,66 @@ public class Prediction {
 
     public static Map<IceBuilding, List<IceBuildingState>> iceBuildingStateAtWhatTurn;
 
-    public  static Map<IceBuilding, int[]> howManyOfMyPenguinsWillArriveAtWhatTurn;
+    public static Map<IceBuilding, int[]> howManyOfMyPenguinsWillArriveAtWhatTurn;
     public static Map<IceBuilding, int[]> howManyEnemyPenguinsWillArriveAtWhatTurn;
 
+    public static Map<Iceberg, int[]> howManyPenguinsWillSendAtWhatTurn;
 
 
-    public Prediction(Game game) {
+    public Prediction(Game game, List<Action> executedActions) {
 
-        int maxLengthBetweenIceBuildings = GameUtil.getMaxLengthBetweenIceBuildings(game);
+        int maxTurnsLookAhead = GameUtil.getMaxLengthBetweenIceBuildings(game) * 2 + 1;
 
         howManyOfMyPenguinsWillArriveAtWhatTurn = new HashMap<>();
         howManyEnemyPenguinsWillArriveAtWhatTurn = new HashMap<>();
+        howManyPenguinsWillSendAtWhatTurn = new HashMap<>();
+
+
+        for(Action action : executedActions) {
+            if(action instanceof AttackAction) {
+                AttackAction attackAction = (AttackAction) action;
+
+                AttackPlan attackPlan = attackAction.plan;
+                IceBuilding target = attackPlan.target;
+
+                for(AttackPlan.AttackPlanAction planAction : attackPlan.actions) {
+
+                    int turnsToSend = planAction.turnsToSend;
+                    int turnsToArrive = planAction.turnsToSend + planAction.sender.getTurnsTillArrival(target);
+
+                    int[] penguinAmountArrivingAtWhatTurn = howManyOfMyPenguinsWillArriveAtWhatTurn.get(target);
+
+                    if(penguinAmountArrivingAtWhatTurn == null){
+                        penguinAmountArrivingAtWhatTurn = new int[maxTurnsLookAhead];
+                        howManyOfMyPenguinsWillArriveAtWhatTurn.put(target, penguinAmountArrivingAtWhatTurn);
+                    }
+
+                    penguinAmountArrivingAtWhatTurn[turnsToArrive] += planAction.penguinAmount;
+
+
+
+                    int[] penguinAmountToSendAtWhatTurn = howManyPenguinsWillSendAtWhatTurn.get(planAction.sender);
+
+                    if(penguinAmountToSendAtWhatTurn == null){
+                        penguinAmountToSendAtWhatTurn = new int[maxTurnsLookAhead];
+                        howManyPenguinsWillSendAtWhatTurn.put(planAction.sender, penguinAmountToSendAtWhatTurn);
+                    }
+
+                    penguinAmountToSendAtWhatTurn[turnsToSend] += planAction.penguinAmount;
+                }
+            }
+
+            // TODO: implement bridge and defend actions
+        }
+
+
 
         for(PenguinGroup myPenguinGroup : game.getMyPenguinGroups()){
             IceBuilding destination  = myPenguinGroup.destination;
             int[] penguinAmountArrivingAtWhatTurn = howManyOfMyPenguinsWillArriveAtWhatTurn.get(destination);
 
             if(penguinAmountArrivingAtWhatTurn == null){
-                penguinAmountArrivingAtWhatTurn = new int[maxLengthBetweenIceBuildings + 1];
+                penguinAmountArrivingAtWhatTurn = new int[maxTurnsLookAhead];
                 howManyOfMyPenguinsWillArriveAtWhatTurn.put(destination, penguinAmountArrivingAtWhatTurn);
             }
 
@@ -41,7 +83,7 @@ public class Prediction {
             int[] penguinAmountArrivingAtWhatTurn = howManyEnemyPenguinsWillArriveAtWhatTurn.get(destination);
 
             if(penguinAmountArrivingAtWhatTurn == null){
-                penguinAmountArrivingAtWhatTurn = new int[maxLengthBetweenIceBuildings + 1];
+                penguinAmountArrivingAtWhatTurn = new int[maxTurnsLookAhead];
                 howManyEnemyPenguinsWillArriveAtWhatTurn.put(destination, penguinAmountArrivingAtWhatTurn);
             }
 
@@ -62,12 +104,14 @@ public class Prediction {
 
             IceBuildingState state = new IceBuildingState(game, iceBuilding);
             howManyPenguinsWillBeAtWhatTurn.add(state);
+
+            // State now is always updated by the game, including upgrades and sends
         }
 
         BonusIceberg bonusIceberg = game.getBonusIceberg();
         int turnsLeftToBonus = bonusIceberg.turnsLeftToBonus;
 
-        for (int i = 1; i <= maxLengthBetweenIceBuildings; i++) {
+        for (int i = 1; i < maxTurnsLookAhead; i++) {
 
             IceBuildingState bonusIcebergState = iceBuildingStateAtWhatTurn.get(bonusIceberg).get(i - 1);
 
@@ -90,6 +134,7 @@ public class Prediction {
 
                 int[] arrivingMineByTurn = howManyOfMyPenguinsWillArriveAtWhatTurn.get(iceBuilding);
                 int[] arrivingEnemyByTurn = howManyEnemyPenguinsWillArriveAtWhatTurn.get(iceBuilding);
+                int[] sendingMineByTurn = howManyPenguinsWillSendAtWhatTurn.get(iceBuilding);
 
                 List<IceBuildingState> statesByTurn = iceBuildingStateAtWhatTurn.get(iceBuilding);
                 IceBuildingState state = statesByTurn.get(i - 1);
@@ -103,8 +148,12 @@ public class Prediction {
 
 
 
+
                 int arrivingMine = arrivingMineByTurn == null ? 0 : arrivingMineByTurn[i];
                 int arrivingEnemy = arrivingEnemyByTurn == null ? 0 : arrivingEnemyByTurn[i];
+
+                int sendingMine = sendingMineByTurn == null ? 0 : sendingMineByTurn[i];
+                arrivingMine -= sendingMine;
 
                 switch (state.owner) {
                     case ME:

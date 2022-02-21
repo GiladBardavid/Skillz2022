@@ -49,8 +49,9 @@ public class UpgradeAction extends Action {
 
 
     @Override
-    public Set<Iceberg> getModifiedIcebergs() {
-        return Collections.singleton(target);
+    public Set<Iceberg> getIcebergsThatUpgradedNow() {
+        Set<Iceberg> icebergs = new HashSet<>();
+        icebergs.add(target);
+        return icebergs;
     }
-
 }

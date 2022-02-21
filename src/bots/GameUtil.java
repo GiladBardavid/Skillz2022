@@ -747,13 +747,13 @@ public class GameUtil {
 
 
     public static void updateTurnState(Game game) {
-        prediction = new Prediction(game);
+        prediction = new Prediction(game, new ArrayList<>());
     }
 
 
 
 
-    public static AttackPlan planAttack(Game game, Prediction prediction, IceBuilding target) {
+    public static AttackPlan planAttack(Game game, Prediction prediction, IceBuilding target, Set<Iceberg> cannotSendNow) {
         List<Iceberg> closestToFarthestIcebergs = Arrays.asList(game.getAllIcebergs());
 
         Collections.sort(closestToFarthestIcebergs, new Comparator<Iceberg>() {
@@ -767,6 +767,11 @@ public class GameUtil {
         for(int i = 0; i < closestToFarthestIcebergs.size(); i++) {
             /*log("farthest iceberg is: " + closestToFarthestIcebergs.get(i));*/
             Iceberg farthest = closestToFarthestIcebergs.get(i);
+
+            // Because the farthest always needs to send now, we need to make sure that it isn't in the send-now-ban list.
+            if(cannotSendNow.contains(farthest)) {
+                continue;
+            }
 
             // If the farthest iceberg (in the i-th index) , continue as it cannot send.
             if(!isMine(game, farthest)) {
