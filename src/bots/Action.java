@@ -1,6 +1,7 @@
 package bots;
 
 import penguin_game.*;
+import java.util.*;
 
 public abstract class Action {
 
@@ -17,6 +18,8 @@ public abstract class Action {
     }
 
     public abstract boolean executeIfPossible(Game game);
+
+    public abstract Set<Iceberg> getModifiedIcebergs();
 
     public void setScore(double score) {
         this.score = score;

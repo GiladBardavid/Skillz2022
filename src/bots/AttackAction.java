@@ -2,6 +2,9 @@ package bots;
 
 import penguin_game.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class AttackAction extends Action {
 
     AttackPlan plan;
@@ -94,6 +97,15 @@ public class AttackAction extends Action {
             }
         }
         return wasExecuted;
+    }
+
+    @Override
+    public Set<Iceberg> getModifiedIcebergs() {
+        Set<Iceberg> icebergs = new HashSet<>();
+        for(AttackPlan.AttackPlanAction planAction : plan.actions) {
+            icebergs.add(planAction.sender);
+        }
+        return icebergs;
     }
 
     @Override

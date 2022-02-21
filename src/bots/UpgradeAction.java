@@ -35,7 +35,6 @@ public class UpgradeAction extends Action {
             enemyDefendScore, 0.2
         );
 
-        score = 100;
         return score;
     }
 
@@ -47,4 +46,11 @@ public class UpgradeAction extends Action {
         }
         return false;
     }
+
+
+    @Override
+    public Set<Iceberg> getModifiedIcebergs() {
+        return Collections.singleton(target);
+    }
+
 }

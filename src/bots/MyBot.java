@@ -53,11 +53,24 @@ public class MyBot implements SkillzBot {
             log("Score: " + action.score);
         }
 
+        Set<Iceberg> executedIcebergs = new HashSet<>();
 
-        Action bestAction = candidateActions.get(0);
+        /*for(Action action : candidateActions) {
 
-        // If the action is worth performing, execute it.
-        if(bestAction.score > 0) {
+            // If the action is worth performing, execute it.
+            if (action.score > 0) {
+                Set<Iceberg> actionIcebergs = action.getModifiedIcebergs();
+                if(Collections.disjoint(actionIcebergs, executedIcebergs)) {
+
+                    if(action.executeIfPossible(game)) {
+                        executedIcebergs.addAll(actionIcebergs);
+                        break; // temporary
+                    }
+                }
+            }
+        }*/
+        if(candidateActions.size() > 0) {
+            Action bestAction = candidateActions.get(0);
             bestAction.executeIfPossible(game);
         }
         // TODO execute more than one action
