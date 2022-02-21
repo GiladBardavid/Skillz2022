@@ -2,7 +2,9 @@ package bots;
 
 import penguin_game.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class AttackAction extends Action {
@@ -116,5 +118,15 @@ public class AttackAction extends Action {
             }
         }
         return icebergs;
+    }
+
+
+    @Override
+    public Action ageByTurn() {
+        AttackPlan newPlan = plan.ageByTurn();
+        if(newPlan == null) {
+            return null;
+        }
+        return new AttackAction(newPlan);
     }
 }

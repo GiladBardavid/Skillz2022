@@ -1,5 +1,7 @@
 package bots;
 import penguin_game.*;
+
+import java.awt.print.Pageable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -10,7 +12,7 @@ import java.util.stream.Collectors;
  */
 public class MyBot implements SkillzBot {
 
-
+    List<Action> ongoingActions = new ArrayList<>();
 
     /**
      * Does the turn. This function is called by the system.
@@ -26,6 +28,16 @@ public class MyBot implements SkillzBot {
 
         // Update static states
         GameUtil.updateTurnState(game);
+
+        // age ongoing actions
+        List<Action> newOngoingActions = new ArrayList<>();
+        for(Action action : ongoingActions) {
+            Action newAction = action.ageByTurn();
+            if(newAction != null) {
+                newOngoingActions.add(newAction);
+            }
+        }
+        ongoingActions = newOngoingActions;
 
         Prediction prediction = GameUtil.prediction;
         /*log("Start prediction: " + prediction);*/
@@ -94,6 +106,11 @@ public class MyBot implements SkillzBot {
             prediction = new Prediction(game, executedActions);
             /*log("New Prediction: " + prediction);*/
         }
+
+        for(Action action : executedActions) {
+            ongoingActions.add(action);
+            log("Ongoing actions: " + ongoingActions);
+        }
     }
 
 
@@ -105,6 +122,10 @@ public class MyBot implements SkillzBot {
      */
     public List<Action> createAllActions(Game game, Prediction prediction, Set<Iceberg> cannotSendNow, Set<Iceberg> cannotUpgradeNow) {
         List<Action> actions = new ArrayList<>();
+
+
+        // Add all ongoing actions.
+        actions.addAll(ongoingActions);
 
         // Create attack actions
         for(IceBuilding iceBuilding : GameUtil.getAllIceBuildings(game)) {

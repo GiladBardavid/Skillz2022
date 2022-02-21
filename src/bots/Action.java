@@ -30,4 +30,6 @@ public abstract class Action {
     public Set<Iceberg> getIcebergsThatUpgradedNow(){
         return new HashSet<>();
     }
+
+    public abstract Action ageByTurn();
 }

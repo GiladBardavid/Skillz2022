@@ -41,6 +41,19 @@ public class AttackPlan {
         return "Plan: target: " + target + " " + sb.toString();
     }
 
+    public AttackPlan ageByTurn() {
+        AttackPlan newPlan = new AttackPlan(target);
+        for (AttackPlanAction action : actions) {
+            if(action.turnsToSend > 0) {
+                newPlan.addAction(action.sender, action.penguinAmount, action.turnsToSend - 1);
+            }
+        }
+        if(newPlan.actions.isEmpty()) {
+            return null;
+        }
+        return newPlan;
+    }
+
     static class AttackPlanAction {
         public Iceberg sender;
         public int penguinAmount;
@@ -56,5 +69,7 @@ public class AttackPlan {
             return sender.toString() + ": " + penguinAmount + " penguins, " + turnsToSend + " turns to send";
         }
     }
+
+
 
 }

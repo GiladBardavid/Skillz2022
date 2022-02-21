@@ -56,4 +56,9 @@ public class UpgradeAction extends Action {
         icebergs.add(target);
         return icebergs;
     }
+
+    @Override
+    public Action ageByTurn() {
+        return null;
+    }
 }
