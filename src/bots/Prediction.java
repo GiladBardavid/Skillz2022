@@ -4,6 +4,7 @@ import penguin_game.*;
 import java.util.*;
 
 import static bots.IceBuildingState.Owner.ME;
+import static bots.IceBuildingState.Owner.NEUTRAL;
 
 public class Prediction {
 
@@ -22,6 +23,8 @@ public class Prediction {
         howManyOfMyPenguinsWillArriveAtWhatTurn = new HashMap<>();
         howManyEnemyPenguinsWillArriveAtWhatTurn = new HashMap<>();
         howManyPenguinsWillSendAtWhatTurn = new HashMap<>();
+
+        Set<Iceberg> upgradedIcebergs = new HashSet<>();
 
 
         for(Action action : executedActions) {
@@ -56,6 +59,9 @@ public class Prediction {
 
                     penguinAmountToSendAtWhatTurn[turnsToSend] += planAction.penguinAmount;
                 }
+            }
+            else if(action instanceof UpgradeAction) {
+                upgradedIcebergs.add(((UpgradeAction) action).target);
             }
 
             // TODO: implement bridge and defend actions
@@ -105,6 +111,9 @@ public class Prediction {
             iceBuildingStateAtWhatTurn.put(iceBuilding, howManyPenguinsWillBeAtWhatTurn);
 
             IceBuildingState state = new IceBuildingState(game, iceBuilding);
+            if(upgradedIcebergs.contains(iceBuilding)){
+                state.penguinAmount -= ((Iceberg)iceBuilding).upgradeCost;
+            }
             howManyPenguinsWillBeAtWhatTurn.add(state);
 
             // State now is always updated by the game, including upgrades and sends
@@ -133,6 +142,9 @@ public class Prediction {
 
             for (IceBuilding iceBuilding : GameUtil.getAllIceBuildings(game)) {
                 int penguinsPerTurn = (iceBuilding instanceof Iceberg) ? ((Iceberg) iceBuilding).penguinsPerTurn : 0;
+                if(upgradedIcebergs.contains(iceBuilding)){
+                    penguinsPerTurn += ((Iceberg)iceBuilding).upgradeValue;
+                }
 
                 int[] arrivingMineByTurn = howManyOfMyPenguinsWillArriveAtWhatTurn.get(iceBuilding);
                 int[] arrivingEnemyByTurn = howManyEnemyPenguinsWillArriveAtWhatTurn.get(iceBuilding);
@@ -144,7 +156,7 @@ public class Prediction {
                 int newPenguinAmount = state.penguinAmount;
                 IceBuildingState.Owner newOwner = state.owner;
 
-                if (state.owner != IceBuildingState.Owner.NEUTRAL) {
+                if (state.owner != NEUTRAL) {
                     newPenguinAmount += penguinsPerTurn;
                 }
 
@@ -175,7 +187,7 @@ public class Prediction {
                             int sum = arrivingMine + arrivingEnemy;
                             newPenguinAmount = Math.min(diff, sum - newPenguinAmount);
                             if (newPenguinAmount == 0) {
-                                newOwner = IceBuildingState.Owner.NEUTRAL;
+                                newOwner = NEUTRAL;
                             } else if (arrivingMine > arrivingEnemy) {
                                 newOwner = ME;
                             } else {
@@ -187,7 +199,7 @@ public class Prediction {
 
                                 turnsLeftToBonus = bonusIceberg.maxTurnsToBonus;
 
-                                if(newOwner != IceBuildingState.Owner.NEUTRAL) {
+                                if(newOwner != NEUTRAL) {
                                     thisTurnBonus++;
                                 }
                             }
@@ -195,7 +207,7 @@ public class Prediction {
                 }
 
                 if (newPenguinAmount == 0) {
-                    newOwner = IceBuildingState.Owner.NEUTRAL;
+                    newOwner = NEUTRAL;
 
                     // If the bonus iceberg was captured, reset the bonus timer
                     if(iceBuilding.equals(bonusIceberg)) {
@@ -237,7 +249,7 @@ public class Prediction {
             }
 
             // Decrement the bonus timer
-            if(bonusIcebergState.owner != IceBuildingState.Owner.NEUTRAL){
+            if(bonusIcebergState.owner != NEUTRAL){
                 turnsLeftToBonus--;
             }
 

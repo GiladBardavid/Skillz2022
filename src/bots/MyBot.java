@@ -18,6 +18,7 @@ public class MyBot implements SkillzBot {
      */
     public void doTurn(Game game) {
 
+
         /*log("maxTurnsToBonus: " + game.getBonusIceberg().maxTurnsToBonus);
         log("turnsLeftToBonus: " + game.getBonusIceberg().turnsLeftToBonus);
         log("penguinBonus: " + game.getBonusIceberg().penguinBonus);*/
