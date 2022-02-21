@@ -26,6 +26,7 @@ public class MyBot implements SkillzBot {
         GameUtil.updateTurnState(game);
 
         Prediction prediction = GameUtil.prediction;
+        log("Start prediction: " + prediction);
 
         Set<Iceberg> cannotSendNow = new HashSet<>();
         Set<Iceberg> cannotUpgradeNow = new HashSet<>();
@@ -71,13 +72,16 @@ public class MyBot implements SkillzBot {
 
                 executedActions.add(bestAction);
 
-                cannotSendNow.addAll(bestAction.getIcebergsThatSentNow());
-                cannotUpgradeNow.addAll(bestAction.getIcebergsThatUpgradedNow());
+                cannotSendNow.addAll(bestAction.getIcebergsThatUpgradedNow());
+                /*log("Adding icebergs that sent now: " + bestAction.getIcebergsThatSentNow());*/
+                cannotUpgradeNow.addAll(bestAction.getIcebergsThatSentNow());
+                /*log("Adding icebergs that upgraded now: " + bestAction.getIcebergsThatUpgradedNow());*/
             }
 
 
             // Recalc prediction
             prediction = new Prediction(game, executedActions);
+            log("New Prediction: " + prediction);
         }
     }
 

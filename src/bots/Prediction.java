@@ -233,4 +233,12 @@ public class Prediction {
 
     }
 
+    @Override
+    public String toString() {
+        String s = "Prediction: \n";
+        for(IceBuilding iceBuilding : iceBuildingStateAtWhatTurn.keySet()) {
+            s += "  " + iceBuilding.toString() + ": " + iceBuildingStateAtWhatTurn.get(iceBuilding).toString() + "\n";
+        }
+        return s;
+    }
 }
