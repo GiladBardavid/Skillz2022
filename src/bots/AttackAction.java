@@ -58,10 +58,8 @@ public class AttackAction extends Action {
 
         double averageDistanceToEnemyIcebergs = GameUtil.getAverageDistanceToEnemyIcebergs(game, target);
         double enemyDefendScore = GameUtil.normalizeScore(averageDistanceToMyIcebergs - averageDistanceToEnemyIcebergs, 30, -30);
-
-        // If the enemy will be able to capture it back, there is no point in attacking it
-        if(enemyDefendScore < 0.35){
-            return 0;
+        if(averageDistanceToEnemyIcebergs == 0) {
+            enemyDefendScore = 1;
         }
 
         Log.log("Target: " + target + ", Average distance to enemy icebergs: " + averageDistanceToEnemyIcebergs +  ", average distance to mine: " + averageDistanceToMyIcebergs + " so score = " + enemyDefendScore);
@@ -77,6 +75,11 @@ public class AttackAction extends Action {
                 penguinsPerTurnDeltaScore, 0.3,
                 enemyDefendScore, 0.1
         );
+
+        // If the enemy will be able to capture it back, there is no point in attacking it
+        if(enemyDefendScore < 0.35){
+            score *= 0;
+        }
 
         return score;
     }

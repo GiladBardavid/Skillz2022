@@ -260,6 +260,9 @@ public class Prediction {
 
     @Override
     public String toString() {
+        if(!Log.IS_DEBUG) { // Save time
+            return "";
+        }
         String s = "Prediction: \n";
         for(IceBuilding iceBuilding : iceBuildingStateAtWhatTurn.keySet()) {
             s += "  " + iceBuilding.toString() + ": " + iceBuildingStateAtWhatTurn.get(iceBuilding).toString() + "\n";
