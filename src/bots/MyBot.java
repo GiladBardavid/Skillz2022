@@ -1,7 +1,6 @@
 package bots;
 import penguin_game.*;
 
-import java.awt.print.Pageable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -20,7 +19,6 @@ public class MyBot implements SkillzBot {
      */
     public void doTurn(Game game) {
 
-
         /*log("maxTurnsToBonus: " + game.getBonusIceberg().maxTurnsToBonus);
         log("turnsLeftToBonus: " + game.getBonusIceberg().turnsLeftToBonus);
         log("penguinBonus: " + game.getBonusIceberg().penguinBonus);*/
@@ -38,6 +36,8 @@ public class MyBot implements SkillzBot {
             }
         }
         ongoingActions = newOngoingActions;
+
+        log("ongoing actions: " + ongoingActions.size());
 
         Prediction prediction = GameUtil.prediction;
         /*log("Start prediction: " + prediction);*/
@@ -62,7 +62,7 @@ public class MyBot implements SkillzBot {
 
             // Filter out all elements from candidateActions whos score is 0 using a stream.
             candidateActions = candidateActions.stream()
-                    .filter(action -> action.score > 0)
+                    .filter(action -> action.score > 0 && !executedActions.contains(action))
                     .collect(Collectors.toList());
 
 
@@ -108,7 +108,9 @@ public class MyBot implements SkillzBot {
         }
 
         for(Action action : executedActions) {
-            ongoingActions.add(action);
+            if(!ongoingActions.contains(action)) {
+                ongoingActions.add(action);
+            }
             log("Ongoing actions: " + ongoingActions);
         }
     }

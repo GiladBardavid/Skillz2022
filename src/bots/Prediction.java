@@ -86,7 +86,7 @@ public class Prediction {
 
 
         for(PenguinGroup enemyPenguinGroup : game.getEnemyPenguinGroups()){
-            Log.log("D_0_6: found enemy group: " + enemyPenguinGroup.toString() + " with destination: " + enemyPenguinGroup.destination.toString() + " and turnsTillArrival: " + enemyPenguinGroup.turnsTillArrival);
+            /*Log.log("D_0_6: found enemy group: " + enemyPenguinGroup.toString() + " with destination: " + enemyPenguinGroup.destination.toString() + " and turnsTillArrival: " + enemyPenguinGroup.turnsTillArrival);*/
             IceBuilding destination  = enemyPenguinGroup.destination;
             int[] penguinAmountArrivingAtWhatTurn = howManyEnemyPenguinsWillArriveAtWhatTurn.get(destination);
 
