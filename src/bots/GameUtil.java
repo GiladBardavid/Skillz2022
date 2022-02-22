@@ -805,7 +805,8 @@ public class GameUtil {
 
                 IceBuildingState state = stateByTurn.get(turnsTillArrivalDelta);
 
-                if(state.owner == ME) {
+                // If the iceberg can send penguins, send all and check for excess
+                if(state.owner == ME && state.penguinAmount > 0) {
 
                     int amountToSend = state.penguinAmount;
                     penguinSum += amountToSend;
@@ -829,6 +830,19 @@ public class GameUtil {
 
 
             if(penguinSum > targetStateAtArrival.penguinAmount) {
+
+                // If the plan does not need to execute now, ignore it, it will be done in a later turn
+                boolean hasActionToBePerformedNow = false;
+                for(AttackPlan.AttackPlanAction action : attackPlan.actions) {
+                    if(action.turnsToSend == 0) {
+                        hasActionToBePerformedNow = true;
+                        break;
+                    }
+                }
+                if(!hasActionToBePerformedNow) {
+                    return null;
+                }
+
                 Log.log("Attack " + target + " with " + penguinSum + " penguins");
 
                 return attackPlan;

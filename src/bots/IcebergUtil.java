@@ -157,4 +157,22 @@ public class IcebergUtil {
         // Return the how-many-penguins-will-be-added-at-what-turn map.
         return howManyPenguinsWillBeAddedInXTurns;
     }
+
+
+
+    public static String toString(IceBuilding iceBuilding) {
+        String result = "[[" + iceBuilding.id + "/";
+        switch (iceBuilding.owner.id) {
+            case 0:
+                result += "ME";
+                break;
+            case 1:
+                result += "ENEMY";
+                break;
+            case -1:
+                result += "NEUTRAL";
+                break;
+        }
+        return result + "]]";
+    }
 }

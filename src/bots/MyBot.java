@@ -13,11 +13,22 @@ public class MyBot implements SkillzBot {
 
     List<Action> ongoingActions = new ArrayList<>();
 
+    public static boolean DO_NOTHING = false;
+    public static boolean DONT_CREATE_NEW_ATTACKS = false;
+
     /**
      * Does the turn. This function is called by the system.
      * @param game current game state
      */
     public void doTurn(Game game) {
+
+        if(DO_NOTHING) {
+            return;
+        }
+
+        if(game.turn == 19) {
+            DONT_CREATE_NEW_ATTACKS = true;
+        }
 
         /*log("maxTurnsToBonus: " + game.getBonusIceberg().maxTurnsToBonus);
         log("turnsLeftToBonus: " + game.getBonusIceberg().turnsLeftToBonus);
@@ -57,6 +68,9 @@ public class MyBot implements SkillzBot {
             // Sort actions
             for (Action action : candidateActions) {
                 action.computeScore(game);
+                if(ongoingActions.contains(action)) {
+                    action.score = 100;
+                }
             }
 
 
@@ -88,7 +102,8 @@ public class MyBot implements SkillzBot {
             if (candidateActions.size() > 0) {
                 Action bestAction = candidateActions.get(0);
 
-                log("\nBest action: " + bestAction.toString() + "\n");
+                log("\nBest action: " + bestAction.toString() + "\n" + "  Score: " + bestAction.score + "\n");
+                log("Best action prediction before: " + prediction.iceBuildingStateAtWhatTurn.get(((AttackAction)bestAction).plan.target));
 
                 bestAction.executeIfPossible(game);
 
@@ -104,6 +119,7 @@ public class MyBot implements SkillzBot {
 
             // Recalc prediction
             prediction = new Prediction(game, executedActions);
+            log("Best action prediction after: " + prediction);
             /*log("New Prediction: " + prediction);*/
         }
 
@@ -111,7 +127,7 @@ public class MyBot implements SkillzBot {
             if(!ongoingActions.contains(action)) {
                 ongoingActions.add(action);
             }
-            log("Ongoing actions: " + ongoingActions);
+            log("Ongoing actions new: " + ongoingActions);
         }
     }
 
@@ -128,6 +144,8 @@ public class MyBot implements SkillzBot {
 
         // Add all ongoing actions.
         actions.addAll(ongoingActions);
+
+        if(DONT_CREATE_NEW_ATTACKS) return actions;
 
         // Create attack actions
         for(IceBuilding iceBuilding : GameUtil.getAllIceBuildings(game)) {

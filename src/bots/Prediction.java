@@ -238,7 +238,7 @@ public class Prediction {
                 }
                 else {
                     if(sendingMine > 0) {
-                        Log.log("ERROR trying to send: amount = " + sendingMine + " predicted owner = " + newOwner);
+                        throw new IllegalStateException("ERROR trying to send: amount = " + sendingMine + " predicted owner = " + newOwner);
                     }
                 }
 

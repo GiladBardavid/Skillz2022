@@ -38,7 +38,7 @@ public class AttackPlan {
         for (AttackPlanAction action : actions) {
             sb.append(action.toString()).append("\n");
         }
-        return "Plan: target: " + target + " " + sb.toString();
+        return "Plan: target: " + IcebergUtil.toString(target) + "\n" + sb.toString();
     }
 
     public AttackPlan ageByTurn() {
@@ -63,10 +63,14 @@ public class AttackPlan {
             this.sender = sender;
             this.penguinAmount = penguinAmount;
             this.turnsToSend = turnsToSend;
+
+            if(penguinAmount <= 0) {
+                throw new IllegalArgumentException("penguinAmount must be positive");
+            }
         }
 
         public String toString() {
-            return sender.toString() + ": " + penguinAmount + " penguins, " + turnsToSend + " turns to send";
+            return "  from: " + IcebergUtil.toString(sender) + " penguin amount: " + penguinAmount + ", in " + turnsToSend + " turns";
         }
     }
 

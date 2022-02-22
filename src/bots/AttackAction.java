@@ -64,7 +64,7 @@ public class AttackAction extends Action {
             enemyDefendScore = 1;
         }
 
-        Log.log("Target: " + target + ", Average distance to enemy icebergs: " + averageDistanceToEnemyIcebergs +  ", average distance to mine: " + averageDistanceToMyIcebergs + " so score = " + enemyDefendScore);
+        Log.log("Target: " + IcebergUtil.toString(target) + ", Average distance to enemy icebergs: " + averageDistanceToEnemyIcebergs +  ", average distance to mine: " + averageDistanceToMyIcebergs + " so score = " + enemyDefendScore);
         // TODO improve enemy defend score calculation by using weighted average
 
 
@@ -93,7 +93,7 @@ public class AttackAction extends Action {
             if(planAction.turnsToSend == 0) {
                 if(planAction.sender.penguinAmount >= planAction.penguinAmount) {
                     planAction.sender.sendPenguins(plan.target, planAction.penguinAmount);
-                    Log.log("Performed action: target = " + plan.target +  ", action = " + planAction.toString());
+                    Log.log("Performed action: target = " + IcebergUtil.toString(plan.target) +  ", action = " + planAction.toString());
                     wasExecuted = true;
                 }
                 else {
