@@ -11,10 +11,13 @@ import java.util.stream.Collectors;
  */
 public class MyBot implements SkillzBot {
 
+    public static Game game = null;
+
     List<Action> ongoingActions = new ArrayList<>();
 
     public static boolean DO_NOTHING = false;
     public static boolean DONT_CREATE_NEW_ATTACKS = false;
+    /*public static int ONLY_PRINT_FROM_TURN = 43;*/
 
     /**
      * Does the turn. This function is called by the system.
@@ -22,13 +25,26 @@ public class MyBot implements SkillzBot {
      */
     public void doTurn(Game game) {
 
+        this.game = game;
+
+        /*for(PenguinGroup penguinGroup : game.getMyPenguinGroups()) {
+            log("penguin group " + penguinGroup + " will arrive in: " + penguinGroup.turnsTillArrival + " turns");
+        }*/
+
         if(DO_NOTHING) {
             return;
         }
 
-        if(game.turn == 19) {
-            DONT_CREATE_NEW_ATTACKS = true;
+        /*if(game.turn == 1) {
+            Log.IS_DEBUG = false;
         }
+        if(game.turn == ONLY_PRINT_FROM_TURN) {
+            Log.IS_DEBUG = true;
+        }*/
+
+        /*if(game.turn == 19) {
+            DONT_CREATE_NEW_ATTACKS = true;
+        }*/
 
         /*log("maxTurnsToBonus: " + game.getBonusIceberg().maxTurnsToBonus);
         log("turnsLeftToBonus: " + game.getBonusIceberg().turnsLeftToBonus);
@@ -49,6 +65,10 @@ public class MyBot implements SkillzBot {
         ongoingActions = newOngoingActions;
 
         log("ongoing actions: " + ongoingActions.size());
+        for(Action action : ongoingActions) {
+            log(action.toString());
+        }
+        log("------------------");
 
         Prediction prediction = GameUtil.prediction;
         /*log("Start prediction: " + prediction);*/
@@ -58,19 +78,20 @@ public class MyBot implements SkillzBot {
 
         List<Action> executedActions = new ArrayList<>();
 
+
         while(true) {
 
 
-            List<Action> candidateActions = createAllActions(game, prediction, cannotSendNow, cannotUpgradeNow);
+            List<Action> candidateActions = createAllActions(game, prediction, cannotSendNow, cannotUpgradeNow, executedActions);
             log("candidateActions size: " + candidateActions.size());
 
 
             // Sort actions
             for (Action action : candidateActions) {
                 action.computeScore(game);
-                if(ongoingActions.contains(action)) {
-                    action.score = 100;
-                }
+                /*if(ongoingActions.contains(action)) {
+                    action.score = 100; // TODO remove
+                }*/
             }
 
 
@@ -103,7 +124,6 @@ public class MyBot implements SkillzBot {
                 Action bestAction = candidateActions.get(0);
 
                 log("\nBest action: " + bestAction.toString() + "\n" + "  Score: " + bestAction.score + "\n");
-                log("Best action prediction before: " + prediction.iceBuildingStateAtWhatTurn.get(((AttackAction)bestAction).plan.target));
 
                 bestAction.executeIfPossible(game);
 
@@ -138,12 +158,35 @@ public class MyBot implements SkillzBot {
      * @param game current game state
      * @return list of all possible actions
      */
-    public List<Action> createAllActions(Game game, Prediction prediction, Set<Iceberg> cannotSendNow, Set<Iceberg> cannotUpgradeNow) {
+    public List<Action> createAllActions(Game game, Prediction prediction, Set<Iceberg> cannotSendNow, Set<Iceberg> cannotUpgradeNow, List<Action> executedActions) {
+        if(!prediction.isValid) {
+            log(prediction);
+            throw new IllegalStateException("Prediction is not valid");
+        }
+
         List<Action> actions = new ArrayList<>();
 
 
         // Add all ongoing actions.
-        actions.addAll(ongoingActions);
+        for(Action ongoingAction : ongoingActions) {
+            List<Action> actionsToTest = new ArrayList<>(executedActions);
+            actionsToTest.add(ongoingAction);
+
+            Prediction predictionAfterAction = new Prediction(game, actionsToTest);
+
+            log("Ongoing action: " + ongoingAction.toString());
+            log("Prediction after Ongoing action: " + predictionAfterAction);
+
+            if(predictionAfterAction.isValid) {
+                ongoingAction.predictionAfterAction = predictionAfterAction;
+                actions.add(ongoingAction);
+            }
+            else {
+                log("Ongoing action is invalid: " + ongoingAction);
+            }
+        }
+
+        /*actions.addAll(ongoingActions);*/
 
         if(DONT_CREATE_NEW_ATTACKS) return actions;
 
@@ -154,13 +197,37 @@ public class MyBot implements SkillzBot {
                 log("Prediction = " + prediction.iceBuildingStateAtWhatTurn.get(iceBuilding));
                 log(plan.toString());
 
-                actions.add(new AttackAction(plan));
+                AttackAction action = new AttackAction(plan);
+                List<Action> actionsToTest = new ArrayList<>(executedActions);
+                actionsToTest.add(action);
+
+                log("Prediction before action: " + prediction);
+                log("Actions to test: " + actionsToTest);
+                Prediction predictionAfterAction = new Prediction(game, actionsToTest);
+                log("Action: " + action.toString());
+                log("Prediction after action: " + predictionAfterAction);
+
+                if(predictionAfterAction.isValid) {
+                    action.predictionAfterAction = predictionAfterAction;
+                    actions.add(action);
+                }
             }
         }
 
         for(Iceberg myIceberg : game.getMyIcebergs()) {
             if(myIceberg.canUpgrade() && !cannotUpgradeNow.contains(myIceberg)) {
-                actions.add(new UpgradeAction(myIceberg));
+                UpgradeAction action = new UpgradeAction(myIceberg);
+
+                List<Action> actionsToTest = new ArrayList<>(executedActions);
+                actionsToTest.add(action);
+
+                Prediction predictionAfterAction = new Prediction(game, executedActions);
+
+                if(predictionAfterAction.isValid) {
+                    action.predictionAfterAction = predictionAfterAction;
+                    actions.add(action);
+                }
+
             }
         }
 

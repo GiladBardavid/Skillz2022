@@ -36,7 +36,7 @@ public class AttackPlan {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (AttackPlanAction action : actions) {
-            sb.append(action.toString()).append("\n");
+            sb.append(action.toString() + ", will arrive in turn " + (MyBot.game.turn + action.turnsToSend + target.getTurnsTillArrival(action.sender) - 1)).append("\n");
         }
         return "Plan: target: " + IcebergUtil.toString(target) + "\n" + sb.toString();
     }

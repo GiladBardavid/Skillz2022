@@ -8,12 +8,14 @@ import static bots.IceBuildingState.Owner.NEUTRAL;
 
 public class Prediction {
 
-    public static Map<IceBuilding, List<IceBuildingState>> iceBuildingStateAtWhatTurn;
+    public Map<IceBuilding, List<IceBuildingState>> iceBuildingStateAtWhatTurn;
 
-    public static Map<IceBuilding, int[]> howManyOfMyPenguinsWillArriveAtWhatTurn;
-    public static Map<IceBuilding, int[]> howManyEnemyPenguinsWillArriveAtWhatTurn;
+    public Map<IceBuilding, int[]> howManyOfMyPenguinsWillArriveAtWhatTurn;
+    public Map<IceBuilding, int[]> howManyEnemyPenguinsWillArriveAtWhatTurn;
 
-    public static Map<Iceberg, int[]> howManyPenguinsWillSendAtWhatTurn;
+    public Map<Iceberg, int[]> howManyPenguinsWillSendAtWhatTurn;
+
+    public boolean isValid = true;
 
 
     public Prediction(Game game, List<Action> executedActions) {
@@ -141,6 +143,7 @@ public class Prediction {
 
 
             for (IceBuilding iceBuilding : GameUtil.getAllIceBuildings(game)) {
+
                 int penguinsPerTurn = (iceBuilding instanceof Iceberg) ? ((Iceberg) iceBuilding).penguinsPerTurn : 0;
                 if(upgradedIcebergs.contains(iceBuilding)){
                     penguinsPerTurn += ((Iceberg)iceBuilding).upgradeValue;
@@ -235,13 +238,16 @@ public class Prediction {
                 // Send penguins to other icebergs
                 if(newOwner == ME) {
                     newPenguinAmount -= sendingMine;
+                    if(newPenguinAmount < 0) {
+                        isValid = false;
+                    }
                 }
                 else {
                     if(sendingMine > 0) {
-                        throw new IllegalStateException("ERROR trying to send: amount = " + sendingMine + " predicted owner = " + newOwner);
+                        // The prediction is not valid in this case, we are sending from an iceberg that won't be able to send
+                        isValid = false;
                     }
                 }
-
 
 
                 state = new IceBuildingState(newPenguinAmount, newOwner);

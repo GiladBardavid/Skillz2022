@@ -32,4 +32,6 @@ public abstract class Action {
     }
 
     public abstract Action ageByTurn();
+
+    public Prediction predictionAfterAction;
 }
