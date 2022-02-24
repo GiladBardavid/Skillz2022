@@ -60,6 +60,7 @@ public class Prediction {
                     }
 
                     penguinAmountToSendAtWhatTurn[turnsToSend] += planAction.penguinAmount;
+                    /*Log.log("Prediction for " + planAction.sender + ": " + Arrays.toString(penguinAmountToSendAtWhatTurn));*/
                 }
             }
             else if(action instanceof UpgradeAction) {
@@ -116,9 +117,14 @@ public class Prediction {
             if(upgradedIcebergs.contains(iceBuilding)){
                 state.penguinAmount -= ((Iceberg)iceBuilding).upgradeCost;
             }
+            if(howManyPenguinsWillSendAtWhatTurn.get(iceBuilding) != null){
+                state.penguinAmount -= howManyPenguinsWillSendAtWhatTurn.get(iceBuilding)[0];
+            }
+            if(state.penguinAmount < 0) {
+                isValid = false;
+            }
             howManyPenguinsWillBeAtWhatTurn.add(state);
 
-            // State now is always updated by the game, including upgrades and sends
         }
 
         BonusIceberg bonusIceberg = game.getBonusIceberg();

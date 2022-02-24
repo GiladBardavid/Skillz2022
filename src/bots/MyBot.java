@@ -17,7 +17,7 @@ public class MyBot implements SkillzBot {
 
     public static boolean DO_NOTHING = false;
     public static boolean DONT_CREATE_NEW_ATTACKS = false;
-    /*public static int ONLY_PRINT_FROM_TURN = 43;*/
+    public static int ONLY_PRINT_FROM_TURN = 1;
 
     /**
      * Does the turn. This function is called by the system.
@@ -35,12 +35,12 @@ public class MyBot implements SkillzBot {
             return;
         }
 
-        /*if(game.turn == 1) {
+        if(game.turn == 1) {
             Log.IS_DEBUG = false;
         }
         if(game.turn == ONLY_PRINT_FROM_TURN) {
             Log.IS_DEBUG = true;
-        }*/
+        }
 
         /*if(game.turn == 19) {
             DONT_CREATE_NEW_ATTACKS = true;
@@ -125,7 +125,7 @@ public class MyBot implements SkillzBot {
 
                 log("\nBest action: " + bestAction.toString() + "\n" + "  Score: " + bestAction.score + "\n");
 
-                bestAction.executeIfPossible(game);
+                /*bestAction.executeIfPossible(game);*/
 
                 executedActions.add(bestAction);
 
@@ -139,16 +139,20 @@ public class MyBot implements SkillzBot {
 
             // Recalc prediction
             prediction = new Prediction(game, executedActions);
-            log("Best action prediction after: " + prediction);
+            /*log("Best action prediction after: " + prediction);*/
             /*log("New Prediction: " + prediction);*/
         }
 
         for(Action action : executedActions) {
-            if(!ongoingActions.contains(action)) {
+            action.executeIfPossible(game);
+
+            /*if(!ongoingActions.contains(action)) {
                 ongoingActions.add(action);
             }
-            log("Ongoing actions new: " + ongoingActions);
+            log("Ongoing actions new: " + ongoingActions);*/
         }
+        ongoingActions = executedActions;
+        log("Ongoing actions new: " + ongoingActions);
     }
 
 
@@ -169,13 +173,17 @@ public class MyBot implements SkillzBot {
 
         // Add all ongoing actions.
         for(Action ongoingAction : ongoingActions) {
+            if(executedActions.contains(ongoingAction)) {
+                continue;
+            }
+
             List<Action> actionsToTest = new ArrayList<>(executedActions);
             actionsToTest.add(ongoingAction);
 
             Prediction predictionAfterAction = new Prediction(game, actionsToTest);
 
             log("Ongoing action: " + ongoingAction.toString());
-            log("Prediction after Ongoing action: " + predictionAfterAction);
+            /*log("Prediction after Ongoing action: " + predictionAfterAction);*/
 
             if(predictionAfterAction.isValid) {
                 ongoingAction.predictionAfterAction = predictionAfterAction;
@@ -192,20 +200,30 @@ public class MyBot implements SkillzBot {
 
         // Create attack actions
         for(IceBuilding iceBuilding : GameUtil.getAllIceBuildings(game)) {
+            boolean hasAttackOnThisIceberg = false;
+            for(Action executedAction : executedActions) {
+                if(executedAction instanceof AttackAction && ((AttackAction) executedAction).plan.target == iceBuilding) {
+                    hasAttackOnThisIceberg = true;
+                    break;
+                }
+            }
+            if(hasAttackOnThisIceberg) continue;
+
+
             AttackPlan plan = GameUtil.planAttack(game, prediction, iceBuilding, cannotSendNow);
             if(plan != null) {
-                log("Prediction = " + prediction.iceBuildingStateAtWhatTurn.get(iceBuilding));
+                /*log("Prediction = " + prediction.iceBuildingStateAtWhatTurn.get(iceBuilding));*/
                 log(plan.toString());
 
                 AttackAction action = new AttackAction(plan);
                 List<Action> actionsToTest = new ArrayList<>(executedActions);
                 actionsToTest.add(action);
 
-                log("Prediction before action: " + prediction);
-                log("Actions to test: " + actionsToTest);
+                /*log("Prediction before action: " + prediction);*/
+                /*log("Actions to test: " + actionsToTest);*/
                 Prediction predictionAfterAction = new Prediction(game, actionsToTest);
                 log("Action: " + action.toString());
-                log("Prediction after action: " + predictionAfterAction);
+                /*log("Prediction after action: " + predictionAfterAction);*/
 
                 if(predictionAfterAction.isValid) {
                     action.predictionAfterAction = predictionAfterAction;
@@ -221,7 +239,7 @@ public class MyBot implements SkillzBot {
                 List<Action> actionsToTest = new ArrayList<>(executedActions);
                 actionsToTest.add(action);
 
-                Prediction predictionAfterAction = new Prediction(game, executedActions);
+                Prediction predictionAfterAction = new Prediction(game, actionsToTest);
 
                 if(predictionAfterAction.isValid) {
                     action.predictionAfterAction = predictionAfterAction;
