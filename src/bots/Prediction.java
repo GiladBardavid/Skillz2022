@@ -3,8 +3,7 @@ package bots;
 import penguin_game.*;
 import java.util.*;
 
-import static bots.IceBuildingState.Owner.ME;
-import static bots.IceBuildingState.Owner.NEUTRAL;
+import static bots.IceBuildingState.Owner.*;
 
 public class Prediction {
 
@@ -200,7 +199,7 @@ public class Prediction {
                             } else if (arrivingMine > arrivingEnemy) {
                                 newOwner = ME;
                             } else {
-                                newOwner = IceBuildingState.Owner.ENEMY;
+                                newOwner = ENEMY;
                             }
 
                             // If the bonus iceberg was captured, reset the bonus timer
@@ -268,6 +267,45 @@ public class Prediction {
         }
 
 
+    }
+
+    public double computeScore() {
+        int countMyIcebergs = 0;
+        int countEnemyIcebergs = 0;
+        int countNeutralIcebergs = 0;
+
+        int myPenguinsSum = 0;
+        int enemyPenguinsSum = 0;
+
+        for(IceBuilding iceBuilding : iceBuildingStateAtWhatTurn.keySet()) {
+            List<IceBuildingState> states = iceBuildingStateAtWhatTurn.get(iceBuilding);
+            IceBuildingState lastState = states.get(states.size() - 1);
+
+            if(lastState.owner == ME) {
+                countMyIcebergs++;
+                myPenguinsSum += lastState.penguinAmount;
+            }
+            else if(lastState.owner == ENEMY) {
+                countEnemyIcebergs++;
+                enemyPenguinsSum += lastState.penguinAmount;
+            }
+            else {
+                countNeutralIcebergs++;
+            }
+        }
+
+        if(countEnemyIcebergs == 0) return 1;
+        if(countMyIcebergs == 0) return 0;
+
+        double scoreByPenguins = (double)myPenguinsSum / (double)(myPenguinsSum + enemyPenguinsSum);
+        double scoreByIcebergs = (double)countMyIcebergs / (double)(countMyIcebergs + countEnemyIcebergs);
+
+        double score = GameUtil.computeFactoredScore(
+                scoreByPenguins, 0.7,
+                scoreByIcebergs, 0.3
+        );
+
+        return score;
     }
 
     @Override

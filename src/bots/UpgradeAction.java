@@ -18,24 +18,13 @@ public class UpgradeAction extends Action {
 
     @Override
     double computeScoreImpl(Game game) {
-        int penguinsPerTurnDelta = target.upgradeValue;
-        int penguinCost = target.upgradeCost;
-        double averageDistanceFromMyIcebergs = GameUtil.getAverageDistanceToMyIcebergs(game, target);
-        double averageDistanceFromEnemyIcebergs = GameUtil.getAverageDistanceToEnemyIcebergs(game, target);
 
-        double penguinsPerTurnDeltaScore = GameUtil.normalizeScore(penguinsPerTurnDelta, 0, 10);
-        double penguinCostScore = GameUtil.normalizeScore(penguinCost, 100, 0);
-        double averageDistanceFromMyIcebergsScore = GameUtil.normalizeScore(averageDistanceFromMyIcebergs, 100, 0);
-        double enemyDefendScore = GameUtil.normalizeScore(averageDistanceFromMyIcebergs - averageDistanceFromEnemyIcebergs, 30, -30);
-
-        double score = GameUtil.computeFactoredScore(
-            penguinsPerTurnDeltaScore, 0.45,
-            penguinCostScore, 0.2,
-            averageDistanceFromMyIcebergsScore, 0.15,
-            enemyDefendScore, 0.2
-        );
+        double score = predictionAfterAction.computeScore();
 
         return score;
+
+        // TODO enemy defend score
+
     }
 
     @Override

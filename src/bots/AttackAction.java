@@ -2,10 +2,9 @@ package bots;
 
 import penguin_game.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
+import static bots.IceBuildingState.Owner.*;
 
 public class AttackAction extends Action {
 
@@ -17,73 +16,40 @@ public class AttackAction extends Action {
 
     @Override
     public double computeScoreImpl(Game game) {
-        /**
-         * Factors:
-         * - cost
-         * - turns to capture
-         * - type of target (normal / bonus)
-         * - average distance to my icebergs
-         * - iceberg parameters (upgrade cost, upgrade value)
-         * - enemy defend score
-         * - penguins per turn delta
-         */
 
-        IceBuilding target = plan.target;
+        double score = predictionAfterAction.computeScore();
 
-        int penguinsSent = plan.getTotalPenguinsSent();
-        double penguinsSentScore = GameUtil.normalizeScore(penguinsSent, 1000, 1);
 
-        int turnsToCapture = plan.getTurnsToCapture();
-        double turnsToCaptureScore = GameUtil.normalizeScore(turnsToCapture, 100, 1 );
+        // If the enemy is the closest to a neutral iceberg and it's penguin amount is positive, we should never attack it as the enemy could recapture it the next turn.
+        boolean isEnemyClosest = false;
 
-        double targetTypeScore = 0;
-        if(target == game.getBonusIceberg()) {
-            int amountOfIcebergs = game.getMyIcebergs().length + game.getEnemyIcebergs().length + (int)(0.3 * game.getNeutralIcebergs().length);
-            targetTypeScore = GameUtil.normalizeScore(BonusIcebergUtil.getAveragePenguinsPerTurnPerIceberg(game) * amountOfIcebergs, 0, 200);
+        Collection<Iceberg> sortedByLength = GameUtil.getIcebergsSortedByDistance(game, plan.target);
+        Iceberg myClosestIceberg = null;
+        Iceberg enemyClosestIceberg = null;
+
+        int planTurnsToCapture = plan.getTurnsToCapture();
+        for(Iceberg iceberg : sortedByLength) {
+            IceBuildingState.Owner owner = predictionBeforeAction.iceBuildingStateAtWhatTurn.get(iceberg).get(planTurnsToCapture).owner;
+            if(owner == ME && myClosestIceberg == null) {
+                myClosestIceberg = iceberg;
+            }
+            else if(owner == ENEMY && enemyClosestIceberg == null) {
+                enemyClosestIceberg = iceberg;
+            }
         }
 
-        double islandParametersScore = 0; // TODO add max level parameter
-
-        if(target instanceof Iceberg) {
-            Iceberg iceberg = (Iceberg) target;
-            islandParametersScore = GameUtil.normalizeScore((double)iceberg.upgradeValue / iceberg.upgradeCost, 0, 1);
+        if(enemyClosestIceberg != null && myClosestIceberg != null && enemyClosestIceberg.getTurnsTillArrival(plan.target) <= myClosestIceberg.getTurnsTillArrival(plan.target)) {
+            isEnemyClosest = true;
         }
 
-        double averageDistanceToMyIcebergs = GameUtil.getAverageDistanceToMyIcebergs(game, target);
-        double averageDistanceToMyIcebergsScore = GameUtil.normalizeScore(averageDistanceToMyIcebergs, 100, 1);
+        boolean willTargetBeNeutral = predictionBeforeAction.iceBuildingStateAtWhatTurn.get(plan.target).get(planTurnsToCapture).owner == NEUTRAL;
 
-        int penguinsPerTurnDelta = (target instanceof Iceberg) ? ((Iceberg) target).penguinsPerTurn : 0;
-        if(GameUtil.isEnemy(game, target)){
-            penguinsPerTurnDelta *= 2;
-        }
-        double penguinsPerTurnDeltaScore = GameUtil.normalizeScore(penguinsPerTurnDelta, 0, 30);
-
-        double averageDistanceToEnemyIcebergs = GameUtil.getAverageDistanceToEnemyIcebergs(game, target);
-        double enemyDefendScore = GameUtil.normalizeScore(averageDistanceToMyIcebergs - averageDistanceToEnemyIcebergs, 30, -30);
-        if(averageDistanceToEnemyIcebergs == 0) {
-            enemyDefendScore = 1;
-        }
-
-        Log.log("Target: " + IcebergUtil.toString(target) + ", Average distance to enemy icebergs: " + averageDistanceToEnemyIcebergs +  ", average distance to mine: " + averageDistanceToMyIcebergs + " so score = " + enemyDefendScore);
-        // TODO improve enemy defend score calculation by using weighted average
-
-
-        double score = GameUtil.computeFactoredScore(
-                penguinsSentScore, 0.2,
-                turnsToCaptureScore, 0.1,
-                targetTypeScore, 0.15,
-                islandParametersScore, 0.05,
-                averageDistanceToMyIcebergsScore, 0.1,
-                penguinsPerTurnDeltaScore, 0.3,
-                enemyDefendScore, 0.1
-        );
-
-        // If the enemy will be able to capture it back, there is no point in attacking it
-        if(enemyDefendScore < 0.35){
-            score *= 0;
+        if(willTargetBeNeutral && isEnemyClosest && plan.target.penguinAmount > 0) {
+            score = 0;
         }
 
         return score;
+
     }
 
     @Override

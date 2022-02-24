@@ -855,6 +855,18 @@ public class GameUtil {
     }
 
 
+
+
+    public static Collection<Iceberg> getIcebergsSortedByDistance(Game game, IceBuilding target) {
+        List<Iceberg> icebergs = new ArrayList<>(Arrays.asList(game.getAllIcebergs())).stream()
+                .filter(iceberg -> iceberg != target)
+                .sorted(Comparator.comparingInt(iceberg -> iceberg.getTurnsTillArrival(target)))
+                .collect(Collectors.toList());
+
+        return icebergs;
+    }
+
+
     private static void log(Object toPrint) {
         Log.log(toPrint);
     }

@@ -27,6 +27,11 @@ public class MyBot implements SkillzBot {
 
         this.game = game;
 
+        /*if(game.turn == 21) {
+            game.getMyIcebergs()[2].sendPenguins(game.getEnemyIcebergs()[0], 1);
+            game.getMyIcebergs()[2].sendPenguins(game.getMyIcebergs()[1], 1);
+        }*/
+
         /*for(PenguinGroup penguinGroup : game.getMyPenguinGroups()) {
             log("penguin group " + penguinGroup + " will arrive in: " + penguinGroup.turnsTillArrival + " turns");
         }*/
@@ -113,7 +118,7 @@ public class MyBot implements SkillzBot {
                 }
             });
 
-
+            log("printing candidate actions");
             for (Action action : candidateActions) {
                 log(action.toString());
                 log("Score: " + action.score);
@@ -187,6 +192,7 @@ public class MyBot implements SkillzBot {
 
             if(predictionAfterAction.isValid) {
                 ongoingAction.predictionAfterAction = predictionAfterAction;
+                ongoingAction.predictionBeforeAction = prediction;
                 actions.add(ongoingAction);
             }
             else {
@@ -227,6 +233,7 @@ public class MyBot implements SkillzBot {
 
                 if(predictionAfterAction.isValid) {
                     action.predictionAfterAction = predictionAfterAction;
+                    action.predictionBeforeAction = prediction;
                     actions.add(action);
                 }
             }
@@ -243,6 +250,7 @@ public class MyBot implements SkillzBot {
 
                 if(predictionAfterAction.isValid) {
                     action.predictionAfterAction = predictionAfterAction;
+                    action.predictionBeforeAction = prediction;
                     actions.add(action);
                 }
 
