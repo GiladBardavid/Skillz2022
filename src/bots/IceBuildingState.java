@@ -20,6 +20,10 @@ public class IceBuildingState {
 
     public IceBuildingState(Game game, IceBuilding iceBuilding) {
         this.penguinAmount = iceBuilding.penguinAmount;
+        // bypass game bug
+        if(this.penguinAmount < 0) {
+            this.penguinAmount = 0;
+        }
 
         switch (GameUtil.playerToString(game, iceBuilding.owner)) {
             case "Me":
@@ -46,7 +50,10 @@ public class IceBuildingState {
         }
 
         // Unreachable
-        throw new IllegalStateException(owner.toString());
+        if(Log.IS_DEBUG) {
+            throw new IllegalStateException(owner.toString());
+        }
+        return null;
     }
 
     @Override

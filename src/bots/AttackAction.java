@@ -17,9 +17,6 @@ public class AttackAction extends Action {
     @Override
     public double computeScoreImpl(Game game) {
 
-        double score = predictionAfterAction.computeScore();
-
-
         // If the enemy is the closest to a neutral iceberg and it's penguin amount is positive, we should never attack it as the enemy could recapture it the next turn.
         boolean isEnemyClosest = false;
 
@@ -45,8 +42,42 @@ public class AttackAction extends Action {
         boolean willTargetBeNeutral = predictionBeforeAction.iceBuildingStateAtWhatTurn.get(plan.target).get(planTurnsToCapture).owner == NEUTRAL;
 
         if(willTargetBeNeutral && isEnemyClosest && plan.target.penguinAmount > 0) {
-            score = 0;
+            return 0;
         }
+
+
+
+
+
+        double predictionScore = predictionAfterAction.computeScore();
+
+
+        int totalDistanceFromMyIcebergs = 0;
+        int totalDistanceFromEnemyIcebergs = 0;
+        int myIcebergs = 0;
+        int enemyIcebergs = 0;
+
+        for(Iceberg iceberg : game.getAllIcebergs()) {
+            if(predictionBeforeAction.iceBuildingStateAtWhatTurn.get(iceberg).get(planTurnsToCapture).owner == ME) {
+                myIcebergs++;
+                totalDistanceFromMyIcebergs += iceberg.getTurnsTillArrival(plan.target);
+            }
+            else if(predictionBeforeAction.iceBuildingStateAtWhatTurn.get(iceberg).get(planTurnsToCapture).owner == ENEMY) {
+                enemyIcebergs++;
+                totalDistanceFromEnemyIcebergs += iceberg.getTurnsTillArrival(plan.target);
+            }
+        }
+
+        double averageDistanceToMyIcebergs = (double)totalDistanceFromMyIcebergs / myIcebergs;
+        double averageDistanceToEnemyIcebergs = (double)totalDistanceFromEnemyIcebergs / enemyIcebergs;
+
+        double enemyDefendScore = GameUtil.normalizeScore(averageDistanceToMyIcebergs - averageDistanceToEnemyIcebergs, 50, -50);
+        Log.log("for target + " + plan.target + ", enemyDefendScore: " + enemyDefendScore);
+
+        double score = GameUtil.computeFactoredScore(
+                predictionScore, 0.5,
+                enemyDefendScore, 0.5
+        );
 
         return score;
 

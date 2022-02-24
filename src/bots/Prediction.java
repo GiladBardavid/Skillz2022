@@ -120,6 +120,10 @@ public class Prediction {
                 state.penguinAmount -= howManyPenguinsWillSendAtWhatTurn.get(iceBuilding)[0];
             }
             if(state.penguinAmount < 0) {
+                /*Log.log("IceBuilding is: " + iceBuilding + " penguins amount: " + iceBuilding.penguinAmount);
+                Log.log("how many my arriving: " + howManyOfMyPenguinsWillArriveAtWhatTurn.get(iceBuilding)[0]);
+                Log.log("how many enemy arriving: " + howManyOfMyPenguinsWillArriveAtWhatTurn.get(iceBuilding)[0]);
+                Log.log("how many penguins will send: " + howManyPenguinsWillSendAtWhatTurn.get(iceBuilding)[0]);*/
                 isValid = false;
             }
             howManyPenguinsWillBeAtWhatTurn.add(state);

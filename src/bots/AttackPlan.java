@@ -65,7 +65,9 @@ public class AttackPlan {
             this.turnsToSend = turnsToSend;
 
             if(penguinAmount <= 0) {
-                throw new IllegalArgumentException("penguinAmount must be positive");
+                if(Log.IS_DEBUG) {
+                    throw new IllegalArgumentException("penguinAmount must be positive");
+                }
             }
         }
 

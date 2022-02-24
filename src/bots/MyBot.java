@@ -15,9 +15,9 @@ public class MyBot implements SkillzBot {
 
     List<Action> ongoingActions = new ArrayList<>();
 
-    public static boolean DO_NOTHING = false;
+    /*public static boolean DO_NOTHING = false;*/
     public static boolean DONT_CREATE_NEW_ATTACKS = false;
-    public static int ONLY_PRINT_FROM_TURN = 1;
+    /*public static int ONLY_PRINT_FROM_TURN = 1;*/
 
     /**
      * Does the turn. This function is called by the system.
@@ -36,7 +36,7 @@ public class MyBot implements SkillzBot {
             log("penguin group " + penguinGroup + " will arrive in: " + penguinGroup.turnsTillArrival + " turns");
         }*/
 
-        if(DO_NOTHING) {
+        /*if(DO_NOTHING) {
             return;
         }
 
@@ -45,7 +45,7 @@ public class MyBot implements SkillzBot {
         }
         if(game.turn == ONLY_PRINT_FROM_TURN) {
             Log.IS_DEBUG = true;
-        }
+        }*/
 
         /*if(game.turn == 19) {
             DONT_CREATE_NEW_ATTACKS = true;
@@ -76,7 +76,7 @@ public class MyBot implements SkillzBot {
         log("------------------");
 
         Prediction prediction = GameUtil.prediction;
-        /*log("Start prediction: " + prediction);*/
+        log("Start prediction: " + prediction);
 
         Set<Iceberg> cannotSendNow = new HashSet<>();
         Set<Iceberg> cannotUpgradeNow = new HashSet<>();
@@ -170,7 +170,9 @@ public class MyBot implements SkillzBot {
     public List<Action> createAllActions(Game game, Prediction prediction, Set<Iceberg> cannotSendNow, Set<Iceberg> cannotUpgradeNow, List<Action> executedActions) {
         if(!prediction.isValid) {
             log(prediction);
-            throw new IllegalStateException("Prediction is not valid");
+            if(Log.IS_DEBUG) {
+                throw new IllegalStateException("Prediction is not valid");
+            }
         }
 
         List<Action> actions = new ArrayList<>();
