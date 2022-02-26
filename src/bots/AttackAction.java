@@ -68,16 +68,25 @@ public class AttackAction extends Action {
             }
         }
 
-        double averageDistanceToMyIcebergs = (double)totalDistanceFromMyIcebergs / myIcebergs;
-        double averageDistanceToEnemyIcebergs = (double)totalDistanceFromEnemyIcebergs / enemyIcebergs;
+        double averageDistanceToMyIcebergs = 0;
+        if(myIcebergs > 0) {
+            averageDistanceToMyIcebergs = totalDistanceFromMyIcebergs / myIcebergs;
+        }
+
+        double averageDistanceToEnemyIcebergs = 0;
+        if(enemyIcebergs > 0) {
+            averageDistanceToEnemyIcebergs = (double)totalDistanceFromEnemyIcebergs / enemyIcebergs;
+        }
 
         double enemyDefendScore = GameUtil.normalizeScore(averageDistanceToMyIcebergs - averageDistanceToEnemyIcebergs, 50, -50);
-        Log.log("for target + " + plan.target + ", enemyDefendScore: " + enemyDefendScore);
+        Log.log("for target + " + plan.target + ", enemyDefendScore: " + enemyDefendScore + " and predictionScore: " + predictionScore);
 
         double score = GameUtil.computeFactoredScore(
-                predictionScore, 0.5,
-                enemyDefendScore, 0.5
+                predictionScore, 0.9,
+                enemyDefendScore, 0.1
         );
+
+        Log.log("for target + " + plan.target + ", score: " + score);
 
         return score;
 

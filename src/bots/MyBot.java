@@ -15,7 +15,7 @@ public class MyBot implements SkillzBot {
 
     List<Action> ongoingActions = new ArrayList<>();
 
-    /*public static boolean DO_NOTHING = false;*/
+    public static boolean DO_NOTHING = false;
     public static boolean DONT_CREATE_NEW_ATTACKS = false;
     /*public static int ONLY_PRINT_FROM_TURN = 1;*/
 
@@ -36,11 +36,11 @@ public class MyBot implements SkillzBot {
             log("penguin group " + penguinGroup + " will arrive in: " + penguinGroup.turnsTillArrival + " turns");
         }*/
 
-        /*if(DO_NOTHING) {
+        if(DO_NOTHING) {
             return;
         }
 
-        if(game.turn == 1) {
+        /*if(game.turn == 1) {
             Log.IS_DEBUG = false;
         }
         if(game.turn == ONLY_PRINT_FROM_TURN) {
