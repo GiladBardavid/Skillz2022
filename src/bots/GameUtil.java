@@ -843,7 +843,7 @@ public class GameUtil {
                     return null;
                 }
 
-                Log.log("Attack " + target + " with " + penguinSum + " penguins");
+                Log.log("Attack " + IcebergUtil.toString(target) + " with " + penguinSum + " penguins");
 
                 return attackPlan;
             }

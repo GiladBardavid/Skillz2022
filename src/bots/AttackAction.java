@@ -20,12 +20,12 @@ public class AttackAction extends Action {
         // If the enemy is the closest to a neutral iceberg and it's penguin amount is positive, we should never attack it as the enemy could recapture it the next turn.
         boolean isEnemyClosest = false;
 
-        Collection<Iceberg> sortedByLength = GameUtil.getIcebergsSortedByDistance(game, plan.target);
+        Collection<Iceberg> sortedByDistance = GameUtil.getIcebergsSortedByDistance(game, plan.target);
         Iceberg myClosestIceberg = null;
         Iceberg enemyClosestIceberg = null;
 
         int planTurnsToCapture = plan.getTurnsToCapture();
-        for(Iceberg iceberg : sortedByLength) {
+        for(Iceberg iceberg : sortedByDistance) {
             IceBuildingState.Owner owner = predictionBeforeAction.iceBuildingStateAtWhatTurn.get(iceberg).get(planTurnsToCapture).owner;
             if(owner == ME && myClosestIceberg == null) {
                 myClosestIceberg = iceberg;
@@ -41,6 +41,8 @@ public class AttackAction extends Action {
 
         boolean willTargetBeNeutral = predictionBeforeAction.iceBuildingStateAtWhatTurn.get(plan.target).get(planTurnsToCapture).owner == NEUTRAL;
 
+        Log.log("target: " + IcebergUtil.toString(plan.target) + " isEnemyClosest: " + isEnemyClosest + " willTargetBeNeutral: " + willTargetBeNeutral + " penguinAmount: " + plan.target.penguinAmount);
+        Log.log("because enemyClosestIceberg turns till arrival is: " + (enemyClosestIceberg == null ? "null" : enemyClosestIceberg.getTurnsTillArrival(plan.target)) + " and myClosestIceberg turns till arrival is: " + (myClosestIceberg == null ? "null" : myClosestIceberg.getTurnsTillArrival(plan.target)));
         if(willTargetBeNeutral && isEnemyClosest && plan.target.penguinAmount > 0) {
             return 0;
         }
@@ -48,38 +50,44 @@ public class AttackAction extends Action {
 
 
 
-
         double predictionScore = predictionAfterAction.computeScore();
 
+        boolean canEnemyDefend = false;
+        AttackPlan.AttackPlanAction lastAction = plan.actions.get(0);
 
-        int totalDistanceFromMyIcebergs = 0;
-        int totalDistanceFromEnemyIcebergs = 0;
-        int myIcebergs = 0;
-        int enemyIcebergs = 0;
+        int firstTurnEnemyDetectsAttack = lastAction.turnsToSend + 1;
+        for(int enemySendDefenceTurn = firstTurnEnemyDetectsAttack; enemySendDefenceTurn < planTurnsToCapture && !canEnemyDefend; enemySendDefenceTurn++) {
+            for(Iceberg potentialDefendingIceberg : sortedByDistance) {
+                if(enemySendDefenceTurn + potentialDefendingIceberg.getTurnsTillArrival(plan.target) > planTurnsToCapture) {
+                    break;
+                }
 
-        for(Iceberg iceberg : game.getAllIcebergs()) {
-            if(predictionBeforeAction.iceBuildingStateAtWhatTurn.get(iceberg).get(planTurnsToCapture).owner == ME) {
-                myIcebergs++;
-                totalDistanceFromMyIcebergs += iceberg.getTurnsTillArrival(plan.target);
+                IceBuildingState defenderState = predictionBeforeAction.iceBuildingStateAtWhatTurn.get(potentialDefendingIceberg).get(enemySendDefenceTurn);
+                if(defenderState.owner == ENEMY && defenderState.penguinAmount >= 1) {
+                    canEnemyDefend = true;
+                    break;
+                }
             }
-            else if(predictionBeforeAction.iceBuildingStateAtWhatTurn.get(iceberg).get(planTurnsToCapture).owner == ENEMY) {
-                enemyIcebergs++;
-                totalDistanceFromEnemyIcebergs += iceberg.getTurnsTillArrival(plan.target);
-            }
+        }
+        if(canEnemyDefend) {
+            Log.log("Cancelled attack on target: " + IcebergUtil.toString(plan.target) + " because enemy can defend\n");
+            return 0;
         }
 
-        double averageDistanceToMyIcebergs = 0;
-        if(myIcebergs > 0) {
-            averageDistanceToMyIcebergs = totalDistanceFromMyIcebergs / myIcebergs;
-        }
 
-        double averageDistanceToEnemyIcebergs = 0;
-        if(enemyIcebergs > 0) {
-            averageDistanceToEnemyIcebergs = (double)totalDistanceFromEnemyIcebergs / enemyIcebergs;
-        }
 
-        double enemyDefendScore = GameUtil.normalizeScore(averageDistanceToMyIcebergs - averageDistanceToEnemyIcebergs, 50, -50);
+        double enemyDefendScore = canEnemyDefend ? 0 : 1;
         Log.log("for target + " + plan.target + ", enemyDefendScore: " + enemyDefendScore + " and predictionScore: " + predictionScore);
+
+
+        List<Boolean> canEnemyCaptureSender = new ArrayList<>();
+        for(AttackPlan.AttackPlanAction action : plan.actions) {
+            Iceberg sender = action.sender;
+
+        }
+
+        double enemyAttackSendersScore = 0;
+
 
         double score = GameUtil.computeFactoredScore(
                 predictionScore, 0.9,

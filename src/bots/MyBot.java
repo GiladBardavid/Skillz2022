@@ -27,6 +27,13 @@ public class MyBot implements SkillzBot {
 
         this.game = game;
 
+        /*if(game.turn == 1) return;
+
+        if(game.turn == 2) {
+            game.getMyIcebergs()[0].upgrade();
+            return;
+        }*/
+
         /*if(game.turn == 21) {
             game.getMyIcebergs()[2].sendPenguins(game.getEnemyIcebergs()[0], 1);
             game.getMyIcebergs()[2].sendPenguins(game.getMyIcebergs()[1], 1);
@@ -103,6 +110,7 @@ public class MyBot implements SkillzBot {
             // Filter out all elements from candidateActions whos score is 0 using a stream.
             candidateActions = candidateActions.stream()
                     .filter(action -> action.score > 0 && !executedActions.contains(action))
+                    .filter(action -> action.predictionAfterAction.computeScore() > action.predictionBeforeAction.computeScore())
                     .collect(Collectors.toList());
 
 
