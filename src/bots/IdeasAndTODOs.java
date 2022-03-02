@@ -4,7 +4,17 @@ package bots;
 
 TODOs:
 
-    - Defend action - also balance amount of penguins
+    - Fix attacking neutral icebergs that enemy can defend
+
+    - In defend action, send to who needs it most
+
+    - In defend action, consider splitting to multiple destinations
+
+    - In attack action, consider sending more than minimum if we have enough
+
+    - In attack action, take into account the max that an Iceberg can send
+
+    - Improve score of defend action
 
     - Improve target score in attack action (defense , distance)
 
