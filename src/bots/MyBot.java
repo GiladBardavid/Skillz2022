@@ -17,7 +17,8 @@ public class MyBot implements SkillzBot {
 
     public static boolean DO_NOTHING = false;
     public static boolean DONT_CREATE_NEW_ATTACKS = false;
-    /*public static int ONLY_PRINT_FROM_TURN = 1;*/
+    public static int ONLY_PRINT_FROM_TURN = 143;
+
 
     /**
      * Does the turn. This function is called by the system.
@@ -26,6 +27,13 @@ public class MyBot implements SkillzBot {
     public void doTurn(Game game) {
 
         this.game = game;
+
+        // TODO remove, this is only to prevent a bad move in the circle map
+        if(game.turn == 2) {
+            if (game.getMyIcebergs()[0].getTurnsTillArrival(game.getNeutralIcebergs()[0]) == 9) {
+                return;
+            }
+        }
 
         /*if(game.turn == 1) return;
 
@@ -47,12 +55,12 @@ public class MyBot implements SkillzBot {
             return;
         }
 
-        /*if(game.turn == 1) {
+        if(game.turn == 1) {
             Log.IS_DEBUG = false;
         }
         if(game.turn == ONLY_PRINT_FROM_TURN) {
             Log.IS_DEBUG = true;
-        }*/
+        }
 
         /*if(game.turn == 19) {
             DONT_CREATE_NEW_ATTACKS = true;
@@ -101,16 +109,13 @@ public class MyBot implements SkillzBot {
             // Sort actions
             for (Action action : candidateActions) {
                 action.computeScore(game);
-                /*if(ongoingActions.contains(action)) {
-                    action.score = 100; // TODO remove
-                }*/
             }
 
 
             // Filter out all elements from candidateActions whos score is 0 using a stream.
             candidateActions = candidateActions.stream()
                     .filter(action -> action.score > 0 && !executedActions.contains(action))
-                    .filter(action -> action.predictionAfterAction.computeScore() > action.predictionBeforeAction.computeScore())
+                    .filter(action -> (action.predictionAfterAction.computeScore() > action.predictionBeforeAction.computeScore()) || !action.mustImprovePrediction())
                     .collect(Collectors.toList());
 
 
@@ -249,6 +254,7 @@ public class MyBot implements SkillzBot {
             }
         }
 
+        // Create upgrade actions
         for(Iceberg myIceberg : game.getMyIcebergs()) {
             if(myIceberg.canUpgrade() && !cannotUpgradeNow.contains(myIceberg)) {
                 UpgradeAction action = new UpgradeAction(myIceberg);
@@ -267,7 +273,36 @@ public class MyBot implements SkillzBot {
             }
         }
 
-        // TODO add defend action, bridge action.
+
+        //Create defend actions
+        for(Iceberg myIceberg : game.getMyIcebergs()) {
+            if(myIceberg.level != myIceberg.upgradeLevelLimit) continue;
+
+            int maxThatCanSend = prediction.getMaxThatCanSend(myIceberg);
+            if(maxThatCanSend == 0) continue;
+
+            Iceberg closestIcebergThatIsNotMaxLevel = GameUtil.getClosestIcebergThatIsNotMaxLevel(game, myIceberg);
+            if(closestIcebergThatIsNotMaxLevel == null) continue;
+
+            DefendAction action = new DefendAction(myIceberg, closestIcebergThatIsNotMaxLevel, maxThatCanSend);
+
+            log("Checking defend action: " + action.toString());
+
+            List<Action> actionsToTest = new ArrayList<>(executedActions);
+            actionsToTest.add(action);
+
+            Prediction predictionAfterAction = new Prediction(game, actionsToTest);
+
+            if(predictionAfterAction.isValid) {
+                action.predictionAfterAction = predictionAfterAction;
+                action.predictionBeforeAction = prediction;
+                actions.add(action);
+
+                log("Added defend action: " + action.toString());
+            }
+        }
+
+        // TODO add bridge action.
 
         return actions;
     }

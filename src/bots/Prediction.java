@@ -66,7 +66,29 @@ public class Prediction {
                 upgradedIcebergs.add(((UpgradeAction) action).target);
             }
 
-            // TODO: implement bridge and defend actions
+            else if (action instanceof DefendAction) {
+                DefendAction defendAction = (DefendAction) action;
+                int[] penguinAmountToSendAtWhatTurn = howManyPenguinsWillSendAtWhatTurn.get(defendAction.from);
+
+                if(penguinAmountToSendAtWhatTurn == null){
+                    penguinAmountToSendAtWhatTurn = new int[maxTurnsLookAhead];
+                    howManyPenguinsWillSendAtWhatTurn.put(defendAction.from, penguinAmountToSendAtWhatTurn);
+                }
+
+                penguinAmountToSendAtWhatTurn[0] += defendAction.penguinAmount;
+
+
+                int[] penguinAmountArrivingAtWhatTurn = howManyOfMyPenguinsWillArriveAtWhatTurn.get(defendAction.to);
+
+                if(penguinAmountArrivingAtWhatTurn == null){
+                    penguinAmountArrivingAtWhatTurn = new int[maxTurnsLookAhead];
+                    howManyOfMyPenguinsWillArriveAtWhatTurn.put(defendAction.to, penguinAmountArrivingAtWhatTurn);
+                }
+
+                penguinAmountArrivingAtWhatTurn[defendAction.distance] += defendAction.penguinAmount;
+            }
+
+            // TODO: implement bridge actions
         }
 
 
@@ -311,6 +333,24 @@ public class Prediction {
 
         return score;
     }
+
+
+    public int getMaxThatCanSend(Iceberg iceberg) {
+        List<IceBuildingState> states = iceBuildingStateAtWhatTurn.get(iceberg);
+
+        int minPenguinAmountInState = Integer.MAX_VALUE;
+        for(IceBuildingState state : states) {
+            if(state.owner != ME) return 0;
+
+            if(state.penguinAmount < minPenguinAmountInState) {
+                minPenguinAmountInState = state.penguinAmount;
+            }
+        }
+
+        return minPenguinAmountInState;
+    }
+
+
 
     @Override
     public String toString() {

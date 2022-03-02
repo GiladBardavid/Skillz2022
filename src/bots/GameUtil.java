@@ -870,4 +870,22 @@ public class GameUtil {
     private static void log(Object toPrint) {
         Log.log(toPrint);
     }
+
+    public static Iceberg getClosestIcebergThatIsNotMaxLevel(Game game, Iceberg myIceberg) {
+        Iceberg closestIceberg = null;
+        int minDistance = Integer.MAX_VALUE;
+
+        for(Iceberg needsHelp : game.getMyIcebergs()) {
+            if(needsHelp == myIceberg) continue;
+            if(needsHelp.level == needsHelp.upgradeLevelLimit) continue;
+
+            int distance = needsHelp.getTurnsTillArrival(myIceberg);
+            if(distance < minDistance) {
+                minDistance = distance;
+                closestIceberg = needsHelp;
+            }
+        }
+
+        return closestIceberg;
+    }
 }

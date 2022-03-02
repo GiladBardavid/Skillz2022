@@ -16,6 +16,12 @@ public class UpgradeAction extends Action {
     }
 
 
+
+    @Override
+    public boolean mustImprovePrediction() {
+        return true;
+    }
+
     @Override
     double computeScoreImpl(Game game) {
 

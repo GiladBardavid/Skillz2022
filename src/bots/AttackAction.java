@@ -15,6 +15,11 @@ public class AttackAction extends Action {
     }
 
     @Override
+    public boolean mustImprovePrediction() {
+        return true;
+    }
+
+    @Override
     public double computeScoreImpl(Game game) {
 
         // If the enemy is the closest to a neutral iceberg and it's penguin amount is positive, we should never attack it as the enemy could recapture it the next turn.
@@ -69,10 +74,10 @@ public class AttackAction extends Action {
                 }
             }
         }
-        if(canEnemyDefend) {
+        /*if(canEnemyDefend) {
             Log.log("Cancelled attack on target: " + IcebergUtil.toString(plan.target) + " because enemy can defend\n");
             return 0;
-        }
+        }*/
 
 
 
@@ -86,12 +91,10 @@ public class AttackAction extends Action {
 
         }
 
-        double enemyAttackSendersScore = 0;
-
 
         double score = GameUtil.computeFactoredScore(
-                predictionScore, 0.9,
-                enemyDefendScore, 0.1
+                predictionScore, 0.5,
+                enemyDefendScore, 0.5
         );
 
         Log.log("for target + " + plan.target + ", score: " + score);

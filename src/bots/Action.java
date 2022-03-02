@@ -7,6 +7,8 @@ public abstract class Action {
 
     double score;
 
+    public abstract boolean mustImprovePrediction();
+
     public double getScore() {
         return score;
     }
