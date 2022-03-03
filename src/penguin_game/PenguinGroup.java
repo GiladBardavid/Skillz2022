@@ -5,4 +5,5 @@ public class PenguinGroup extends GameObject {
     public int penguinAmount;
     public Iceberg source;
     public int turnsTillArrival;
+    public boolean decoy;
 }

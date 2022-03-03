@@ -9,6 +9,15 @@ public class Game extends BaseObject {
     public final int turn;
     private final Player[] players;
 
+    int bonusIcebergBridgeCost = 0;
+    float bonusIcebergBridgeSpeedMultiplier = 0;
+    int bonusIcebergMaxBridgeDuration = 0;
+
+    float decoyCostFactor = 0;
+    int icebergBridgeCost = 0;
+    float icebergBridgeSpeedMultiplier = 0;
+    int icebergMaxBridgeDuration = 0;
+
     Game() {
         turn = 0;
         maxTurns = 300;
@@ -65,4 +74,10 @@ public class Game extends BaseObject {
     public BonusIceberg getBonusIceberg() {
         return new BonusIceberg();
     }
+
+    public PenguinGroup[] getMyDecoyPenguinGroups() {
+        return null;
+    }
+
+
 }
