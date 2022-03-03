@@ -5,6 +5,7 @@ import penguin_game.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static bots.IceBuildingState.Owner.ENEMY;
 import static bots.IceBuildingState.Owner.ME;
 
 public class GameUtil {
@@ -793,6 +794,9 @@ public class GameUtil {
             int penguinSum = 0;
             AttackPlan attackPlan = new AttackPlan(target);
 
+            // Add the help penguins that the enemy can send - we want to only perform attacks that the enemy can't defend
+            int penguinAmountThatWillBeInTarget = targetStateAtArrival.penguinAmount + getAmountOfPenguinsEnemyCanSendHelpInXTurns(game, prediction, target, turnsTillArrival);
+
             boolean hasEnoughToCapture = false;
             // Add all penguins from the closest x of my icebergs
             for(int j = 0; j <= i && !hasEnoughToCapture; j++) {
@@ -808,13 +812,22 @@ public class GameUtil {
                 // If the iceberg can send penguins, send all and check for excess
                 if(state.owner == ME && state.penguinAmount > 0) {
 
-                    int amountToSend = state.penguinAmount;
+                    // Set the amount to send variable to the max amount of penguins that the iceberg can send
+                    /*int amountToSend = state.penguinAmount;*/
+                    int amountToSend = prediction.getMaxThatCanSend(currentIceberg, turnsTillArrivalDelta);
+
+                    // If the current iceberg can't send anything, just continue to the next one
+                    if(amountToSend <= 0) {
+                        continue;
+                    }
+
                     penguinSum += amountToSend;
 
-                    if(penguinSum > targetStateAtArrival.penguinAmount) {
+
+                    if(penguinSum > penguinAmountThatWillBeInTarget) {
                         int prevAmountToSend = amountToSend;
 
-                        int excess = penguinSum - targetStateAtArrival.penguinAmount;
+                        int excess = penguinSum - penguinAmountThatWillBeInTarget;
                         amountToSend = amountToSend - excess + 1; // +1 because we want to capture and not only make neutral
 
 
@@ -829,7 +842,7 @@ public class GameUtil {
             }
 
 
-            if(penguinSum > targetStateAtArrival.penguinAmount) {
+            if(penguinSum > penguinAmountThatWillBeInTarget) {
 
                 // If the plan does not need to execute now, ignore it, it will be done in a later turn
                 boolean hasActionToBePerformedNow = false;
@@ -908,5 +921,22 @@ public class GameUtil {
         }
 
         return minAverageDistanceIceberg;
+    }
+
+
+    public static int getAmountOfPenguinsEnemyCanSendHelpInXTurns(Game game, Prediction prediction, IceBuilding target, int turns) {
+        if(prediction.iceBuildingStateAtWhatTurn.get(target).get(turns).owner != ENEMY) return 0;
+
+        int amountOfPenguins = 0;
+        for(Iceberg enemyIceberg : game.getEnemyIcebergs()) {
+            if (enemyIceberg == target) continue;
+
+            int distance = enemyIceberg.getTurnsTillArrival(target);
+            if(distance <= turns) {
+                amountOfPenguins += enemyIceberg.penguinAmount;
+                amountOfPenguins += enemyIceberg.penguinsPerTurn * distance;
+            }
+        }
+        return amountOfPenguins;
     }
 }

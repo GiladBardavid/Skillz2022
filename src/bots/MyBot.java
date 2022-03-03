@@ -17,7 +17,7 @@ public class MyBot implements SkillzBot {
 
     public static boolean DO_NOTHING = false;
     public static boolean DONT_CREATE_NEW_ATTACKS = false;
-    public static int ONLY_PRINT_FROM_TURN = 143;
+    public static int ONLY_PRINT_FROM_TURN = 1;
 
 
     /**
@@ -34,6 +34,17 @@ public class MyBot implements SkillzBot {
                 return;
             }
         }
+        if(game.turn == 1) {
+            if(game.getMyIcebergs()[0].getTurnsTillArrival(game.getNeutralIcebergs()[0]) == 6) {
+                game.getMyIcebergs()[0].upgrade();
+                return;
+            }
+        }
+        /*if(game.turn == 6 && game.getAllIcebergs().length == 10) {
+            if(game.getMyIcebergs()[0].getTurnsTillArrival(game.getNeutralIcebergs()[0]) == 11) {
+                game.getMyIcebergs()[0].sendPenguins(game.getNeutralIcebergs()[6], 15);
+            }
+        }*/
 
         /*if(game.turn == 1) return;
 
@@ -55,12 +66,12 @@ public class MyBot implements SkillzBot {
             return;
         }
 
-        if(game.turn == 1) {
+        /*if(game.turn == 1) {
             Log.IS_DEBUG = false;
         }
         if(game.turn == ONLY_PRINT_FROM_TURN) {
             Log.IS_DEBUG = true;
-        }
+        }*/
 
         /*if(game.turn == 19) {
             DONT_CREATE_NEW_ATTACKS = true;
@@ -278,7 +289,9 @@ public class MyBot implements SkillzBot {
         for(Iceberg myIceberg : game.getMyIcebergs()) {
             if(myIceberg.level != myIceberg.upgradeLevelLimit) continue;
 
-            int maxThatCanSend = prediction.getMaxThatCanSend(myIceberg);
+            int maxThatCanSend = prediction.getMaxThatCanSend(myIceberg, 0);
+
+            // If I can't send any penguins right now, don't create a defend action.
             if(maxThatCanSend == 0) continue;
 
             Iceberg target = null;

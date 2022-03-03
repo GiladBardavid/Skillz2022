@@ -74,10 +74,10 @@ public class AttackAction extends Action {
                 }
             }
         }
-        if(canEnemyDefend) {
+        /*if(canEnemyDefend) {
             Log.log("Cancelled attack on target: " + IcebergUtil.toString(plan.target) + " because enemy can defend\n");
             return 0;
-        }
+        }*/
 
 
 
@@ -93,8 +93,8 @@ public class AttackAction extends Action {
 
 
         double score = GameUtil.computeFactoredScore(
-                predictionScore, 0.5,
-                enemyDefendScore, 0.5
+                predictionScore, 1,
+                enemyDefendScore, 0
         );
 
         Log.log("for target + " + plan.target + ", score: " + score);

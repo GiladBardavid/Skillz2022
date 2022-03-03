@@ -335,15 +335,17 @@ public class Prediction {
     }
 
 
-    public int getMaxThatCanSend(Iceberg iceberg) {
+    public int getMaxThatCanSend(Iceberg iceberg, int turnsTillSend) {
         List<IceBuildingState> states = iceBuildingStateAtWhatTurn.get(iceberg);
 
         int minPenguinAmountInState = Integer.MAX_VALUE;
-        for(IceBuildingState state : states) {
-            if(state.owner != ME) return 0;
+        for(int i = turnsTillSend; i < states.size(); i++) {
+            IceBuildingState currentState = states.get(i);
 
-            if(state.penguinAmount < minPenguinAmountInState) {
-                minPenguinAmountInState = state.penguinAmount;
+            if(currentState.owner != ME) return 0;
+
+            if(currentState.penguinAmount < minPenguinAmountInState) {
+                minPenguinAmountInState = currentState.penguinAmount;
             }
         }
 
