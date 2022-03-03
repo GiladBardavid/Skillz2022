@@ -888,4 +888,25 @@ public class GameUtil {
 
         return closestIceberg;
     }
+
+    public static Iceberg closestIcebergToEnemy(Game game) {
+        Iceberg minAverageDistanceIceberg = null;
+        int minAverageDistance = Integer.MAX_VALUE;
+
+        int amountOfEnemyIcebergs = game.getEnemyIcebergs().length;
+        for(Iceberg myIceberg : game.getMyIcebergs()) {
+            int distancesSum = 0;
+            for(Iceberg enemyIceberg : game.getEnemyIcebergs()) {
+                distancesSum += myIceberg.getTurnsTillArrival(enemyIceberg);
+            }
+
+            double averageDistance = (double)distancesSum / amountOfEnemyIcebergs;
+            if(averageDistance < minAverageDistance) {
+                minAverageDistance = (int)averageDistance;
+                minAverageDistanceIceberg = myIceberg;
+            }
+        }
+
+        return minAverageDistanceIceberg;
+    }
 }

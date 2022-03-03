@@ -74,10 +74,10 @@ public class AttackAction extends Action {
                 }
             }
         }
-        /*if(canEnemyDefend) {
+        if(canEnemyDefend) {
             Log.log("Cancelled attack on target: " + IcebergUtil.toString(plan.target) + " because enemy can defend\n");
             return 0;
-        }*/
+        }
 
 
 

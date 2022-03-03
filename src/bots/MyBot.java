@@ -281,10 +281,22 @@ public class MyBot implements SkillzBot {
             int maxThatCanSend = prediction.getMaxThatCanSend(myIceberg);
             if(maxThatCanSend == 0) continue;
 
+            Iceberg target = null;
             Iceberg closestIcebergThatIsNotMaxLevel = GameUtil.getClosestIcebergThatIsNotMaxLevel(game, myIceberg);
-            if(closestIcebergThatIsNotMaxLevel == null) continue;
+            Iceberg myMostVulnerableIceberg = GameUtil.closestIcebergToEnemy(game);
+            if(closestIcebergThatIsNotMaxLevel != null) {
+                target = closestIcebergThatIsNotMaxLevel;
+            }
+            else {
+                target = myMostVulnerableIceberg;
+            }
 
-            DefendAction action = new DefendAction(myIceberg, closestIcebergThatIsNotMaxLevel, maxThatCanSend);
+            // Target should never be null, just in case
+            if(target == null || target == myIceberg) continue;
+
+            if(target == null) continue;
+
+            DefendAction action = new DefendAction(myIceberg, target, maxThatCanSend);
 
             log("Checking defend action: " + action.toString());
 
