@@ -356,17 +356,28 @@ public class Prediction {
         List<IceBuildingState> states = iceBuildingStateAtWhatTurn.get(iceberg);
 
         int minPenguinAmountInState = Integer.MAX_VALUE;
+
+        // If there is a penguin group in the same turn, the max that we can send is 1 less, as if we send all, the enemy will be neutral.
+        int lastIndexOfMinPenguinAmount = 0;
+
         for(int i = turnsTillSend; i < states.size(); i++) {
             IceBuildingState currentState = states.get(i);
 
             if(currentState.owner != ME) return 0;
 
-            if(currentState.penguinAmount < minPenguinAmountInState) {
+            if(currentState.penguinAmount <= minPenguinAmountInState) {
                 minPenguinAmountInState = currentState.penguinAmount;
+                lastIndexOfMinPenguinAmount = i;
             }
         }
 
-        return minPenguinAmountInState;
+        // If the max amount that I can send will result in me turning neutral, send 1 less so I will have 1 penguin remaining and I will stay mine
+        if(lastIndexOfMinPenguinAmount != turnsTillSend) {
+            minPenguinAmountInState--;
+        }
+
+        // Because of the previous if, we don't want the max that I can send to be -1 (negative)
+        return Math.max(minPenguinAmountInState, 0);
     }
 
 

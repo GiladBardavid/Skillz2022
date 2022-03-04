@@ -4,9 +4,13 @@ package bots;
 
 TODOs:
 
+    - Add bridge info when planning attacks
+
     - Fix attacking neutral icebergs that enemy can defend
 
     - In defend action, send to who needs it most
+
+    - In defend action, prevent capturing by enemy
 
     - In defend action, consider splitting to multiple destinations
 
@@ -20,8 +24,8 @@ TODOs:
 
     - Better compute upgrade score
 
-    - Bridges
-
     - Generalize hacks for first week bots
+
+    - Improve bridge score
 
  */

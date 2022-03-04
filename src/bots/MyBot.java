@@ -6,8 +6,6 @@ import java.util.stream.Collectors;
 
 /**
  * "The" Skillz 2022 Code
- *
- *
  */
 public class MyBot implements SkillzBot {
 
@@ -17,7 +15,7 @@ public class MyBot implements SkillzBot {
 
     public static boolean DO_NOTHING = false;
     public static boolean DONT_CREATE_NEW_ATTACKS = false;
-    public static int ONLY_PRINT_FROM_TURN = 1;
+    public static int ONLY_PRINT_FROM_TURN = 300;
 
 
     /**
@@ -44,12 +42,12 @@ public class MyBot implements SkillzBot {
                 return;
             }
         }
-        if(game.turn == 1) {
+        /*if(game.turn == 1) {
             if(game.getMyIcebergs()[0].getTurnsTillArrival(game.getNeutralIcebergs()[0]) == 6) {
                 game.getMyIcebergs()[0].upgrade();
                 return;
             }
-        }
+        }*/
 
 
 
@@ -80,12 +78,12 @@ public class MyBot implements SkillzBot {
             return;
         }
 
-        /*if(game.turn == 1) {
+        if(game.turn == 1) {
             Log.IS_DEBUG = false;
         }
         if(game.turn == ONLY_PRINT_FROM_TURN) {
             Log.IS_DEBUG = true;
-        }*/
+        }
 
         /*if(game.turn == 19) {
             DONT_CREATE_NEW_ATTACKS = true;
@@ -309,6 +307,8 @@ public class MyBot implements SkillzBot {
 
         //Create defend actions
         for(Iceberg myIceberg : game.getMyIcebergs()) {
+            if(cannotSendNow.contains(myIceberg)) continue;
+
             if(myIceberg.level != myIceberg.upgradeLevelLimit) continue;
 
             int maxThatCanSend = prediction.getMaxThatCanSend(myIceberg, 0);

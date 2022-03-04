@@ -34,7 +34,7 @@ public class BridgeAction extends Action{
             }
         }
 
-        return 2; // TODO score better
+        return 0.2; // score will be determined by prediction
     }
 
     @Override
