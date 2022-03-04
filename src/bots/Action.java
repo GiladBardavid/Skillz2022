@@ -33,6 +33,10 @@ public abstract class Action {
         return new HashSet<>();
     }
 
+    public Set<Iceberg> getIcebergsThatBuiltBridgeNow(){
+        return new HashSet<>();
+    }
+
     public abstract Action ageByTurn();
 
     public Prediction predictionAfterAction;

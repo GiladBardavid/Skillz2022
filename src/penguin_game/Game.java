@@ -9,14 +9,14 @@ public class Game extends BaseObject {
     public final int turn;
     private final Player[] players;
 
-    int bonusIcebergBridgeCost = 0;
-    float bonusIcebergBridgeSpeedMultiplier = 0;
-    int bonusIcebergMaxBridgeDuration = 0;
+    public final int bonusIcebergBridgeCost = 0;
+    public final float bonusIcebergBridgeSpeedMultiplier = 0;
+    public final int bonusIcebergMaxBridgeDuration = 0;
 
-    float decoyCostFactor = 0;
-    int icebergBridgeCost = 0;
-    float icebergBridgeSpeedMultiplier = 0;
-    int icebergMaxBridgeDuration = 0;
+    public final float decoyCostFactor = 0;
+    public final int icebergBridgeCost = 0;
+    public final float icebergBridgeSpeedMultiplier = 0;
+    public final int icebergMaxBridgeDuration = 0;
 
     Game() {
         turn = 0;

@@ -22,4 +22,6 @@ TODOs:
 
     - Bridges
 
+    - Generalize hacks for first week bots
+
  */

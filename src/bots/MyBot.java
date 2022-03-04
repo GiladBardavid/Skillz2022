@@ -28,6 +28,16 @@ public class MyBot implements SkillzBot {
 
         this.game = game;
 
+        /*log("Game bridge cost: " + game.icebergBridgeCost);
+        log("Game bridge speed: " + game.icebergBridgeSpeedMultiplier);
+        log("Bonus bridge cost: " + game.bonusIcebergBridgeCost);
+        log("Bonus bridge speed: " + game.bonusIcebergBridgeSpeedMultiplier);
+        for(Iceberg iceberg : game.getAllIcebergs()) {
+            log("Bridge cost for iceberg " + IcebergUtil.toString(iceberg) + ": " + iceberg.bridgeCost);
+            log("Bridge speed for iceberg " + IcebergUtil.toString(iceberg) + ": " + iceberg.bridgeSpeedMultiplier);
+        }*/
+
+
         // TODO remove, this is only to prevent a bad move in the circle map
         if(game.turn == 2) {
             if (game.getMyIcebergs()[0].getTurnsTillArrival(game.getNeutralIcebergs()[0]) == 9) {
@@ -40,6 +50,10 @@ public class MyBot implements SkillzBot {
                 return;
             }
         }
+
+
+
+
         /*if(game.turn == 6 && game.getAllIcebergs().length == 10) {
             if(game.getMyIcebergs()[0].getTurnsTillArrival(game.getNeutralIcebergs()[0]) == 11) {
                 game.getMyIcebergs()[0].sendPenguins(game.getNeutralIcebergs()[6], 15);
@@ -85,6 +99,8 @@ public class MyBot implements SkillzBot {
         // Update static states
         GameUtil.updateTurnState(game);
 
+        /*log("Start prediction: " + GameUtil.prediction);*/
+
         // age ongoing actions
         List<Action> newOngoingActions = new ArrayList<>();
         for(Action action : ongoingActions) {
@@ -106,6 +122,7 @@ public class MyBot implements SkillzBot {
 
         Set<Iceberg> cannotSendNow = new HashSet<>();
         Set<Iceberg> cannotUpgradeNow = new HashSet<>();
+        Set<Iceberg> cannotBuildBridgeNow = new HashSet<>();
 
         List<Action> executedActions = new ArrayList<>();
 
@@ -113,7 +130,7 @@ public class MyBot implements SkillzBot {
         while(true) {
 
 
-            List<Action> candidateActions = createAllActions(game, prediction, cannotSendNow, cannotUpgradeNow, executedActions);
+            List<Action> candidateActions = createAllActions(game, prediction, cannotSendNow, cannotUpgradeNow, cannotBuildBridgeNow, executedActions);
             log("candidateActions size: " + candidateActions.size());
 
 
@@ -159,10 +176,15 @@ public class MyBot implements SkillzBot {
                 executedActions.add(bestAction);
 
                 cannotSendNow.addAll(bestAction.getIcebergsThatUpgradedNow());
-                /*log("Adding icebergs that sent now: " + bestAction.getIcebergsThatSentNow());*/
+                cannotSendNow.addAll(bestAction.getIcebergsThatBuiltBridgeNow());
+
                 cannotUpgradeNow.addAll(bestAction.getIcebergsThatSentNow());
                 cannotUpgradeNow.addAll(bestAction.getIcebergsThatUpgradedNow());
-                /*log("Adding icebergs that upgraded now: " + bestAction.getIcebergsThatUpgradedNow());*/
+                cannotUpgradeNow.addAll(bestAction.getIcebergsThatBuiltBridgeNow());
+
+                cannotBuildBridgeNow.addAll(bestAction.getIcebergsThatSentNow());
+                cannotBuildBridgeNow.addAll(bestAction.getIcebergsThatUpgradedNow());
+                cannotBuildBridgeNow.addAll(bestAction.getIcebergsThatBuiltBridgeNow());
             }
 
 
@@ -191,7 +213,7 @@ public class MyBot implements SkillzBot {
      * @param game current game state
      * @return list of all possible actions
      */
-    public List<Action> createAllActions(Game game, Prediction prediction, Set<Iceberg> cannotSendNow, Set<Iceberg> cannotUpgradeNow, List<Action> executedActions) {
+    public List<Action> createAllActions(Game game, Prediction prediction, Set<Iceberg> cannotSendNow, Set<Iceberg> cannotUpgradeNow, Set<Iceberg> cannotBuildBridgeNow, List<Action> executedActions) {
         if(!prediction.isValid) {
             log(prediction);
             if(Log.IS_DEBUG) {
@@ -327,7 +349,45 @@ public class MyBot implements SkillzBot {
             }
         }
 
-        // TODO add bridge action.
+
+        // Create bridge actions
+        for(Iceberg myIceberg : game.getMyIcebergs()) {
+            log("Checking bridge action for iceberg: " + myIceberg.toString());
+            if(cannotBuildBridgeNow.contains(myIceberg)) continue;
+
+            for(Iceberg target : game.getAllIcebergs()) {
+                if(target == myIceberg) continue;
+
+                log("Checking can create bridge");
+                if(!(myIceberg.penguinAmount >= myIceberg.bridgeCost)) continue; // maybe their code for canCreateBridge is wrong
+                log("Can create bridge");
+
+                boolean gameAlreadyHasThisBridge = false;
+                for(Bridge bridge : myIceberg.bridges) {
+                    if(bridge.getEdges()[0] == target || bridge.getEdges()[1] == target) {
+                        gameAlreadyHasThisBridge = true;
+                        break;
+                    }
+                }
+                log("Already has bridge: " + gameAlreadyHasThisBridge);
+                if(gameAlreadyHasThisBridge) continue;
+
+                BridgeAction action = new BridgeAction(myIceberg, target);
+
+                List<Action> actionsToTest = new ArrayList<>(executedActions);
+                actionsToTest.add(action);
+
+                Prediction predictionAfterAction = new Prediction(game, actionsToTest);
+
+                if(predictionAfterAction.isValid) {
+                    action.predictionAfterAction = predictionAfterAction;
+                    action.predictionBeforeAction = prediction;
+                    actions.add(action);
+
+                    log("Added bridge action: " + action.toString());
+                }
+            }
+        }
 
         return actions;
     }

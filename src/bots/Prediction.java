@@ -19,6 +19,8 @@ public class Prediction {
 
     public Prediction(Game game, List<Action> executedActions) {
 
+        BridgeHelper bridgeHelper = new BridgeHelper(game);
+
         int maxTurnsLookAhead = GameUtil.getMaxLengthBetweenIceBuildings(game) * 2 + 1;
 
         howManyOfMyPenguinsWillArriveAtWhatTurn = new HashMap<>();
@@ -26,6 +28,8 @@ public class Prediction {
         howManyPenguinsWillSendAtWhatTurn = new HashMap<>();
 
         Set<Iceberg> upgradedIcebergs = new HashSet<>();
+
+        List<BridgeAction> bridgeActions = new ArrayList<>();
 
 
         for(Action action : executedActions) {
@@ -38,7 +42,7 @@ public class Prediction {
                 for(AttackPlan.AttackPlanAction planAction : attackPlan.actions) {
 
                     int turnsToSend = planAction.turnsToSend;
-                    int turnsToArrive = planAction.turnsToSend + planAction.sender.getTurnsTillArrival(target);
+                    int turnsToArrive = bridgeHelper.getArrivalTurn(planAction.sender, target, turnsToSend, bridgeActions);
 
                     int[] penguinAmountArrivingAtWhatTurn = howManyOfMyPenguinsWillArriveAtWhatTurn.get(target);
 
@@ -85,10 +89,23 @@ public class Prediction {
                     howManyOfMyPenguinsWillArriveAtWhatTurn.put(defendAction.to, penguinAmountArrivingAtWhatTurn);
                 }
 
-                penguinAmountArrivingAtWhatTurn[defendAction.distance] += defendAction.penguinAmount;
+                int turnsToArrive = bridgeHelper.getArrivalTurn(defendAction.from, defendAction.to, 0, bridgeActions);
+                penguinAmountArrivingAtWhatTurn[turnsToArrive] += defendAction.penguinAmount;
             }
 
-            // TODO: implement bridge actions
+            else if (action instanceof BridgeAction) {
+                BridgeAction bridgeAction = (BridgeAction) action;
+                bridgeActions.add(bridgeAction);
+
+                int[] penguinAmountToSendAtWhatTurn = howManyPenguinsWillSendAtWhatTurn.get(bridgeAction.from);
+
+                if(penguinAmountToSendAtWhatTurn == null){
+                    penguinAmountToSendAtWhatTurn = new int[maxTurnsLookAhead];
+                    howManyPenguinsWillSendAtWhatTurn.put(bridgeAction.from, penguinAmountToSendAtWhatTurn);
+                }
+
+                penguinAmountToSendAtWhatTurn[0] += bridgeAction.cost;
+            }
         }
 
 
@@ -102,7 +119,7 @@ public class Prediction {
                 howManyOfMyPenguinsWillArriveAtWhatTurn.put(destination, penguinAmountArrivingAtWhatTurn);
             }
 
-            int turnsTillArrival = myPenguinGroup.turnsTillArrival;
+            int turnsTillArrival = bridgeHelper.getActualTurnsTillArrival(myPenguinGroup, bridgeActions);
             int penguinAmount = myPenguinGroup.penguinAmount;
 
             penguinAmountArrivingAtWhatTurn[turnsTillArrival] += penguinAmount;
@@ -119,7 +136,7 @@ public class Prediction {
                 howManyEnemyPenguinsWillArriveAtWhatTurn.put(destination, penguinAmountArrivingAtWhatTurn);
             }
 
-            int turnsTillArrival = enemyPenguinGroup.turnsTillArrival;
+            int turnsTillArrival = bridgeHelper.getActualTurnsTillArrival(enemyPenguinGroup, bridgeActions);
             int penguinAmount = enemyPenguinGroup.penguinAmount;
 
             penguinAmountArrivingAtWhatTurn[turnsTillArrival] += penguinAmount;
