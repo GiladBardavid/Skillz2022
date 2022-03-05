@@ -5,14 +5,14 @@ import java.util.*;
 
 public class UpgradeAction extends Action {
 
-    Iceberg target;
+    Iceberg upgradingIceberg;
 
     public UpgradeAction(Iceberg target) {
-        this.target = target;
+        this.upgradingIceberg = target;
     }
 
     public String toString() {
-        return "Upgrade action: " + target;
+        return "Upgrade action: " + upgradingIceberg;
     }
 
 
@@ -25,6 +25,10 @@ public class UpgradeAction extends Action {
     @Override
     double computeScoreImpl(Game game) {
 
+        if(predictionAfterAction.canBeAtRisk(upgradingIceberg)) {
+            return 0;
+        }
+
         double score = predictionAfterAction.computeScore();
 
         return score;
@@ -35,10 +39,10 @@ public class UpgradeAction extends Action {
 
     @Override
     public boolean executeIfPossible(Game game) {
-        Log.log("Trying upgrade action: target = " + target + " canUpgrade = " + target.canUpgrade());
-        if(target.canUpgrade()){
-            target.upgrade();
-            Log.log("Upgrade action executed: target = " + target);
+        Log.log("Trying upgrade action: target = " + upgradingIceberg + " canUpgrade = " + upgradingIceberg.canUpgrade());
+        if(upgradingIceberg.canUpgrade()){
+            upgradingIceberg.upgrade();
+            Log.log("Upgrade action executed: target = " + upgradingIceberg);
             return true;
         }
         return false;
@@ -48,7 +52,7 @@ public class UpgradeAction extends Action {
     @Override
     public Set<Iceberg> getIcebergsThatUpgradedNow() {
         Set<Iceberg> icebergs = new HashSet<>();
-        icebergs.add(target);
+        icebergs.add(upgradingIceberg);
         return icebergs;
     }
 

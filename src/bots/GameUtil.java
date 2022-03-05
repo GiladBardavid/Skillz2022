@@ -814,7 +814,7 @@ public class GameUtil {
 
                     // Set the amount to send variable to the max amount of penguins that the iceberg can send
                     /*int amountToSend = state.penguinAmount;*/
-                    int amountToSend = prediction.getMaxThatCanSend(currentIceberg, turnsTillArrivalDelta);
+                    int amountToSend = prediction.getMaxThatCanSpend(currentIceberg, turnsTillArrivalDelta);
 
                     // If the current iceberg can't send anything, just continue to the next one
                     if(amountToSend <= 0) {

@@ -15,7 +15,7 @@ public class MyBot implements SkillzBot {
 
     public static boolean DO_NOTHING = false;
     public static boolean DONT_CREATE_NEW_ATTACKS = false;
-    public static int ONLY_PRINT_FROM_TURN = 300;
+    public static int ONLY_PRINT_FROM_TURN = 145;
 
 
     /**
@@ -37,11 +37,11 @@ public class MyBot implements SkillzBot {
 
 
         // TODO remove, this is only to prevent a bad move in the circle map
-        if(game.turn == 2) {
+        /*if(game.turn == 2) {
             if (game.getMyIcebergs()[0].getTurnsTillArrival(game.getNeutralIcebergs()[0]) == 9) {
                 return;
             }
-        }
+        }*/
         /*if(game.turn == 1) {
             if(game.getMyIcebergs()[0].getTurnsTillArrival(game.getNeutralIcebergs()[0]) == 6) {
                 game.getMyIcebergs()[0].upgrade();
@@ -288,6 +288,7 @@ public class MyBot implements SkillzBot {
         // Create upgrade actions
         for(Iceberg myIceberg : game.getMyIcebergs()) {
             if(myIceberg.canUpgrade() && !cannotUpgradeNow.contains(myIceberg)) {
+
                 UpgradeAction action = new UpgradeAction(myIceberg);
 
                 List<Action> actionsToTest = new ArrayList<>(executedActions);
@@ -311,7 +312,7 @@ public class MyBot implements SkillzBot {
 
             if(myIceberg.level != myIceberg.upgradeLevelLimit) continue;
 
-            int maxThatCanSend = prediction.getMaxThatCanSend(myIceberg, 0);
+            int maxThatCanSend = prediction.getMaxThatCanSpend(myIceberg, 0);
 
             // If I can't send any penguins right now, don't create a defend action.
             if(maxThatCanSend == 0) continue;

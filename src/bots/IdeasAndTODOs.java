@@ -4,6 +4,8 @@ package bots;
 
 TODOs:
 
+    - Snowpenguin turn 33
+
     - Add bridge info when planning attacks
 
     - Fix attacking neutral icebergs that enemy can defend

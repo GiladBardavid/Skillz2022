@@ -34,6 +34,10 @@ public class BridgeAction extends Action{
             }
         }
 
+        if(predictionAfterAction.canBeAtRisk(from)) {
+            return 0;
+        }
+
         return 0.2; // score will be determined by prediction
     }
 

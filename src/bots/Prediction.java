@@ -12,9 +12,14 @@ public class Prediction {
     public Map<IceBuilding, int[]> howManyOfMyPenguinsWillArriveAtWhatTurn;
     public Map<IceBuilding, int[]> howManyEnemyPenguinsWillArriveAtWhatTurn;
 
+    public Map<IceBuilding, int[]> howManyOfMyPenguinsCanArriveAtWhatTurn;
+    public Map<IceBuilding, int[]> howManyEnemyPenguinsCanArriveAtWhatTurn;
+
     public Map<Iceberg, int[]> howManyPenguinsWillSendAtWhatTurn;
 
     public boolean isValid = true;
+
+    private final static int MAX_CAN_SEND_LOOKAHEAD = 12;
 
 
     public Prediction(Game game, List<Action> executedActions) {
@@ -26,6 +31,9 @@ public class Prediction {
         howManyOfMyPenguinsWillArriveAtWhatTurn = new HashMap<>();
         howManyEnemyPenguinsWillArriveAtWhatTurn = new HashMap<>();
         howManyPenguinsWillSendAtWhatTurn = new HashMap<>();
+
+        howManyOfMyPenguinsCanArriveAtWhatTurn = new HashMap<>();
+        howManyEnemyPenguinsCanArriveAtWhatTurn = new HashMap<>();
 
         Set<Iceberg> upgradedIcebergs = new HashSet<>();
 
@@ -67,7 +75,7 @@ public class Prediction {
                 }
             }
             else if(action instanceof UpgradeAction) {
-                upgradedIcebergs.add(((UpgradeAction) action).target);
+                upgradedIcebergs.add(((UpgradeAction) action).upgradingIceberg);
             }
 
             else if (action instanceof DefendAction) {
@@ -310,6 +318,41 @@ public class Prediction {
         }
 
 
+        // Update possible penguin arrivals
+        for(IceBuilding iceBuilding : GameUtil.getAllIceBuildings(game)) {
+            int[] myPossiblePenguinArrivals = new int[MAX_CAN_SEND_LOOKAHEAD];
+            int[] enemyPossiblePenguinArrivals = new int[MAX_CAN_SEND_LOOKAHEAD];
+
+            howManyOfMyPenguinsCanArriveAtWhatTurn.put(iceBuilding, myPossiblePenguinArrivals);
+            howManyEnemyPenguinsCanArriveAtWhatTurn.put(iceBuilding, enemyPossiblePenguinArrivals);
+
+            for(IceBuilding otherIceBuilding : GameUtil.getAllIceBuildings(game)) {
+
+                if(otherIceBuilding.equals(iceBuilding)) {
+                    continue;
+                }
+
+                int distance = iceBuilding.getTurnsTillArrival(otherIceBuilding); // TODO factoring bridges
+
+                for(int sendingTurn = 0; sendingTurn < MAX_CAN_SEND_LOOKAHEAD - distance; sendingTurn++) {
+
+                    IceBuildingState otherIcebergState = iceBuildingStateAtWhatTurn.get(otherIceBuilding).get(sendingTurn);
+
+                    if(otherIcebergState.owner == ME) {
+                        myPossiblePenguinArrivals[sendingTurn + distance] += otherIcebergState.penguinAmount;
+                    }
+                    else if(otherIcebergState.owner == ENEMY) {
+                        enemyPossiblePenguinArrivals[sendingTurn + distance] += otherIcebergState.penguinAmount;
+                    }
+                }
+            }
+        }
+        /*Log.log("Possible penguin arrivals updated:");
+        for(IceBuilding iceBuilding : GameUtil.getAllIceBuildings(game)) {
+            Log.log("Iceberg " + IcebergUtil.toString(iceBuilding) + ": Mine:\n " + Arrays.toString(howManyOfMyPenguinsCanArriveAtWhatTurn.get(iceBuilding)));
+            Log.log("Enemy:\n" + Arrays.toString(howManyEnemyPenguinsCanArriveAtWhatTurn.get(iceBuilding)));
+        }*/
+
     }
 
     public double computeScore() {
@@ -352,7 +395,7 @@ public class Prediction {
     }
 
 
-    public int getMaxThatCanSend(Iceberg iceberg, int turnsTillSend) {
+    public int getMaxThatCanSpend(Iceberg iceberg, int turnsTillSend) {
         List<IceBuildingState> states = iceBuildingStateAtWhatTurn.get(iceberg);
 
         int minPenguinAmountInState = Integer.MAX_VALUE;
@@ -365,8 +408,14 @@ public class Prediction {
 
             if(currentState.owner != ME) return 0;
 
-            if(currentState.penguinAmount <= minPenguinAmountInState) {
-                minPenguinAmountInState = currentState.penguinAmount;
+            int penguinAmountIfEveryoneSendsToMe = currentState.penguinAmount;
+
+            if(i < /*turnsTillSend + */MAX_CAN_SEND_LOOKAHEAD) {
+                penguinAmountIfEveryoneSendsToMe += howManyOfMyPenguinsCanArriveAtWhatTurn.get(iceberg)[i] - howManyEnemyPenguinsCanArriveAtWhatTurn.get(iceberg)[i];
+            }
+
+            if(penguinAmountIfEveryoneSendsToMe <= minPenguinAmountInState) { // penguinsAmountIFEveryoneSendsToMe was previously just currentState.penguinAmount
+                minPenguinAmountInState = penguinAmountIfEveryoneSendsToMe;
                 lastIndexOfMinPenguinAmount = i;
             }
         }
@@ -377,7 +426,31 @@ public class Prediction {
         }
 
         // Because of the previous if, we don't want the max that I can send to be -1 (negative)
-        return Math.max(minPenguinAmountInState, 0);
+        int result = Math.max(0, minPenguinAmountInState);
+        Log.log("Max that " + IcebergUtil.toString(iceberg) + " can send: " + result);
+        return result;
+    }
+
+
+
+    public boolean canBeAtRisk(IceBuilding iceBuilding) {
+        List<IceBuildingState> states = iceBuildingStateAtWhatTurn.get(iceBuilding);
+
+        for(int i = 0; i < states.size(); i++) {
+            IceBuildingState currentState = states.get(i);
+
+            int penguinAmountIfEveryoneSendsToMe = currentState.penguinAmount;
+
+            if(i < MAX_CAN_SEND_LOOKAHEAD) {
+                penguinAmountIfEveryoneSendsToMe += howManyOfMyPenguinsCanArriveAtWhatTurn.get(iceBuilding)[i] - howManyEnemyPenguinsCanArriveAtWhatTurn.get(iceBuilding)[i];
+            }
+
+            if (penguinAmountIfEveryoneSendsToMe <= 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 
