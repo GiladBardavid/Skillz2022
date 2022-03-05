@@ -161,13 +161,15 @@ public class IcebergUtil {
 
 
     public static String toString(IceBuilding iceBuilding) {
-        String result = "[[" + iceBuilding.id + "/";
+
+        String result = "[[" + (iceBuilding instanceof BonusIceberg ? "BONUS" : iceBuilding.id) + "/";
+
         switch (iceBuilding.owner.id) {
             case 0:
-                result += "ME";
+                result += "YELLOW";
                 break;
             case 1:
-                result += "ENEMY";
+                result += "BLUE";
                 break;
             case -1:
                 result += "NEUTRAL";

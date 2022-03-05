@@ -15,7 +15,7 @@ public class MyBot implements SkillzBot {
 
     public static boolean DO_NOTHING = false;
     public static boolean DONT_CREATE_NEW_ATTACKS = false;
-    public static int ONLY_PRINT_FROM_TURN = 145;
+    public static int ONLY_PRINT_FROM_TURN = 1;
 
 
     /**
@@ -25,6 +25,19 @@ public class MyBot implements SkillzBot {
     public void doTurn(Game game) {
 
         this.game = game;
+
+
+        // HACKS for week 2
+        /*if(game.turn == 35 && game.getMyIcebergs()[0].penguinAmount >= 28 && game.getMyIcebergs()[1].penguinAmount <= 32) {
+            game.getMyIcebergs()[0].sendPenguins(game.getBonusIceberg(), 11);
+        }
+
+        if(game.getAllIcebergs().length == 8 && game.turn >= 27 && game.turn <= 50) {
+            game.getMyIcebergs()[2].sendPenguins(game.getMyIcebergs()[1], game.getMyIcebergs()[2].penguinAmount);
+        }
+        if(game.getAllIcebergs().length == 8 && game.turn >= 30 && game.turn <= 62) {
+            game.getMyIcebergs()[1].sendPenguins(game.getBonusIceberg(), game.getMyIcebergs()[1].penguinAmount);
+        }*/
 
         /*log("Game bridge cost: " + game.icebergBridgeCost);
         log("Game bridge speed: " + game.icebergBridgeSpeedMultiplier);
@@ -37,11 +50,13 @@ public class MyBot implements SkillzBot {
 
 
         // TODO remove, this is only to prevent a bad move in the circle map
-        /*if(game.turn == 2) {
-            if (game.getMyIcebergs()[0].getTurnsTillArrival(game.getNeutralIcebergs()[0]) == 9) {
-                return;
+        if(game.turn == 2) {
+            if(game.getNeutralIcebergs().length > 0) {
+                if (game.getMyIcebergs()[0].getTurnsTillArrival(game.getNeutralIcebergs()[0]) == 9 && game.getNeutralIcebergs()[0].penguinAmount == 8 && game.getMyIcebergs()[0].penguinAmount == 8) {
+                    return;
+                }
             }
-        }*/
+        }
         /*if(game.turn == 1) {
             if(game.getMyIcebergs()[0].getTurnsTillArrival(game.getNeutralIcebergs()[0]) == 6) {
                 game.getMyIcebergs()[0].upgrade();
@@ -78,12 +93,12 @@ public class MyBot implements SkillzBot {
             return;
         }
 
-        if(game.turn == 1) {
+        /*if(game.turn == 1) {
             Log.IS_DEBUG = false;
         }
         if(game.turn == ONLY_PRINT_FROM_TURN) {
             Log.IS_DEBUG = true;
-        }
+        }*/
 
         /*if(game.turn == 19) {
             DONT_CREATE_NEW_ATTACKS = true;
@@ -168,6 +183,7 @@ public class MyBot implements SkillzBot {
                 Action bestAction = candidateActions.get(0);
 
                 log("\nBest action: " + bestAction.toString() + "\n" + "  Score: " + bestAction.score + "\n");
+                /*log("Prediction after performing the action:\n" + bestAction.predictionAfterAction);*/
 
                 /*bestAction.executeIfPossible(game);*/
 
@@ -318,10 +334,10 @@ public class MyBot implements SkillzBot {
             if(maxThatCanSend == 0) continue;
 
             Iceberg target = null;
-            Iceberg closestIcebergThatIsNotMaxLevel = GameUtil.getClosestIcebergThatIsNotMaxLevel(game, myIceberg);
+            Iceberg closestIcebergThatIsNotMaxLevelAndIsMoreVulnerable = GameUtil.getClosestIcebergThatIsNotMaxLevelAndIsMoreVulnerable(game, myIceberg);
             Iceberg myMostVulnerableIceberg = GameUtil.closestIcebergToEnemy(game);
-            if(closestIcebergThatIsNotMaxLevel != null) {
-                target = closestIcebergThatIsNotMaxLevel;
+            if(closestIcebergThatIsNotMaxLevelAndIsMoreVulnerable != null) {
+                target = closestIcebergThatIsNotMaxLevelAndIsMoreVulnerable;
             }
             else {
                 target = myMostVulnerableIceberg;
@@ -334,7 +350,7 @@ public class MyBot implements SkillzBot {
 
             DefendAction action = new DefendAction(myIceberg, target, maxThatCanSend);
 
-            log("Checking defend action: " + action.toString());
+            /*log("Checking defend action: " + action.toString());*/
 
             List<Action> actionsToTest = new ArrayList<>(executedActions);
             actionsToTest.add(action);
@@ -346,22 +362,22 @@ public class MyBot implements SkillzBot {
                 action.predictionBeforeAction = prediction;
                 actions.add(action);
 
-                log("Added defend action: " + action.toString());
+                /*log("Added defend action: " + action.toString());*/
             }
         }
 
 
         // Create bridge actions
         for(Iceberg myIceberg : game.getMyIcebergs()) {
-            log("Checking bridge action for iceberg: " + myIceberg.toString());
+            /*log("Checking bridge action for iceberg: " + myIceberg.toString());*/
             if(cannotBuildBridgeNow.contains(myIceberg)) continue;
 
             for(Iceberg target : game.getAllIcebergs()) {
                 if(target == myIceberg) continue;
 
-                log("Checking can create bridge");
+                /*log("Checking can create bridge");*/
                 if(!(myIceberg.penguinAmount >= myIceberg.bridgeCost)) continue; // maybe their code for canCreateBridge is wrong
-                log("Can create bridge");
+                /*log("Can create bridge");*/
 
                 boolean gameAlreadyHasThisBridge = false;
                 for(Bridge bridge : myIceberg.bridges) {
@@ -370,7 +386,7 @@ public class MyBot implements SkillzBot {
                         break;
                     }
                 }
-                log("Already has bridge: " + gameAlreadyHasThisBridge);
+                /*log("Already has bridge: " + gameAlreadyHasThisBridge);*/
                 if(gameAlreadyHasThisBridge) continue;
 
                 BridgeAction action = new BridgeAction(myIceberg, target);
@@ -385,7 +401,7 @@ public class MyBot implements SkillzBot {
                     action.predictionBeforeAction = prediction;
                     actions.add(action);
 
-                    log("Added bridge action: " + action.toString());
+                    /*log("Added bridge action: " + action.toString());*/
                 }
             }
         }

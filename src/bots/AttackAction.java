@@ -40,7 +40,9 @@ public class AttackAction extends Action {
             }
         }
 
-        if(enemyClosestIceberg != null && myClosestIceberg != null && enemyClosestIceberg.getTurnsTillArrival(plan.target) <= myClosestIceberg.getTurnsTillArrival(plan.target)) {
+
+        // IMPORTRANT - the -3 is making it so we don't attack neutral icebergs that the enemy is not to far away from
+        if(enemyClosestIceberg != null && myClosestIceberg != null && enemyClosestIceberg.getTurnsTillArrival(plan.target) - 3 <= myClosestIceberg.getTurnsTillArrival(plan.target)) {
             isEnemyClosest = true;
         }
 
@@ -51,13 +53,16 @@ public class AttackAction extends Action {
         if(willTargetBeNeutral && isEnemyClosest && plan.target.penguinAmount > 0) {
             return 0;
         }
+        if(willTargetBeNeutral && plan.target instanceof BonusIceberg && plan.target.penguinAmount > 0) {
+            return 0;
+        }
 
 
 
 
         double predictionScore = predictionAfterAction.computeScore();
 
-        boolean canEnemyDefend = false;
+        /*boolean canEnemyDefend = false;
         AttackPlan.AttackPlanAction lastAction = plan.actions.get(0);
 
         int firstTurnEnemyDetectsAttack = lastAction.turnsToSend + 1;
@@ -74,29 +79,25 @@ public class AttackAction extends Action {
                 }
             }
         }
-        /*if(canEnemyDefend) {
-            Log.log("Cancelled attack on target: " + IcebergUtil.toString(plan.target) + " because enemy can defend\n");
+        *//*if(canEnemyDefend) {
+            Log.log("Cancelled attack on target: " + IcebergUtil.toString(game, plan.target) + " because enemy can defend\n");
             return 0;
-        }*/
+        }*//*
 
 
 
         double enemyDefendScore = canEnemyDefend ? 0 : 1;
-        Log.log("for target + " + plan.target + ", enemyDefendScore: " + enemyDefendScore + " and predictionScore: " + predictionScore);
+        Log.log("for target + " + plan.target + ", enemyDefendScore: " + enemyDefendScore + " and predictionScore: " + predictionScore);*/
 
 
-        List<Boolean> canEnemyCaptureSender = new ArrayList<>();
+        /*List<Boolean> canEnemyCaptureSender = new ArrayList<>();
         for(AttackPlan.AttackPlanAction action : plan.actions) {
             Iceberg sender = action.sender;
 
-        }
+        }*/
 
 
-        double score = GameUtil.computeFactoredScore(
-                predictionScore, 1,
-                enemyDefendScore, 0
-        );
-
+        double score = predictionScore;
         Log.log("for target + " + plan.target + ", score: " + score);
 
         return score;

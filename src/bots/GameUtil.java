@@ -884,7 +884,7 @@ public class GameUtil {
         Log.log(toPrint);
     }
 
-    public static Iceberg getClosestIcebergThatIsNotMaxLevel(Game game, Iceberg myIceberg) {
+    public static Iceberg getClosestIcebergThatIsNotMaxLevelAndIsMoreVulnerable(Game game, Iceberg myIceberg) {
         Iceberg closestIceberg = null;
         int minDistance = Integer.MAX_VALUE;
 
@@ -893,7 +893,10 @@ public class GameUtil {
             if(needsHelp.level == needsHelp.upgradeLevelLimit) continue;
 
             int distance = needsHelp.getTurnsTillArrival(myIceberg);
-            if(distance < minDistance) {
+
+            boolean needsHelpIsMoreVulnerable = getAverageDistanceToEnemyIcebergs(game, needsHelp) <= getAverageDistanceToEnemyIcebergs(game, myIceberg);
+
+            if(distance < minDistance && needsHelpIsMoreVulnerable) {
                 minDistance = distance;
                 closestIceberg = needsHelp;
             }
@@ -906,14 +909,9 @@ public class GameUtil {
         Iceberg minAverageDistanceIceberg = null;
         int minAverageDistance = Integer.MAX_VALUE;
 
-        int amountOfEnemyIcebergs = game.getEnemyIcebergs().length;
         for(Iceberg myIceberg : game.getMyIcebergs()) {
-            int distancesSum = 0;
-            for(Iceberg enemyIceberg : game.getEnemyIcebergs()) {
-                distancesSum += myIceberg.getTurnsTillArrival(enemyIceberg);
-            }
+            double averageDistance = getAverageDistanceToEnemyIcebergs(game, myIceberg);
 
-            double averageDistance = (double)distancesSum / amountOfEnemyIcebergs;
             if(averageDistance < minAverageDistance) {
                 minAverageDistance = (int)averageDistance;
                 minAverageDistanceIceberg = myIceberg;
@@ -921,6 +919,20 @@ public class GameUtil {
         }
 
         return minAverageDistanceIceberg;
+    }
+
+    public static double getAverageDistanceToEnemyIcebergs(Game game, Iceberg myIceberg) {
+        int distancesSum = 0;
+
+        for(Iceberg enemyIceberg : game.getEnemyIcebergs()) {
+            if(myIceberg == null) log("--------------------------");
+            distancesSum += myIceberg.getTurnsTillArrival(enemyIceberg);
+        }
+
+        int enemyIcebergAmount = game.getEnemyIcebergs().length;
+
+        double result = (double)distancesSum / enemyIcebergAmount;
+        return result;
     }
 
 

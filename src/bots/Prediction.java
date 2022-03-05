@@ -333,6 +333,9 @@ public class Prediction {
                 }
 
                 int distance = iceBuilding.getTurnsTillArrival(otherIceBuilding); // TODO factoring bridges
+                /*if(iceBuilding instanceof Iceberg && otherIceBuilding instanceof Iceberg) {
+                    distance /= ((Iceberg)(iceBuilding)).bridgeSpeedMultiplier;
+                }*/
 
                 for(int sendingTurn = 0; sendingTurn < MAX_CAN_SEND_LOOKAHEAD - distance; sendingTurn++) {
 
@@ -387,8 +390,8 @@ public class Prediction {
         double scoreByIcebergs = (double)countMyIcebergs / (double)(countMyIcebergs + countEnemyIcebergs);
 
         double score = GameUtil.computeFactoredScore(
-                scoreByPenguins, 0.7,
-                scoreByIcebergs, 0.3
+                scoreByPenguins, 1,
+                scoreByIcebergs, 0
         );
 
         return score;
@@ -427,7 +430,10 @@ public class Prediction {
 
         // Because of the previous if, we don't want the max that I can send to be -1 (negative)
         int result = Math.max(0, minPenguinAmountInState);
-        Log.log("Max that " + IcebergUtil.toString(iceberg) + " can send: " + result);
+
+        /*result = Math.min(result, states.get(turnsTillSend).penguinAmount);*/
+
+        /*Log.log("Max that " + IcebergUtil.toString(iceberg) + " can send: " + result);*/
         return result;
     }
 
