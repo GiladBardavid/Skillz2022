@@ -18,10 +18,15 @@ public class MyBot implements SkillzBot {
     // If this variable is set to true, then we won't create or add any new attacks. This is only useful for debugging.
     public static boolean DONT_CREATE_NEW_ATTACKS = false;
 
+    // For runs that don't matter. Pick a random
+    public static boolean MAKE_CODE_WORSE = false;
+
     // If we only want to print debug messages from turn x, we set this variable to x.
     // This is only useful for if we don't need debugs from previous turns, but we have a lot of debug messages.
     // In other words, this is to sometimes avoid getting the "too many log messages" message in the logger.
     public static int ONLY_PRINT_FROM_TURN = 400;
+
+    public static Game game;
 
 
     /**
@@ -30,6 +35,7 @@ public class MyBot implements SkillzBot {
      */
     public void doTurn(Game game) {
 
+        this.game = game;
 
         /*log("Game bridge cost: " + game.icebergBridgeCost);
         log("Game bridge speed: " + game.icebergBridgeSpeedMultiplier);
@@ -58,7 +64,7 @@ public class MyBot implements SkillzBot {
 
         // If we only want to print debug messages from turn x, we check if we are on turn x.
         // If we are, then set the IS_DEBUG variable in the Log class to true.
-        if(game.turn == 1) {
+        if(game.turn == 1 && ONLY_PRINT_FROM_TURN <= game.maxTurns) {
             Log.IS_DEBUG = false;
         }
         if(game.turn == ONLY_PRINT_FROM_TURN) {
@@ -172,6 +178,13 @@ public class MyBot implements SkillzBot {
                 // Pick the best action from the candidate actions list.
                 // Because we sorted the list by scores from highest to lowest, the first element in the list is the best action.
                 Action bestAction = candidateActions.get(0);
+
+
+                if(MAKE_CODE_WORSE) {
+                    Random random = new Random();
+                    int randomIndex = random.nextInt(candidateActions.size());
+                    bestAction = candidateActions.get(randomIndex);
+                }
 
                 log("\nBest action: " + bestAction.toString() + "\n" + "  Score: " + bestAction.score + "\n");
                 /*log("Prediction after performing the action:\n" + bestAction.predictionAfterAction);*/

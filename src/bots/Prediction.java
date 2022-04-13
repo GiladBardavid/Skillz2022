@@ -7,6 +7,8 @@ import static bots.IceBuildingState.Owner.*;
 
 public class Prediction {
 
+    private final static int MAX_CAN_SEND_LOOKAHEAD = 12;
+
     public Map<IceBuilding, List<IceBuildingState>> iceBuildingStateAtWhatTurn;
 
     public Map<IceBuilding, int[]> howManyOfMyPenguinsWillArriveAtWhatTurn;
@@ -18,8 +20,6 @@ public class Prediction {
     public Map<Iceberg, int[]> howManyPenguinsWillSendAtWhatTurn;
 
     public boolean isValid = true;
-
-    private final static int MAX_CAN_SEND_LOOKAHEAD = 12;
 
 
     public Prediction(Game game, List<Action> executedActions) {
