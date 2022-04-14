@@ -13,6 +13,7 @@ public class Prediction {
 
     public Map<IceBuilding, int[]> howManyOfMyPenguinsWillArriveAtWhatTurn;
     public Map<IceBuilding, int[]> howManyEnemyPenguinsWillArriveAtWhatTurn;
+    public Map<IceBuilding, int[]> howManyEnemyPenguinsWillArriveAtWhatTurnWorseCase;
 
     public Map<IceBuilding, int[]> howManyOfMyPenguinsCanArriveAtWhatTurn;
     public Map<IceBuilding, int[]> howManyEnemyPenguinsCanArriveAtWhatTurn;
@@ -30,6 +31,7 @@ public class Prediction {
 
         howManyOfMyPenguinsWillArriveAtWhatTurn = new HashMap<>();
         howManyEnemyPenguinsWillArriveAtWhatTurn = new HashMap<>();
+        howManyEnemyPenguinsWillArriveAtWhatTurnWorseCase = new HashMap<>();
         howManyPenguinsWillSendAtWhatTurn = new HashMap<>();
 
         howManyOfMyPenguinsCanArriveAtWhatTurn = new HashMap<>();
@@ -137,6 +139,8 @@ public class Prediction {
         for(PenguinGroup enemyPenguinGroup : game.getEnemyPenguinGroups()){
             /*Log.log("D_0_6: found enemy group: " + enemyPenguinGroup.toString() + " with destination: " + enemyPenguinGroup.destination.toString() + " and turnsTillArrival: " + enemyPenguinGroup.turnsTillArrival);*/
             IceBuilding destination  = enemyPenguinGroup.destination;
+
+
             int[] penguinAmountArrivingAtWhatTurn = howManyEnemyPenguinsWillArriveAtWhatTurn.get(destination);
 
             if(penguinAmountArrivingAtWhatTurn == null){
@@ -148,6 +152,19 @@ public class Prediction {
             int penguinAmount = enemyPenguinGroup.penguinAmount;
 
             penguinAmountArrivingAtWhatTurn[turnsTillArrival] += penguinAmount;
+
+
+
+            int[] penguinAmountArrivingAtWhatTurnWorseCase = howManyEnemyPenguinsWillArriveAtWhatTurnWorseCase.get(destination);
+
+            if(penguinAmountArrivingAtWhatTurnWorseCase == null){
+                penguinAmountArrivingAtWhatTurnWorseCase = new int[maxTurnsLookAhead];
+                howManyEnemyPenguinsWillArriveAtWhatTurnWorseCase.put(destination, penguinAmountArrivingAtWhatTurnWorseCase);
+            }
+
+            int turnsTillArrivalWorseCase = bridgeHelper.getMinTurnsTillArrival(enemyPenguinGroup);
+
+            penguinAmountArrivingAtWhatTurnWorseCase[turnsTillArrivalWorseCase] += penguinAmount;
         }
 
 
@@ -206,7 +223,7 @@ public class Prediction {
                 }
 
                 int[] arrivingMineByTurn = howManyOfMyPenguinsWillArriveAtWhatTurn.get(iceBuilding);
-                int[] arrivingEnemyByTurn = howManyEnemyPenguinsWillArriveAtWhatTurn.get(iceBuilding);
+                int[] arrivingEnemyByTurn = /*howManyEnemyPenguinsWillArriveAtWhatTurn*/howManyEnemyPenguinsWillArriveAtWhatTurnWorseCase.get(iceBuilding);
                 int[] sendingMineByTurn = howManyPenguinsWillSendAtWhatTurn.get(iceBuilding);
 
                 List<IceBuildingState> statesByTurn = iceBuildingStateAtWhatTurn.get(iceBuilding);

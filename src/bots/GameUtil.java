@@ -951,4 +951,28 @@ public class GameUtil {
         }
         return amountOfPenguins;
     }
+
+
+    public static int getTotalEnemyPenguinsOnMap(Game game) {
+        int total = 0;
+        for(Iceberg enemyIceberg : game.getEnemyIcebergs()) {
+            total += enemyIceberg.penguinAmount;
+        }
+        for(PenguinGroup enemyPenguinGroup : game.getEnemyPenguinGroups()) {
+            total += enemyPenguinGroup.penguinAmount;
+        }
+        return total;
+    }
+
+
+    public static int getTotalMyPenguinsOnMap(Game game) {
+        int total = 0;
+        for(Iceberg myIceberg : game.getMyIcebergs()) {
+            total += myIceberg.penguinAmount;
+        }
+        for(PenguinGroup myPenguinGroup : game.getMyPenguinGroups()) {
+            total += myPenguinGroup.penguinAmount;
+        }
+        return total;
+    }
 }

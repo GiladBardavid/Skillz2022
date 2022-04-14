@@ -74,6 +74,18 @@ public class BridgeHelper {
         return turnsLeftForBridge + (originalTurnsTillArrival - (int)(Math.floor(turnsLeftForBridge * speedMultiplier)));
     }
 
+    /**
+     * Returns the minimum number of turns it will take a penguinGroup to reach its destination. In other words, we assume the enemy always has a bridge boosting it.
+     * @return The minimum turns till arrival of the given penguin group
+     */
+    public int getMinTurnsTillArrival(PenguinGroup penguinGroup) {
+        double speedMultiplier = penguinGroup.source.bridgeSpeedMultiplier;
+        int originalTurnsTillArrival = penguinGroup.turnsTillArrival;
+
+        int minTurnsTillArrival = (int)Math.ceil(originalTurnsTillArrival / speedMultiplier);
+        return minTurnsTillArrival;
+    }
+
 
 
     public int getArrivalTurn(IceBuilding sender, IceBuilding destination, int turnsToSend, List<BridgeAction> bridgeActions) {
