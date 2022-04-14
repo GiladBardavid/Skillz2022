@@ -1,9 +1,9 @@
 package penguin_game;
 
 public class PenguinGroup extends GameObject {
-    public Iceberg destination;
+    public IceBuilding destination;
     public int penguinAmount;
-    public Iceberg source;
+    public IceBuilding source;
     public int turnsTillArrival;
     public boolean decoy;
 }

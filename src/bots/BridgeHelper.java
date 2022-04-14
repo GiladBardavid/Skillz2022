@@ -79,7 +79,11 @@ public class BridgeHelper {
      * @return The minimum turns till arrival of the given penguin group
      */
     public int getMinTurnsTillArrival(PenguinGroup penguinGroup) {
-        double speedMultiplier = penguinGroup.source.bridgeSpeedMultiplier;
+        double speedMultiplier = 1;
+        if(penguinGroup.source instanceof Iceberg) {
+            speedMultiplier = ((Iceberg) penguinGroup.source).bridgeSpeedMultiplier;
+        }
+
         int originalTurnsTillArrival = penguinGroup.turnsTillArrival;
 
         int minTurnsTillArrival = (int)Math.ceil(originalTurnsTillArrival / speedMultiplier);
