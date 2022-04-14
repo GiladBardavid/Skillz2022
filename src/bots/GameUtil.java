@@ -975,4 +975,22 @@ public class GameUtil {
         }
         return total;
     }
+
+
+    public static int getMyPenguinCreationRate(Game game) {
+        int total = 0;
+        for(Iceberg myIceberg : game.getMyIcebergs()) {
+            total += myIceberg.penguinsPerTurn;
+        }
+        return total;
+    }
+
+
+    public static int getEnemyPenguinCreationRate(Game game) {
+        int total = 0;
+        for(Iceberg enemyIceberg : game.getEnemyIcebergs()) {
+            total += enemyIceberg.penguinsPerTurn;
+        }
+        return total;
+    }
 }

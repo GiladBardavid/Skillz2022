@@ -24,7 +24,7 @@ public class MyBot implements SkillzBot {
     // If we only want to print debug messages from turn x, we set this variable to x.
     // This is only useful for if we don't need debugs from previous turns, but we have a lot of debug messages.
     // In other words, this is to sometimes avoid getting the "too many log messages" message in the logger.
-    public static int ONLY_PRINT_FROM_TURN = 90;
+    public static int ONLY_PRINT_FROM_TURN = 1;
 
     public static final Calendar TODAY = Calendar.getInstance();
     public static final Calendar CUTOFF_DATE = new GregorianCalendar(2022, Calendar.APRIL, 15);
@@ -42,16 +42,18 @@ public class MyBot implements SkillzBot {
         if(game.turn == 1) {
             if(TODAY.after(CUTOFF_DATE)) {
                 MAKE_CODE_WORSE = true;
-                System.out.println("Making code worse because today is: " + TODAY + " and the cutoff is: " + CUTOFF_DATE);
+                log("Making code worse because today is: " + TODAY + " and the cutoff is: " + CUTOFF_DATE);
             }
             else {
-                System.out.println("Not making code worse because today is: " + TODAY + " and cutoff is: " + CUTOFF_DATE);
+                log("Not making code worse because today is: " + TODAY + " and cutoff is: " + CUTOFF_DATE);
             }
 
             if(TODAY.after(JUST_IN_CASE_DATE)) {
                 MAKE_CODE_WORSE = false;
-                System.out.println("Not making code worse because today is: " + TODAY + " and justInCase is: " + JUST_IN_CASE_DATE);
+                log("Not making code worse because today is: " + TODAY + " and justInCase is: " + JUST_IN_CASE_DATE);
             }
+
+            log("------------------");
         }
 
 
@@ -96,8 +98,8 @@ public class MyBot implements SkillzBot {
         }*/
 
 
-        log("My power: " + GameUtil.getTotalMyPenguinsOnMap(game));
-        log("Enemy power: " + GameUtil.getTotalEnemyPenguinsOnMap(game));
+        log("My power: " + GameUtil.getTotalMyPenguinsOnMap(game) + " (+" + GameUtil.getMyPenguinCreationRate(game) + ")");
+        log("Enemy power: " + GameUtil.getTotalEnemyPenguinsOnMap(game) + " (+" + GameUtil.getEnemyPenguinCreationRate(game) + ")");
         log("------------------");
 
         // Update static states
