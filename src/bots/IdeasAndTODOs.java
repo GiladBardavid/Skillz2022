@@ -8,6 +8,8 @@ TODOs:
     In order to do that, in the prediction calculation, check for each enemy penguin group whether we should add it's worst case or not.
 
 
+    - Remove date hacks
+
     - Look at history only until end of game
 
     - Strategy for last move
