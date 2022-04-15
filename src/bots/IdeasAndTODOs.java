@@ -4,7 +4,13 @@ package bots;
 
 TODOs:
 
-    - BOMBALICA TURN 41 BAD PREDICTION CHANGE
+    We only want to use the worse prediction if the destination iceberg is not neutral.
+    In order to do that, in the prediction calculation, check for each enemy penguin group whether we should add it's worst case or not.
+
+
+    - Look at history only until end of game
+
+    - Strategy for last move
 
     - Ducks R Better turn 79 should attack the bonus iceberg
 

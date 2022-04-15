@@ -223,8 +223,17 @@ public class Prediction {
                 }
 
                 int[] arrivingMineByTurn = howManyOfMyPenguinsWillArriveAtWhatTurn.get(iceBuilding);
-                int[] arrivingEnemyByTurn = /*howManyEnemyPenguinsWillArriveAtWhatTurnWorseCase*/howManyEnemyPenguinsWillArriveAtWhatTurn.get(iceBuilding);
                 int[] sendingMineByTurn = howManyPenguinsWillSendAtWhatTurn.get(iceBuilding);
+
+                // Only take the worst case for enemy penguin groups if the destination iceberg is not neutral. If it is neutral, then we will take the default case.
+                int[] arrivingEnemyByTurn;
+                if(GameUtil.isNeutral(game, iceBuilding)) {
+                    arrivingEnemyByTurn = howManyEnemyPenguinsWillArriveAtWhatTurn.get(iceBuilding);
+                }
+                else {
+                    arrivingEnemyByTurn = howManyEnemyPenguinsWillArriveAtWhatTurnWorseCase.get(iceBuilding);
+                }
+
 
                 List<IceBuildingState> statesByTurn = iceBuildingStateAtWhatTurn.get(iceBuilding);
                 IceBuildingState state = statesByTurn.get(i - 1);

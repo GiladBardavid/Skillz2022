@@ -905,6 +905,100 @@ public class GameUtil {
         return closestIceberg;
     }
 
+
+    public static Iceberg getClosestIcebergThatIsNotMaxLevel(Game game, Iceberg myIceberg) {
+        Iceberg closestIceberg = null;
+        int minDistance = Integer.MAX_VALUE;
+
+        for(Iceberg needsHelp : game.getMyIcebergs()) {
+            if(needsHelp == myIceberg) continue;
+            if(needsHelp.level == needsHelp.upgradeLevelLimit) continue;
+
+            int distance = needsHelp.getTurnsTillArrival(myIceberg);
+
+            if(distance < minDistance) {
+                minDistance = distance;
+                closestIceberg = needsHelp;
+            }
+        }
+
+        return closestIceberg;
+    }
+
+
+    public static Iceberg getClosestIcebergThatCouldUseHelp(Game game, Iceberg myIceberg, Prediction prediction) {
+
+        List<Iceberg> closestToFarthestOfMyIcebergs = Arrays.asList(game.getMyIcebergs());
+
+        Collections.sort(closestToFarthestOfMyIcebergs, new Comparator<Iceberg>() {
+            @Override
+            public int compare(Iceberg o1, Iceberg o2) {
+                return o1.getTurnsTillArrival(myIceberg) - o2.getTurnsTillArrival(myIceberg);
+            }
+        });
+
+
+        for(int i = 1; i < closestToFarthestOfMyIcebergs.size(); i++) { // Start at 1 to skip the iceberg itself
+            Iceberg icebergToCheck = closestToFarthestOfMyIcebergs.get(i);
+
+            log("F_0_2: iceberg " + IcebergUtil.toString(myIceberg) + " is now checking iceberg " + IcebergUtil.toString(icebergToCheck));
+
+            if(icebergToCheck.level == icebergToCheck.upgradeLevelLimit) {
+                continue;
+            }
+
+            boolean couldUseMyHelp = false;
+
+            int amountNeededToUpgradeToMaxLevel = getCostNeededTillMaxLevel(icebergToCheck);
+
+            List<IceBuildingState> states = prediction.iceBuildingStateAtWhatTurn.get(icebergToCheck);
+
+            int turnsTillArrival = icebergToCheck.getTurnsTillArrival(myIceberg);
+            for(int j = turnsTillArrival; j < states.size(); j++) {
+                IceBuildingState state = states.get(j);
+                if(state.owner != ME || state.penguinAmount <= amountNeededToUpgradeToMaxLevel) {
+                    log("F_0_3: iceberg " + IcebergUtil.toString(icebergToCheck) + " does not need my help because states[" + j + "] = " + state);
+                    couldUseMyHelp = true;
+                    break;
+                }
+            }
+
+            if(couldUseMyHelp) {
+                return icebergToCheck;
+            }
+        }
+
+        return null; // Found no good icebergs
+    }
+
+
+    // This is after doing math
+    /*
+    u = upgradeCost
+    f = costFactor
+    d = level distance from max level (maxLevel - level)
+
+    total cost = u + (u+f) + (u+2f) + (u+3f) + ... + (u+(d-1)*f)
+    = d*u + f + 2f + 3f + ... + (d-1)*f
+    = d*u + f*(1+2+3+...+(d-1))
+    = d*u + f*(d*(d-1)/2) =
+
+    +----------------------+
+    |  d * (u + f*(d-1)/2) |
+    +----------------------+
+
+     */
+    public static int getCostNeededTillMaxLevel(Iceberg iceberg) {
+        int u = iceberg.upgradeCost;
+        int d = iceberg.upgradeLevelLimit - iceberg.level;
+        int f = iceberg.costFactor;
+
+        int result = (int) (d * (u + f * (d - 1) / 2.0));
+        log("F_0_1: cost needed till max level for " + IcebergUtil.toString(iceberg) + " is " + result);
+        return result;
+    }
+
+
     public static Iceberg closestIcebergToEnemy(Game game) {
         Iceberg minAverageDistanceIceberg = null;
         int minAverageDistance = Integer.MAX_VALUE;

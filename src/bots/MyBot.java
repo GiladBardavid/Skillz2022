@@ -39,6 +39,12 @@ public class MyBot implements SkillzBot {
      */
     public void doTurn(Game game) {
 
+        /*if(game.turn == 1) {
+            game.getMyIcebergs()[0].upgrade();
+            Log.IS_DEBUG = true;
+            return;
+        }*/
+
         if(game.turn == 1) {
             if(TODAY.after(CUTOFF_DATE)) {
                 MAKE_CODE_WORSE = true;
@@ -376,10 +382,19 @@ public class MyBot implements SkillzBot {
             if(maxThatCanSend == 0) continue;
 
             Iceberg target = null;
-            Iceberg closestIcebergThatIsNotMaxLevelAndIsMoreVulnerable = GameUtil.getClosestIcebergThatIsNotMaxLevelAndIsMoreVulnerable(game, myIceberg);
+            /*Iceberg closestIcebergThatIsNotMaxLevelAndIsMoreVulnerable = GameUtil.getClosestIcebergThatIsNotMaxLevelAndIsMoreVulnerable(game, myIceberg);*/
+            /*Iceberg closestIcebergThatIsNotMaxLevel = GameUtil.getClosestIcebergThatIsNotMaxLevel(game, myIceberg);*/
+            Iceberg closestIcebergThatCouldUseHelp = GameUtil.getClosestIcebergThatCouldUseHelp(game, myIceberg, prediction);
+
             Iceberg myMostVulnerableIceberg = GameUtil.closestIcebergToEnemy(game);
-            if(closestIcebergThatIsNotMaxLevelAndIsMoreVulnerable != null) {
+            /*if(closestIcebergThatIsNotMaxLevelAndIsMoreVulnerable != null) {
                 target = closestIcebergThatIsNotMaxLevelAndIsMoreVulnerable;
+            }*/
+            /*if(closestIcebergThatIsNotMaxLevel != null) {
+                target = closestIcebergThatIsNotMaxLevel;
+            }*/
+            if(closestIcebergThatCouldUseHelp != null) {
+                target = closestIcebergThatCouldUseHelp;
             }
             else {
                 target = myMostVulnerableIceberg;
@@ -388,7 +403,6 @@ public class MyBot implements SkillzBot {
             // Target should never be null, just in case
             if(target == null || target == myIceberg) continue;
 
-            if(target == null) continue;
 
             DefendAction action = new DefendAction(myIceberg, target, maxThatCanSend);
 
