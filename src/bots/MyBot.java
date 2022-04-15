@@ -18,7 +18,7 @@ public class MyBot implements SkillzBot {
     // If this variable is set to true, then we won't create or add any new attacks. This is only useful for debugging.
     public static boolean DONT_CREATE_NEW_ATTACKS = false;
 
-    // For runs that don't matter. Pick a random
+    // For runs that don't matter. Pick a random action
     public static boolean MAKE_CODE_WORSE = false;
 
     // If we only want to print debug messages from turn x, we set this variable to x.
@@ -27,7 +27,7 @@ public class MyBot implements SkillzBot {
     public static int ONLY_PRINT_FROM_TURN = 1;
 
     public static final Calendar TODAY = Calendar.getInstance();
-    public static final Calendar CUTOFF_DATE = new GregorianCalendar(2022, Calendar.APRIL, 15);
+    public static final Calendar CUTOFF_DATE = new GregorianCalendar(2022, Calendar.APRIL, 26);
     public static final Calendar JUST_IN_CASE_DATE = new GregorianCalendar(2022, Calendar.MAY, 14);
 
     public static Game game;
@@ -53,7 +53,7 @@ public class MyBot implements SkillzBot {
                 log("Not making code worse because today is: " + TODAY + " and justInCase is: " + JUST_IN_CASE_DATE);
             }
 
-            log("------------------");
+            log("------------------------------");
         }
 
 
@@ -100,7 +100,7 @@ public class MyBot implements SkillzBot {
 
         log("My power: " + GameUtil.getTotalMyPenguinsOnMap(game) + " (+" + GameUtil.getMyPenguinCreationRate(game) + ")");
         log("Enemy power: " + GameUtil.getTotalEnemyPenguinsOnMap(game) + " (+" + GameUtil.getEnemyPenguinCreationRate(game) + ")");
-        log("------------------");
+        log("------------------------------");
 
         // Update static states
         GameUtil.updateTurnState(game);
@@ -127,7 +127,7 @@ public class MyBot implements SkillzBot {
         for(Action action : ongoingActions) {
             log(action.toString());
         }
-        log("------------------");
+        log("------------------------------");
 
 
         // Fetch the starting prediction from the GameUtil class
@@ -337,6 +337,9 @@ public class MyBot implements SkillzBot {
                     action.predictionBeforeAction = prediction;
                     actions.add(action);
                 }
+            }
+            else {
+                log("Attack plan for ice-building: " + IcebergUtil.toString(iceBuilding) + " is null");
             }
         }
 

@@ -386,7 +386,7 @@ public class GameUtil {
         String bonusIcebergOwner = playerToString(game, game.getBonusIceberg().owner);
 
         // If the bonus iceberg's owner is either enemy or neutral, add it to the set.
-        if(bonusIcebergOwner.equals("Enemy") || bonusIcebergOwner.equals("Neutral")) {
+        if(bonusIcebergOwner.toLowerCase().equals("enemy") || bonusIcebergOwner.toLowerCase().equals("neutral")) {
             allEnemyOrNeutralIceBuildings.add(game.getBonusIceberg());
         }
 
@@ -403,7 +403,7 @@ public class GameUtil {
      * @return true if the ice-building is mine, false otherwise
      */
     public static boolean isMine(Game game, IceBuilding iceBuilding) {
-        return playerToString(game, iceBuilding.owner).equals("Me");
+        return playerToString(game, iceBuilding.owner).toLowerCase().equals("me");
     }
 
 
@@ -414,7 +414,7 @@ public class GameUtil {
      * @return true if the ice-building is owned by the enemy, false otherwise
      */
     public static boolean isEnemy(Game game, IceBuilding iceBuilding) {
-        return playerToString(game, iceBuilding.owner).equals("Enemy");
+        return playerToString(game, iceBuilding.owner).toLowerCase().equals("enemy");
     }
 
 
@@ -425,7 +425,7 @@ public class GameUtil {
      * @return
      */
     public static boolean isNeutral(Game game, IceBuilding iceBuilding) {
-        return playerToString(game, iceBuilding.owner).equals("Neutral");
+        return playerToString(game, iceBuilding.owner).toLowerCase().equals("neutral");
     }
 
 

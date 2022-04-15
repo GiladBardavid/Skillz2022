@@ -4,6 +4,10 @@ package bots;
 
 TODOs:
 
+    - BOMBALICA TURN 41 BAD PREDICTION CHANGE
+
+    - Ducks R Better turn 79 should attack the bonus iceberg
+
     - Change tactics near end of game
 
     - Optimize MAX_LOOKAHEAD in prediction

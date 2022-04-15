@@ -223,7 +223,7 @@ public class Prediction {
                 }
 
                 int[] arrivingMineByTurn = howManyOfMyPenguinsWillArriveAtWhatTurn.get(iceBuilding);
-                int[] arrivingEnemyByTurn = /*howManyEnemyPenguinsWillArriveAtWhatTurn*/howManyEnemyPenguinsWillArriveAtWhatTurnWorseCase.get(iceBuilding);
+                int[] arrivingEnemyByTurn = /*howManyEnemyPenguinsWillArriveAtWhatTurnWorseCase*/howManyEnemyPenguinsWillArriveAtWhatTurn.get(iceBuilding);
                 int[] sendingMineByTurn = howManyPenguinsWillSendAtWhatTurn.get(iceBuilding);
 
                 List<IceBuildingState> statesByTurn = iceBuildingStateAtWhatTurn.get(iceBuilding);
@@ -485,7 +485,7 @@ public class Prediction {
         }
         String s = "Prediction: \n";
         for(IceBuilding iceBuilding : iceBuildingStateAtWhatTurn.keySet()) {
-            s += "  " + iceBuilding.toString() + ": " + iceBuildingStateAtWhatTurn.get(iceBuilding).toString() + "\n";
+            s += "  " + IcebergUtil.toString(iceBuilding) + " ::: " + iceBuildingStateAtWhatTurn.get(iceBuilding).toString() + "\n";
         }
         return s;
     }
