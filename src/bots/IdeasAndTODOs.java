@@ -10,6 +10,8 @@ TODOs:
 
     - Remove date hacks
 
+    - Generalize GameUtil planAttack see TODO in there
+
     - Look at history only until end of game
 
     - Strategy for last move

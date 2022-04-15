@@ -795,7 +795,12 @@ public class GameUtil {
             AttackPlan attackPlan = new AttackPlan(target);
 
             // Add the help penguins that the enemy can send - we want to only perform attacks that the enemy can't defend
-            int penguinAmountThatWillBeInTarget = targetStateAtArrival.penguinAmount + getAmountOfPenguinsEnemyCanSendHelpInXTurns(game, prediction, target, turnsTillArrival);
+            int amountOfPenguinsEnemyCanSendHelp = getAmountOfPenguinsEnemyCanSendHelpInXTurns(game, prediction, target, turnsTillArrival);
+            int penguinAmountThatWillBeInTarget = targetStateAtArrival.penguinAmount + amountOfPenguinsEnemyCanSendHelp;
+
+            if(target.equals(game.getBonusIceberg())) { // TODO this is a very bad loop. NEED to generalize
+                penguinAmountThatWillBeInTarget -= amountOfPenguinsEnemyCanSendHelp;
+            }
 
             boolean hasEnoughToCapture = false;
             // Add all penguins from the closest x of my icebergs
@@ -941,7 +946,7 @@ public class GameUtil {
         for(int i = 1; i < closestToFarthestOfMyIcebergs.size(); i++) { // Start at 1 to skip the iceberg itself
             Iceberg icebergToCheck = closestToFarthestOfMyIcebergs.get(i);
 
-            log("F_0_2: iceberg " + IcebergUtil.toString(myIceberg) + " is now checking iceberg " + IcebergUtil.toString(icebergToCheck));
+            /*log("F_0_2: iceberg " + IcebergUtil.toString(myIceberg) + " is now checking iceberg " + IcebergUtil.toString(icebergToCheck));*/
 
             if(icebergToCheck.level == icebergToCheck.upgradeLevelLimit) {
                 continue;
@@ -953,11 +958,17 @@ public class GameUtil {
 
             List<IceBuildingState> states = prediction.iceBuildingStateAtWhatTurn.get(icebergToCheck);
 
+            // If we upgraded the iceberg to max level exactly this turn, it's already max and doesn't need help.
+            // This check will work over 90% of the time, but there is a small chance that it will fail.
+            if(states.size() >= 2 && states.get(1).penguinAmount - states.get(0).penguinAmount == icebergToCheck.penguinsPerTurn + icebergToCheck.upgradeValue) {
+                continue;
+            }
+
             int turnsTillArrival = icebergToCheck.getTurnsTillArrival(myIceberg);
             for(int j = turnsTillArrival; j < states.size(); j++) {
                 IceBuildingState state = states.get(j);
                 if(state.owner != ME || state.penguinAmount <= amountNeededToUpgradeToMaxLevel) {
-                    log("F_0_3: iceberg " + IcebergUtil.toString(icebergToCheck) + " does not need my help because states[" + j + "] = " + state);
+                    /*log("F_0_3: iceberg " + IcebergUtil.toString(icebergToCheck) + " does not need my help because states[" + j + "] = " + state);*/
                     couldUseMyHelp = true;
                     break;
                 }
@@ -994,7 +1005,7 @@ public class GameUtil {
         int f = iceberg.costFactor;
 
         int result = (int) (d * (u + f * (d - 1) / 2.0));
-        log("F_0_1: cost needed till max level for " + IcebergUtil.toString(iceberg) + " is " + result);
+        /*log("F_0_1: cost needed till max level for " + IcebergUtil.toString(iceberg) + " is " + result);*/
         return result;
     }
 

@@ -32,12 +32,22 @@ public class MyBot implements SkillzBot {
 
     public static Game game;
 
+    public boolean PRINT_TIME_WARNING = false;
+
 
     /**
      * Does the turn. This function is called by the system.
      * @param game current game state
      */
     public void doTurn(Game game) {
+
+        long startTime = System.currentTimeMillis();
+
+        if(PRINT_TIME_WARNING) {
+            log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            log("WARNING: LAST TURN WAS VERY CLOSE TO TIME OUT");
+            log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        }
 
         /*if(game.turn == 1) {
             game.getMyIcebergs()[0].upgrade();
@@ -263,6 +273,19 @@ public class MyBot implements SkillzBot {
         // Update the ongoingActions list to match with the actions that we executed this turn.
         ongoingActions = executedActions;
         log("Ongoing actions new: " + ongoingActions);
+
+
+        log("------------------------------");
+
+        long endTime = System.currentTimeMillis();
+        long totalTime = endTime - startTime;
+        if(totalTime > game.getMaxTurnTime() / /*3*/1) {
+            PRINT_TIME_WARNING = true;
+        }
+        else {
+            PRINT_TIME_WARNING = false;
+        }
+        log("Time taken: " + totalTime + " ms");
     }
 
 
@@ -344,9 +367,9 @@ public class MyBot implements SkillzBot {
                     actions.add(action);
                 }
             }
-            else {
+            /*else {
                 log("Attack plan for ice-building: " + IcebergUtil.toString(iceBuilding) + " is null");
-            }
+            }*/
         }
 
         // Create upgrade actions
@@ -371,6 +394,7 @@ public class MyBot implements SkillzBot {
 
 
         //Create defend actions
+        long defendActionStartTime = System.currentTimeMillis();
         for(Iceberg myIceberg : game.getMyIcebergs()) {
             if(cannotSendNow.contains(myIceberg)) continue;
 
@@ -421,6 +445,8 @@ public class MyBot implements SkillzBot {
                 /*log("Added defend action: " + action.toString());*/
             }
         }
+        long defendActionEndTime = System.currentTimeMillis();
+        log("!!!!!! Defend action time: " + (defendActionEndTime - defendActionStartTime));
 
 
         // Create bridge actions
