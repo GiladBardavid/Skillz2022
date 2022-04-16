@@ -450,7 +450,10 @@ public class Prediction {
         }
 
         // If the max amount that I can send will result in me turning neutral, send 1 less so I will have 1 penguin remaining and I will stay mine
-        if(lastIndexOfMinPenguinAmount != turnsTillSend) {
+        // There are 2 cases:
+        // 1. when there is a future state with the same penguin amount.
+        // 2. When the last index is the first turn, but there is an enemy penguin group that will arrive in the same turn.
+        if(lastIndexOfMinPenguinAmount != turnsTillSend || willAnEnemyPenguinGroupArriveInTheNextXTurns(iceberg, turnsTillSend + 1)) { // TODO The +1 may be wrong
             minPenguinAmountInState--;
         }
 
@@ -459,10 +462,28 @@ public class Prediction {
 
         /*result = Math.min(result, states.get(turnsTillSend).penguinAmount);*/
 
-        /*Log.log("Max that " + IcebergUtil.toString(iceberg) + " can send: " + result);*/
+        /*Log.log("G_0_1: Max that " + IcebergUtil.toString(iceberg) + " can send: " + result);*/
         return result;
     }
 
+
+    public boolean willAnEnemyPenguinGroupArriveInTheNextXTurns(Iceberg iceberg, int turnsTillSend) {
+        if(howManyEnemyPenguinsWillArriveAtWhatTurnWorseCase.get(iceberg) == null) {
+            /*Log.log("not1 sub1 for " + IcebergUtil.toString(iceberg));*/
+            return false;
+        }
+
+        for(int i = 0; i <= turnsTillSend; i++) {
+            if(howManyEnemyPenguinsWillArriveAtWhatTurnWorseCase.get(iceberg)[i] > 0) {
+                /*Log.log("sub1 for " + IcebergUtil.toString(iceberg) + ": " + i);*/
+                return true;
+            }
+        }
+
+        /*Log.log("not2 sub1 for " + IcebergUtil.toString(iceberg));
+        Log.log("because the penguins arriving array is: " + Arrays.toString(howManyEnemyPenguinsWillArriveAtWhatTurnWorseCase.get(iceberg)));*/
+        return false;
+    }
 
 
     public boolean canBeAtRisk(IceBuilding iceBuilding) {

@@ -1098,4 +1098,5 @@ public class GameUtil {
         }
         return total;
     }
+
 }

@@ -8,9 +8,13 @@ TODOs:
     In order to do that, in the prediction calculation, check for each enemy penguin group whether we should add it's worst case or not.
 
 
+    - לא חוזזרים לרחובות we sometimes defend to make neutral then 1 turn later send 1 more to capture - probably a bug.
+
     - Remove date hacks
 
-    - Generalize GameUtil planAttack see TODO in there
+    - Fix the sub1's in prediction get max that can spend
+
+    - Generalize GameUtil planAttack see to-do in there
 
     - Look at history only until end of game
 

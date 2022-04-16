@@ -285,7 +285,7 @@ public class MyBot implements SkillzBot {
         else {
             PRINT_TIME_WARNING = false;
         }
-        log("Time taken: " + totalTime + " ms");
+        log("Time taken: " + totalTime + " / " + game.getMaxTurnTime() + " ms");
     }
 
 
