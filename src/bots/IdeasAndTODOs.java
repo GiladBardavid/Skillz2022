@@ -8,6 +8,9 @@ TODOs:
     In order to do that, in the prediction calculation, check for each enemy penguin group whether we should add it's worst case or not.
 
 
+    - Only create bridge action for bridges who we have a penguin-sent connection between
+        In other words, it's only a good option to create a bridge if we have penguins that will be boosting when creating it.
+
     - לא חוזזרים לרחובות we sometimes defend to make neutral then 1 turn later send 1 more to capture - probably a bug.
 
     - Remove date hacks

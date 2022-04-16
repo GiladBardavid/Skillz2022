@@ -1099,4 +1099,21 @@ public class GameUtil {
         return total;
     }
 
+
+    public static List<Iceberg> getIcebergsThatAreGettingSentPenguinsAtFromMyIceberg(Game game, Iceberg myIceberg) {
+        List<Iceberg> icebergsThatAreGettingAttacked = new ArrayList<>();
+
+        for(PenguinGroup myPenguinGroup : game.getMyPenguinGroups()) {
+            if(myPenguinGroup.source == myIceberg) {
+                IceBuilding destination = myPenguinGroup.destination;
+
+                // If the destination is a bonus iceberg, we can't build a bridge to it because of the game API
+                if(destination instanceof Iceberg) {
+                    icebergsThatAreGettingAttacked.add((Iceberg) destination);
+                }
+            }
+        }
+
+        return icebergsThatAreGettingAttacked;
+    }
 }

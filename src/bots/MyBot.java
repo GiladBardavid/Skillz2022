@@ -34,6 +34,8 @@ public class MyBot implements SkillzBot {
 
     public boolean PRINT_TIME_WARNING = false;
 
+    public long startTime = 0;
+
 
     /**
      * Does the turn. This function is called by the system.
@@ -41,7 +43,7 @@ public class MyBot implements SkillzBot {
      */
     public void doTurn(Game game) {
 
-        long startTime = System.currentTimeMillis();
+        startTime = System.currentTimeMillis();
 
         if(PRINT_TIME_WARNING) {
             log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
@@ -118,6 +120,8 @@ public class MyBot implements SkillzBot {
         log("Enemy power: " + GameUtil.getTotalEnemyPenguinsOnMap(game) + " (+" + GameUtil.getEnemyPenguinCreationRate(game) + ")");
         log("------------------------------");
 
+        /*log("\nTime1: " + (System.currentTimeMillis() - startTime) + "\n");*/
+
         // Update static states
         GameUtil.updateTurnState(game);
 
@@ -165,15 +169,19 @@ public class MyBot implements SkillzBot {
         // All the actions in this list will be executed at the end of the current turn.
         List<Action> executedActions = new ArrayList<>();
 
+        log( "\nTime2: " + (System.currentTimeMillis() - startTime) + "\n");
 
         // While we have good candidate actions, we will pick the best one that we can perform and execute it.
         // Once we have no more good actions to add, we will break in the loop, so while(true) is fine.
         while(true) {
 
+            log("\nTime3.0: " + (System.currentTimeMillis() - startTime) + "\n");
+
             // Find and store all the candidate actions.
             List<Action> candidateActions = createAllActions(game, prediction, cannotSendNow, cannotUpgradeNow, cannotBuildBridgeNow, executedActions);
             log("candidateActions size: " + candidateActions.size());
 
+            log("\nTime3.1: " + (System.currentTimeMillis() - startTime) + "\n");
 
             // Calculate the score for each action in our candidate actions list.
             // The score is a variable in the action class. Each score is in the range 0-1.
@@ -181,6 +189,8 @@ public class MyBot implements SkillzBot {
             for (Action action : candidateActions) {
                 action.computeScore(game);
             }
+
+            log("\nTime3.2: " + (System.currentTimeMillis() - startTime) + "\n");
 
 
             // Filter out all elements from candidateActions who's score is 0 using a stream.
@@ -191,6 +201,7 @@ public class MyBot implements SkillzBot {
                     .filter(action -> (action.predictionAfterAction.computeScore() > action.predictionBeforeAction.computeScore()) || !action.mustImprovePrediction())
                     .collect(Collectors.toList());
 
+            log("\nTime3.3: " + (System.currentTimeMillis() - startTime) + "\n");
 
             // If we have no good candidate actions, then we are done.
             if (candidateActions.size() == 0) {
@@ -214,6 +225,7 @@ public class MyBot implements SkillzBot {
                 log("Score: " + action.score);
             }
 
+            log("\nTime3.4: " + (System.currentTimeMillis() - startTime) + "\n");
 
             if (candidateActions.size() > 0) { // This check is useless as we already checked this case, but we can keep it just in case.
 
@@ -227,6 +239,8 @@ public class MyBot implements SkillzBot {
                     int randomIndex = random.nextInt(candidateActions.size());
                     bestAction = candidateActions.get(randomIndex);
                 }
+
+                log("\nTime3.5: " + (System.currentTimeMillis() - startTime) + "\n");
 
                 log("\nBest action: " + bestAction.toString() + "\n" + "  Score: " + bestAction.score + "\n");
                 /*log("Prediction after performing the action:\n" + bestAction.predictionAfterAction);*/
@@ -250,15 +264,21 @@ public class MyBot implements SkillzBot {
                 cannotBuildBridgeNow.addAll(bestAction.getIcebergsThatSentNow());
                 cannotBuildBridgeNow.addAll(bestAction.getIcebergsThatUpgradedNow());
                 cannotBuildBridgeNow.addAll(bestAction.getIcebergsThatBuiltBridgeNow());
+
+                log("\nTime3.6: " + (System.currentTimeMillis() - startTime) + "\n");
             }
 
 
             // Update our prediction variable, with executing the new action that we added.
             prediction = new Prediction(game, executedActions);
 
+            log("\nTime3.7: " + (System.currentTimeMillis() - startTime) + "\n");
+
             /*log("Best action prediction after: " + prediction);*/
             /*log("New Prediction: " + prediction);*/
         }
+
+        log("\nTime4: " + (System.currentTimeMillis() - startTime) + "\n");
 
         // Execute the actions we added to the executed actions list (execute all of the actions that we decided that we want to perform).
         for(Action action : executedActions) {
@@ -285,7 +305,7 @@ public class MyBot implements SkillzBot {
         else {
             PRINT_TIME_WARNING = false;
         }
-        log("Time taken: " + totalTime + " / " + game.getMaxTurnTime() + " ms");
+        log("\nTime taken: " + totalTime + " / " + game.getMaxTurnTime() + " ms");
     }
 
 
@@ -296,12 +316,17 @@ public class MyBot implements SkillzBot {
      * @return list of all possible actions
      */
     public List<Action> createAllActions(Game game, Prediction prediction, Set<Iceberg> cannotSendNow, Set<Iceberg> cannotUpgradeNow, Set<Iceberg> cannotBuildBridgeNow, List<Action> executedActions) {
+
+        log("\nTime3.0.0: " + (System.currentTimeMillis() - startTime) + "\n");
+
         if(!prediction.isValid) {
             log(prediction);
             if(Log.IS_DEBUG) {
                 throw new IllegalStateException("Prediction is not valid");
             }
         }
+
+        log("\nTime3.0.1: " + (System.currentTimeMillis() - startTime) + "\n");
 
         List<Action> actions = new ArrayList<>();
 
@@ -329,6 +354,8 @@ public class MyBot implements SkillzBot {
                 log("Ongoing action is invalid: " + ongoingAction);
             }
         }
+
+        log("\nTime3.0.2: " + (System.currentTimeMillis() - startTime) + "\n");
 
         /*actions.addAll(ongoingActions);*/
 
@@ -372,6 +399,8 @@ public class MyBot implements SkillzBot {
             }*/
         }
 
+        log("\nTime3.0.2: " + (System.currentTimeMillis() - startTime) + "\n");
+
         // Create upgrade actions
         for(Iceberg myIceberg : game.getMyIcebergs()) {
             if(myIceberg.canUpgrade() && !cannotUpgradeNow.contains(myIceberg)) {
@@ -392,15 +421,21 @@ public class MyBot implements SkillzBot {
             }
         }
 
+        log("\nTime3.0.3: " + (System.currentTimeMillis() - startTime) + "\n");
+
 
         //Create defend actions
-        long defendActionStartTime = System.currentTimeMillis();
         for(Iceberg myIceberg : game.getMyIcebergs()) {
+
             if(cannotSendNow.contains(myIceberg)) continue;
 
             if(myIceberg.level != myIceberg.upgradeLevelLimit) continue;
 
+            log("  Time3.0.3.0: " + (System.currentTimeMillis() - startTime));
+
             int maxThatCanSend = prediction.getMaxThatCanSpend(myIceberg, 0);
+
+            log("  Time3.0.3.1: " + (System.currentTimeMillis() - startTime));
 
             // If I can't send any penguins right now, don't create a defend action.
             if(maxThatCanSend == 0) continue;
@@ -410,7 +445,11 @@ public class MyBot implements SkillzBot {
             /*Iceberg closestIcebergThatIsNotMaxLevel = GameUtil.getClosestIcebergThatIsNotMaxLevel(game, myIceberg);*/
             Iceberg closestIcebergThatCouldUseHelp = GameUtil.getClosestIcebergThatCouldUseHelp(game, myIceberg, prediction);
 
+            log("  Time3.0.3.2: " + (System.currentTimeMillis() - startTime));
+
             Iceberg myMostVulnerableIceberg = GameUtil.closestIcebergToEnemy(game);
+
+            log("  Time3.0.3.3: " + (System.currentTimeMillis() - startTime));
             /*if(closestIcebergThatIsNotMaxLevelAndIsMoreVulnerable != null) {
                 target = closestIcebergThatIsNotMaxLevelAndIsMoreVulnerable;
             }*/
@@ -430,12 +469,16 @@ public class MyBot implements SkillzBot {
 
             DefendAction action = new DefendAction(myIceberg, target, maxThatCanSend);
 
+            log("  Time3.0.3.4: " + (System.currentTimeMillis() - startTime));
+
             /*log("Checking defend action: " + action.toString());*/
 
             List<Action> actionsToTest = new ArrayList<>(executedActions);
             actionsToTest.add(action);
 
             Prediction predictionAfterAction = new Prediction(game, actionsToTest);
+
+            log("  Time3.0.3.5: " + (System.currentTimeMillis() - startTime));
 
             if(predictionAfterAction.isValid) {
                 action.predictionAfterAction = predictionAfterAction;
@@ -444,9 +487,12 @@ public class MyBot implements SkillzBot {
 
                 /*log("Added defend action: " + action.toString());*/
             }
+
+            log("  Time3.0.3.6: " + (System.currentTimeMillis() - startTime));
         }
-        long defendActionEndTime = System.currentTimeMillis();
-        log("!!!!!! Defend action time: " + (defendActionEndTime - defendActionStartTime));
+
+
+        log("\nTime3.0.4: " + (System.currentTimeMillis() - startTime) + "\n");
 
 
         // Create bridge actions
@@ -454,7 +500,7 @@ public class MyBot implements SkillzBot {
             /*log("Checking bridge action for iceberg: " + myIceberg.toString());*/
             if(cannotBuildBridgeNow.contains(myIceberg)) continue;
 
-            for(Iceberg target : game.getAllIcebergs()) {
+            for(Iceberg target : GameUtil.getIcebergsThatAreGettingSentPenguinsAtFromMyIceberg(game, myIceberg)) {
                 if(target == myIceberg) continue;
 
                 /*log("Checking can create bridge");*/
@@ -487,6 +533,8 @@ public class MyBot implements SkillzBot {
                 }
             }
         }
+
+        log("\nTime3.0.5: " + (System.currentTimeMillis() - startTime) + "\n");
 
         return actions;
     }
