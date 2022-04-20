@@ -43,6 +43,10 @@ public class MyBot implements SkillzBot {
      */
     public void doTurn(Game game) {
 
+        /*for(Bridge bridge : GameUtil.getAllBridges(game)) {
+            log("Bridge: " + bridge + " duration: " + bridge.duration);
+        }*/
+
         startTime = System.currentTimeMillis();
 
         if(PRINT_TIME_WARNING) {
@@ -187,7 +191,9 @@ public class MyBot implements SkillzBot {
             // The score is a variable in the action class. Each score is in the range 0-1.
             // Note: Scores can be higher than 1 or lower than 0, and the code will still work fine, but that is not ideal. Try to keep it in [0,1]
             for (Action action : candidateActions) {
+                log("  Time3.1.0: " + (System.currentTimeMillis() - startTime));
                 action.computeScore(game);
+                log("Action: " + action + ", score: " + action.score);
             }
 
             log("\nTime3.2: " + (System.currentTimeMillis() - startTime) + "\n");
@@ -198,7 +204,7 @@ public class MyBot implements SkillzBot {
             // Note: Some actions have to increase our prediction score, but some don't. Right now only defend actions don't require a prediction score increase.
             candidateActions = candidateActions.stream()
                     .filter(action -> action.score > 0 && !executedActions.contains(action))
-                    .filter(action -> (action.predictionAfterAction.computeScore() > action.predictionBeforeAction.computeScore()) || !action.mustImprovePrediction())
+                    .filter(action -> (action.predictionAfterAction.computeScore() >= action.predictionBeforeAction.computeScore())/* || !action.mustImprovePrediction()*/)
                     .collect(Collectors.toList());
 
             log("\nTime3.3: " + (System.currentTimeMillis() - startTime) + "\n");
@@ -510,8 +516,10 @@ public class MyBot implements SkillzBot {
                 boolean gameAlreadyHasThisBridge = false;
                 for(Bridge bridge : myIceberg.bridges) {
                     if(bridge.getEdges()[0] == target || bridge.getEdges()[1] == target) {
-                        gameAlreadyHasThisBridge = true;
-                        break;
+                        if(bridge.duration > 1) {
+                            gameAlreadyHasThisBridge = true;
+                            break;
+                        }
                     }
                 }
                 /*log("Already has bridge: " + gameAlreadyHasThisBridge);*/

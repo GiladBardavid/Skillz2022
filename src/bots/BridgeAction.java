@@ -30,7 +30,9 @@ public class BridgeAction extends Action{
     double computeScoreImpl(Game game) {
         for(Bridge bridge : from.bridges) {
             if(bridge.getEdges()[0] == to || bridge.getEdges()[1] == to) {
-                return 0;
+                if(bridge.duration > 1) { // If the bridge will disappear next turn we can rebuild it
+                    return 0;
+                }
             }
         }
 
@@ -38,7 +40,7 @@ public class BridgeAction extends Action{
             return 0;
         }
 
-        return 0.2; // score will be determined by prediction
+        return 0.2 * predictionAfterAction.computeScore(); // score will be determined by prediction
     }
 
     @Override

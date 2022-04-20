@@ -1116,4 +1116,21 @@ public class GameUtil {
 
         return icebergsThatAreGettingAttacked;
     }
+
+
+    public static List<Bridge> getAllBridges(Game game) {
+        Set<Bridge> bridges = new HashSet<>();
+        for(Iceberg myIceberg : game.getMyIcebergs()) {
+            for(Bridge bridge : myIceberg.bridges) {
+                bridges.add(bridge);
+            }
+        }
+        for(Iceberg enemyIceberg : game.getEnemyIcebergs()) {
+            for(Bridge bridge : enemyIceberg.bridges) {
+                bridges.add(bridge);
+            }
+        }
+
+        return new ArrayList<>(bridges);
+    }
 }

@@ -462,7 +462,7 @@ public class Prediction {
 
         /*result = Math.min(result, states.get(turnsTillSend).penguinAmount);*/
 
-        /*Log.log("G_0_1: Max that " + IcebergUtil.toString(iceberg) + " can send: " + result);*/
+        Log.log("G_0_1: Max that " + IcebergUtil.toString(iceberg) + " can send: " + result);
         return result;
     }
 
@@ -489,7 +489,8 @@ public class Prediction {
     public boolean canBeAtRisk(IceBuilding iceBuilding) {
         List<IceBuildingState> states = iceBuildingStateAtWhatTurn.get(iceBuilding);
 
-        for(int i = 0; i < states.size(); i++) {
+        // Start at 1 because sometimes remaining with 0 penguins in the first state is okay as it will happen because we send penguins so the iceberg will remain ours
+        for(int i = 1; i < states.size(); i++) {
             IceBuildingState currentState = states.get(i);
 
             int penguinAmountIfEveryoneSendsToMe = currentState.penguinAmount;
