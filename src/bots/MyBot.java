@@ -24,7 +24,7 @@ public class MyBot implements SkillzBot {
     // If we only want to print debug messages from turn x, we set this variable to x.
     // This is only useful for if we don't need debugs from previous turns, but we have a lot of debug messages.
     // In other words, this is to sometimes avoid getting the "too many log messages" message in the logger.
-    public static int ONLY_PRINT_FROM_TURN = 1;
+    public static int ONLY_PRINT_FROM_TURN = 400;
 
     public static final Calendar TODAY = Calendar.getInstance();
     public static final Calendar CUTOFF_DATE = new GregorianCalendar(2022, Calendar.APRIL, 26);

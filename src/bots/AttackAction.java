@@ -42,7 +42,7 @@ public class AttackAction extends Action {
 
 
         // IMPORTRANT - the -3 is making it so we don't attack neutral icebergs that the enemy is not to far away from
-        if(enemyClosestIceberg != null && myClosestIceberg != null && enemyClosestIceberg.getTurnsTillArrival(plan.target) - /*3*/1 <= myClosestIceberg.getTurnsTillArrival(plan.target)) {
+        if(enemyClosestIceberg != null && myClosestIceberg != null && enemyClosestIceberg.getTurnsTillArrival(plan.target) - /*3*//*1*/0 <= myClosestIceberg.getTurnsTillArrival(plan.target)) {
             isEnemyClosest = true;
         }
 
