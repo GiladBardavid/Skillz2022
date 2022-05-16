@@ -462,7 +462,7 @@ public class Prediction {
 
         /*result = Math.min(result, states.get(turnsTillSend).penguinAmount);*/
 
-        Log.log("G_0_1: Max that " + IcebergUtil.toString(iceberg) + " can send: " + result);
+        /*Log.log("G_0_1: Max that " + IcebergUtil.toString(iceberg) + " can send: " + result);*/
         return result;
     }
 

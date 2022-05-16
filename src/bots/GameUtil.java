@@ -765,6 +765,8 @@ public class GameUtil {
         });
 
 
+        boolean areWeClosest = areWeClosestToIceberg(game, target);
+
         for(int i = 0; i < closestToFarthestIcebergs.size(); i++) {
             /*log("farthest iceberg is: " + closestToFarthestIcebergs.get(i));*/
             Iceberg farthest = closestToFarthestIcebergs.get(i);
@@ -798,7 +800,8 @@ public class GameUtil {
             int amountOfPenguinsEnemyCanSendHelp = getAmountOfPenguinsEnemyCanSendHelpInXTurns(game, prediction, target, turnsTillArrival);
             int penguinAmountThatWillBeInTarget = targetStateAtArrival.penguinAmount + amountOfPenguinsEnemyCanSendHelp;
 
-            if(target.equals(game.getBonusIceberg())) { // TODO this is a very bad loop. NEED to generalize
+            /*if(target.equals(game.getBonusIceberg())) {*/ // TODO change this so instead of just bonus iceberg, we will do this for every iceberg that we are closest to
+            if(areWeClosest) {
                 penguinAmountThatWillBeInTarget -= amountOfPenguinsEnemyCanSendHelp;
             }
 
@@ -1132,5 +1135,32 @@ public class GameUtil {
         }
 
         return new ArrayList<>(bridges);
+    }
+
+
+    public static boolean areWeClosestToIceberg(Game game, IceBuilding iceBuilding) {
+        int minDistance = Integer.MAX_VALUE;
+
+        for(Iceberg iceberg : game.getMyIcebergs()) {
+            int distance = iceberg.getTurnsTillArrival(iceBuilding);
+            if(distance > 0 && distance < minDistance) {
+                minDistance = distance;
+            }
+        }
+
+        for(Iceberg iceberg : game.getEnemyIcebergs()) {
+            int distance = iceberg.getTurnsTillArrival(iceBuilding);
+            if(distance > 0 && distance < minDistance) {
+                minDistance = distance;
+            }
+        }
+
+        for(Iceberg iceberg : game.getMyIcebergs()) {
+            int distance = iceberg.getTurnsTillArrival(iceBuilding);
+            if (distance == minDistance) {
+                return true;
+            }
+        }
+        return false;
     }
 }

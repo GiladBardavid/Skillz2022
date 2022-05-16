@@ -4,6 +4,12 @@ package bots;
 
 TODOs:
 
+    We want to send the minimum amount + 1 in case we are tied or closest to the target, and the maximum amount in case we are the furthest away.
+
+
+
+
+
     We only want to use the worse prediction if the destination iceberg is not neutral.
     In order to do that, in the prediction calculation, check for each enemy penguin group whether we should add it's worst case or not.
 

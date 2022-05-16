@@ -24,15 +24,15 @@ public class MyBot implements SkillzBot {
     // If we only want to print debug messages from turn x, we set this variable to x.
     // This is only useful for if we don't need debugs from previous turns, but we have a lot of debug messages.
     // In other words, this is to sometimes avoid getting the "too many log messages" message in the logger.
-    public static int ONLY_PRINT_FROM_TURN = 400;
+    public static int ONLY_PRINT_FROM_TURN = 1;
 
     public static final Calendar TODAY = Calendar.getInstance();
-    public static final Calendar CUTOFF_DATE = new GregorianCalendar(2022, Calendar.APRIL, 26);
+    public static final Calendar CUTOFF_DATE = new GregorianCalendar(2022, Calendar.MAY, 3);
     public static final Calendar JUST_IN_CASE_DATE = new GregorianCalendar(2022, Calendar.MAY, 14);
 
     public static Game game;
 
-    public boolean PRINT_TIME_WARNING = false;
+    public boolean printTimeWarning = false;
 
     public long startTime = 0;
 
@@ -49,7 +49,7 @@ public class MyBot implements SkillzBot {
 
         startTime = System.currentTimeMillis();
 
-        if(PRINT_TIME_WARNING) {
+        if(printTimeWarning) {
             log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             log("WARNING: LAST TURN WAS VERY CLOSE TO TIME OUT");
             log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
@@ -60,23 +60,6 @@ public class MyBot implements SkillzBot {
             Log.IS_DEBUG = true;
             return;
         }*/
-
-        if(game.turn == 1) {
-            if(TODAY.after(CUTOFF_DATE)) {
-                MAKE_CODE_WORSE = true;
-                log("Making code worse because today is: " + TODAY + " and the cutoff is: " + CUTOFF_DATE);
-            }
-            else {
-                log("Not making code worse because today is: " + TODAY + " and cutoff is: " + CUTOFF_DATE);
-            }
-
-            if(TODAY.after(JUST_IN_CASE_DATE)) {
-                MAKE_CODE_WORSE = false;
-                log("Not making code worse because today is: " + TODAY + " and justInCase is: " + JUST_IN_CASE_DATE);
-            }
-
-            log("------------------------------");
-        }
 
 
         this.game = game;
@@ -305,11 +288,11 @@ public class MyBot implements SkillzBot {
 
         long endTime = System.currentTimeMillis();
         long totalTime = endTime - startTime;
-        if(totalTime > game.getMaxTurnTime() / /*3*/1) {
-            PRINT_TIME_WARNING = true;
+        if(totalTime > game.getMaxTurnTime() / 2) {
+            printTimeWarning = true;
         }
         else {
-            PRINT_TIME_WARNING = false;
+            printTimeWarning = false;
         }
         log("\nTime taken: " + totalTime + " / " + game.getMaxTurnTime() + " ms");
     }
@@ -530,7 +513,10 @@ public class MyBot implements SkillzBot {
                 List<Action> actionsToTest = new ArrayList<>(executedActions);
                 actionsToTest.add(action);
 
+
+                log("\nTime3.0.5.1: " + (System.currentTimeMillis() - startTime) + "\n");
                 Prediction predictionAfterAction = new Prediction(game, actionsToTest);
+                log("\nTime3.0.5.2: " + (System.currentTimeMillis() - startTime) + "\n");
 
                 if(predictionAfterAction.isValid) {
                     action.predictionAfterAction = predictionAfterAction;
