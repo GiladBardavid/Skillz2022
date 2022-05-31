@@ -36,6 +36,7 @@ public class MyBot implements SkillzBot {
      */
     public void doTurn(Game game) {
 
+        log("decoy factor: " + game.decoyCostFactor);
         log("max time: " + game.getTimeRemaining());
 
         Time.updateStartTime();
@@ -152,6 +153,17 @@ public class MyBot implements SkillzBot {
         // While we have good candidate actions, we will pick the best one that we can perform and execute it.
         // Once we have no more good actions to add, we will break in the loop, so while(true) is fine.
         while(true) {
+
+            if(Time.getTimeUsed() > 200) {
+
+                log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                log("TIME USED: " + Time.getTimeUsed());
+                log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+                break;
+            }
 
             log("\nTime3.0: " + Time.getTimeUsed() + "\n");
 
@@ -406,11 +418,7 @@ public class MyBot implements SkillzBot {
 
             if(myIceberg.level != myIceberg.upgradeLevelLimit) continue;
 
-            log("  Time3.0.4.0: " + Time.getTimeUsed());
-
             int maxThatCanSend = prediction.getMaxThatCanSpend(myIceberg, 0);
-
-            log("  Time3.0.4.1: " + Time.getTimeUsed());
 
             // If I can't send any penguins right now, don't create a defend action.
             if(maxThatCanSend == 0) continue;
@@ -420,11 +428,8 @@ public class MyBot implements SkillzBot {
             /*Iceberg closestIcebergThatIsNotMaxLevel = GameUtil.getClosestIcebergThatIsNotMaxLevel(game, myIceberg);*/
             Iceberg closestIcebergThatCouldUseHelp = GameUtil.getClosestIcebergThatCouldUseHelp(game, myIceberg, prediction);
 
-            log("  Time3.0.4.2: " + Time.getTimeUsed());
-
             Iceberg myMostVulnerableIceberg = GameUtil.closestIcebergToEnemy(game);
 
-            log("  Time3.0.4.3: " + Time.getTimeUsed());
             /*if(closestIcebergThatIsNotMaxLevelAndIsMoreVulnerable != null) {
                 target = closestIcebergThatIsNotMaxLevelAndIsMoreVulnerable;
             }*/
@@ -443,8 +448,6 @@ public class MyBot implements SkillzBot {
 
 
             DefendAction action = new DefendAction(myIceberg, target, maxThatCanSend);
-
-            log("  Time3.0.4.4: " + Time.getTimeUsed());
 
             /*log("Checking defend action: " + action.toString());*/
 
@@ -476,14 +479,12 @@ public class MyBot implements SkillzBot {
             if(cannotBuildBridgeNow.contains(myIceberg)) continue;
 
             for(Iceberg target : GameUtil.getIcebergsThatAreGettingSentPenguinsAtFromMyIceberg(game, myIceberg)) {
-                log("Time3.0.5.01: " + Time.getTimeUsed());
+
                 if(target == myIceberg) continue;
 
                 /*log("Checking can create bridge");*/
                 if(!(myIceberg.penguinAmount >= myIceberg.bridgeCost)) continue; // maybe their code for canCreateBridge is wrong
                 /*log("Can create bridge");*/
-
-                log("Time3.0.5.02: " + Time.getTimeUsed());
 
                 boolean gameAlreadyHasThisBridge = false;
                 for(Bridge bridge : myIceberg.bridges) {
@@ -495,14 +496,10 @@ public class MyBot implements SkillzBot {
                     }
                 }
 
-                log("Time3.0.5.03: " + Time.getTimeUsed());
-
                 /*log("Already has bridge: " + gameAlreadyHasThisBridge);*/
                 if(gameAlreadyHasThisBridge) continue;
 
                 BridgeAction action = new BridgeAction(myIceberg, target);
-
-                log("Time3.0.5.04: " + Time.getTimeUsed());
 
                 List<Action> actionsToTest = new ArrayList<>(executedActions);
                 actionsToTest.add(action);
