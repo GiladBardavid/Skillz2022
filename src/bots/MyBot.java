@@ -18,17 +18,11 @@ public class MyBot implements SkillzBot {
     // If this variable is set to true, then we won't create or add any new attacks. This is only useful for debugging.
     public static boolean DONT_CREATE_NEW_ATTACKS = false;
 
-    // For runs that don't matter. Pick a random action
-    public static boolean MAKE_CODE_WORSE = false;
 
     // If we only want to print debug messages from turn x, we set this variable to x.
     // This is only useful for if we don't need debugs from previous turns, but we have a lot of debug messages.
     // In other words, this is to sometimes avoid getting the "too many log messages" message in the logger.
     public static int ONLY_PRINT_FROM_TURN = 1;
-
-    public static final Calendar TODAY = Calendar.getInstance();
-    public static final Calendar CUTOFF_DATE = new GregorianCalendar(2022, Calendar.MAY, 3);
-    public static final Calendar JUST_IN_CASE_DATE = new GregorianCalendar(2022, Calendar.MAY, 14);
 
     public static Game game;
 
@@ -223,12 +217,6 @@ public class MyBot implements SkillzBot {
                 Action bestAction = candidateActions.get(0);
 
 
-                if(MAKE_CODE_WORSE) {
-                    Random random = new Random();
-                    int randomIndex = random.nextInt(candidateActions.size());
-                    bestAction = candidateActions.get(randomIndex);
-                }
-
                 log("\nTime3.5: " + (System.currentTimeMillis() - startTime) + "\n");
 
                 log("\nBest action: " + bestAction.toString() + "\n" + "  Score: " + bestAction.score + "\n");
@@ -295,6 +283,8 @@ public class MyBot implements SkillzBot {
             printTimeWarning = false;
         }
         log("\nTime taken: " + totalTime + " / " + game.getMaxTurnTime() + " ms");
+
+        Log.printLog();
     }
 
 
@@ -388,7 +378,7 @@ public class MyBot implements SkillzBot {
             }*/
         }
 
-        log("\nTime3.0.2: " + (System.currentTimeMillis() - startTime) + "\n");
+        log("\nTime3.0.3: " + (System.currentTimeMillis() - startTime) + "\n");
 
         // Create upgrade actions
         for(Iceberg myIceberg : game.getMyIcebergs()) {
@@ -410,7 +400,7 @@ public class MyBot implements SkillzBot {
             }
         }
 
-        log("\nTime3.0.3: " + (System.currentTimeMillis() - startTime) + "\n");
+        log("\nTime3.0.4: " + (System.currentTimeMillis() - startTime) + "\n");
 
 
         //Create defend actions
@@ -420,11 +410,11 @@ public class MyBot implements SkillzBot {
 
             if(myIceberg.level != myIceberg.upgradeLevelLimit) continue;
 
-            log("  Time3.0.3.0: " + (System.currentTimeMillis() - startTime));
+            log("  Time3.0.4.0: " + (System.currentTimeMillis() - startTime));
 
             int maxThatCanSend = prediction.getMaxThatCanSpend(myIceberg, 0);
 
-            log("  Time3.0.3.1: " + (System.currentTimeMillis() - startTime));
+            log("  Time3.0.4.1: " + (System.currentTimeMillis() - startTime));
 
             // If I can't send any penguins right now, don't create a defend action.
             if(maxThatCanSend == 0) continue;
@@ -434,11 +424,11 @@ public class MyBot implements SkillzBot {
             /*Iceberg closestIcebergThatIsNotMaxLevel = GameUtil.getClosestIcebergThatIsNotMaxLevel(game, myIceberg);*/
             Iceberg closestIcebergThatCouldUseHelp = GameUtil.getClosestIcebergThatCouldUseHelp(game, myIceberg, prediction);
 
-            log("  Time3.0.3.2: " + (System.currentTimeMillis() - startTime));
+            log("  Time3.0.4.2: " + (System.currentTimeMillis() - startTime));
 
             Iceberg myMostVulnerableIceberg = GameUtil.closestIcebergToEnemy(game);
 
-            log("  Time3.0.3.3: " + (System.currentTimeMillis() - startTime));
+            log("  Time3.0.4.3: " + (System.currentTimeMillis() - startTime));
             /*if(closestIcebergThatIsNotMaxLevelAndIsMoreVulnerable != null) {
                 target = closestIcebergThatIsNotMaxLevelAndIsMoreVulnerable;
             }*/
@@ -458,7 +448,7 @@ public class MyBot implements SkillzBot {
 
             DefendAction action = new DefendAction(myIceberg, target, maxThatCanSend);
 
-            log("  Time3.0.3.4: " + (System.currentTimeMillis() - startTime));
+            log("  Time3.0.4.4: " + (System.currentTimeMillis() - startTime));
 
             /*log("Checking defend action: " + action.toString());*/
 
@@ -467,7 +457,7 @@ public class MyBot implements SkillzBot {
 
             Prediction predictionAfterAction = new Prediction(game, actionsToTest);
 
-            log("  Time3.0.3.5: " + (System.currentTimeMillis() - startTime));
+            log("  Time3.0.4.5: " + (System.currentTimeMillis() - startTime));
 
             if(predictionAfterAction.isValid) {
                 action.predictionAfterAction = predictionAfterAction;
@@ -477,11 +467,11 @@ public class MyBot implements SkillzBot {
                 /*log("Added defend action: " + action.toString());*/
             }
 
-            log("  Time3.0.3.6: " + (System.currentTimeMillis() - startTime));
+            log("  Time3.0.4.6: " + (System.currentTimeMillis() - startTime));
         }
 
 
-        log("\nTime3.0.4: " + (System.currentTimeMillis() - startTime) + "\n");
+        log("\nTime3.0.5: " + (System.currentTimeMillis() - startTime) + "\n");
 
 
         // Create bridge actions
@@ -528,7 +518,7 @@ public class MyBot implements SkillzBot {
             }
         }
 
-        log("\nTime3.0.5: " + (System.currentTimeMillis() - startTime) + "\n");
+        log("\nTime3.0.6: " + (System.currentTimeMillis() - startTime) + "\n");
 
         return actions;
     }
