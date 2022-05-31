@@ -154,7 +154,7 @@ public class MyBot implements SkillzBot {
         // Once we have no more good actions to add, we will break in the loop, so while(true) is fine.
         while(true) {
 
-            if(Time.getTimeUsed() > 250) {
+            if(Time.getTimeUsed() > 200) {
 
                 log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
