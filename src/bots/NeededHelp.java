@@ -4,6 +4,39 @@ import penguin_game.*;
 
 public class NeededHelp {
 
+
+    /*
+
+
+    ----------------------------------------------------------------------------------------------
+    ATTENTION
+
+    we are not using this class at all
+    don't learn it
+    ----------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     */
+
+
+
     public int howManyPenguins;
     public int inHowManyTurns;
 
