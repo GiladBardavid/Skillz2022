@@ -1,3 +1,11 @@
+/**
+* This file is my submitted code in the final 8 groups stage, where the final challenge was a Reset Challenge.
+* All members had 40 minutes to write their best bots from scratch, where all bots competed against eachother. The teams' scores were calculated based on the average performance of each member.
+* This is my (Gilad) code after 40 minutes, which ended up 1st individually out of the 36 contestants in this final stage.
+* My teammates' codes unfortunatelly did not compile after the 40 minute countdown, therefore gaining 0 points each.
+* We ended up in 2nd place overall, each of us winning an Xbox, a silver medal and a trophy.
+*/
+
 package bots;
 import penguin_game.*;
 import java.util.*;
