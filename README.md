@@ -3,13 +3,13 @@
 <!-- TOP SECTION -->
 <br />
 <div align="center">
-  <img src="images/team_image.JPG" alt="Team photo" width="320">
+   <h3 align="center">🥈Israeli Programming Championship 2022 - 2nd Place Code🥈</h3>
+   
+   <img src="images/team_image.JPG" alt="Team photo" width="300">
 
-  <h3 align="center">🥈Israeli Programming Championship 2022 - 2nd Place Code🥈</h3>
-
-  <p align="center">
-    Our code that won us the 2nd place at the official Israeli Programming Championship organized by the Ministry of Education.
-  </p>
+   <p align="center">
+      Our code that won us the 2nd place at the official Israeli Programming Championship organized by the Ministry of Education.
+   </p>
 </div>
 
 <!-- FILE STRUCTURE -->
