@@ -54,8 +54,7 @@ A team's score is the sum of their scores against all other competing teams, and
 The top 100 teams from the online stage are invited to compete in the finals, a one-day physical event.
 In the finals all scores are reset and another game changing feature is announced. Each team then has 3 hours to apply changes to their code from the national stage to adapt to the new feature. A single all-vs-all tournament is run and the top 8 teams out of the 100 participating teams move on to the Grand Finals.
 
-<a is="grand-finals"></a>
-* **Grand Finals (8 groups)**  
+* <a id="grand-finals"></a>**Grand Finals (8 groups)** 
 Up until this stage, teams compete together as a unit and at this final stage, a final twist to the game is introduced and all team members split up to compete as individuals.
 Each team member then as only 40 minutes to update the code to adapt to the twist. To determine the final ranking, an individual all-vs-all tournament is run with the same points distribution mechanism from the previous stages and a team's score is the average of each of it's members scores.
 This year, the twist was that game reset to the vanilla version from the start of the national contest, removing all of the special features added throughout the national stage, as well as all of the team's code was erased and each team member started the 40 minute coding period with nothing but a simple blank template file.
