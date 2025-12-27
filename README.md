@@ -1,7 +1,6 @@
 <a id="readme-top"></a>
 
 <!-- TOP SECTION -->
-<br />
 <div align="center">
    <h3 align="center">🥈Israeli Programming Championship 2022 - 2nd Place Code🥈</h3>
    
